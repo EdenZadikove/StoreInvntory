@@ -5,21 +5,20 @@ import java.util.Scanner;
 import model.Model;
 
 public class Welcome {
-	//TEST
+	
 	private Login login = new Login();
 	private Model model_ = new Model();
 	
 	@SuppressWarnings("resource")
 	public void welcome() throws IOException {
-		
+	
 		Scanner scanner = new Scanner(System.in);
 		int command;
 		int userType = 0;
 		
-		System.out.println("Welcome To Store Inventory System!\n");
+		System.out.println("\n-----------------------------Welcome To Store Inventory System!-----------------------------\n");
 		System.out.println("Login ========> 1");
 		System.out.println("Exit  ========> 0");
-		System.out.println();
 		System.out.print("I want to: ");
 		
 		command = scanner.nextInt();
@@ -47,7 +46,7 @@ public class Welcome {
 	private int nevigateMenu(int userType) throws IOException {
 		int command = 0;
 		
-		System.out.println("Which screen would you like to get?\n");
+		
 
 		switch(userType) {
 		case 1:

@@ -86,6 +86,24 @@ public class Admin extends User {
 		return "Order id- " + orderId + " can not be canceled because its already " + order.getOrderStatus() + " by the supplier.";
 	}
 	
+	
+	public String deleteOrder(int orderId) {
+		Map <Integer, Order> mapOrders = ordersDB_.getOrders();
+		Order order = mapOrders.get(orderId);
+		if  (order == null)
+			return "Order does not exist!";
+		
+		//check if order status is 'canceled OR approved'
+		if(order.getOrderStatus().equals("canceled") || order.getOrderStatus().equals("approved")) {
+			mapOrders.remove(orderId);
+			return "Order id- " + orderId + " successfully deleted";
+		}
+		return "Order id- " + orderId + " can not be deleted because its waiting for supplier's response.\nIf"
+					+ " you want to delete this order - 1. first you need to cancel this order\n"
+					+ "                                   2. delete the order.";	
+	}
+	
+	
 	public Order isOrderExist(Map <Integer, Order> mapOrders,  int orderId) {
 		
 		Order order = mapOrders.get(orderId);

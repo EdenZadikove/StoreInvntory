@@ -25,6 +25,10 @@ public class OrdersController {
 		return model_.cancelOrder(orderId);
 	}
 	
+	public String deleteOrder(int orderId) {
+		return model_.deleteOrder(orderId);
+	}
+	
 	public void saveToFile() throws IOException {
 		model_.saveToFile_orders();
 	}

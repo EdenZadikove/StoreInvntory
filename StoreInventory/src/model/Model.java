@@ -53,6 +53,10 @@ public class Model    {
 		return ((Admin)user_).cancelOrder(orderId);
 	}
 	
+	public String deleteOrder(int orderId) {
+		return ((Admin)user_).deleteOrder(orderId);
+	}
+	
 	public void saveToFile_orders() throws IOException {
 		((Admin)user_).saveToFile();
 	}

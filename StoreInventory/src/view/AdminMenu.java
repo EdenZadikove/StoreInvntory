@@ -13,18 +13,17 @@ public class AdminMenu {
 		int showMainMenuAgain = 3; //3- show main menu
 		while(showMainMenuAgain == 3) {
 			command =  mainMenu();
-			showSelectedScreen(command);
+			showMainMenuAgain = showSelectedScreen(command);
 		}
 	}
-	
-	
-	
-	
+
 	public int mainMenu() throws IOException {
 		Scanner scanner = new Scanner(System.in);
 		int command = -1;
 		int validCommandFlag = 0;
-		System.out.println("Main Menu");
+		System.out.println("\n-----------------------------------------Main Menu------------------------------------------\n");
+		System.out.println("Which screen would you like to get?\n");
+		
 		while(validCommandFlag == 0) {
 			System.out.println("Store Manager  ========> 1");
 			System.out.println("Orders Manager ========> 2");
@@ -36,6 +35,7 @@ public class AdminMenu {
 			
 			command = scanner.nextInt();
 			scanner.nextLine(); //ignore enter char
+			
 			
 			if(command > 3 || command < 0) System.out.println("Invalid Choice");
 			else validCommandFlag = 1;
