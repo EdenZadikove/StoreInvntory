@@ -8,13 +8,15 @@ import java.util.Map;
 public class Admin extends User {
 	
 	private static OrdersDB ordersDB_ = null;
+	private Map<Integer, Order> orders_ = new Hashtable <Integer, Order>(); 
 	//private UsersDB usersDB_ = new UsersDB();
 	
 	public Admin(String userName, int passwrod, String phoneNumber, String email) throws IOException {
 		super(userName, passwrod, phoneNumber, email, 1);
 		ordersDB_ = OrdersDB.getInstance();
+		orders_ = ordersDB_.getOrders();
 	}
-
+	
 	@Override
 	public void logOut() {
 		// TODO Auto-generated method stub
@@ -27,7 +29,7 @@ public class Admin extends User {
 		
 		ArrayList<String> ordersList = new ArrayList<String>();
 		
-		for (Map.Entry<Integer, Order> entry : ordersDB_.getOrders().entrySet()) {
+		for (Map.Entry<Integer, Order> entry : orders_.entrySet()) {
 			String row = "OrderId:" + entry.getValue().getOrderId() + ";" +
 						 "ItemName:" + entry.getValue().getItemName() + ";" +
 						 "Quantity:" + entry.getValue().getQuantity() + ";" +
@@ -40,11 +42,8 @@ public class Admin extends User {
 	@SuppressWarnings("unchecked")
 	public int cretaeOrder(String itemName, int Quntity) throws IOException {
 		
-		Map<Integer, Order> orders_ = new Hashtable <Integer, Order>();
-		
 		int orderId = calculateOrderId();
 		Order newOrder = new Order(orderId, itemName, Quntity);
-		orders_ = ordersDB_.getOrders();
 		orders_.put(orderId, newOrder);
 		ordersDB_.setOrders(orders_);
 		
@@ -52,16 +51,14 @@ public class Admin extends User {
 	}
 
 	private int calculateOrderId() throws IOException {
-		
-		Map <Integer, Order> mapOrders = ordersDB_.getOrders();
 		int maxKey = 1;
 		
 		//empty orders table
-		if(mapOrders.size() == 0)
+		if(orders_.size() == 0)
 			return maxKey;
 		
 		//Search for the max key
-		for (Map.Entry<Integer, Order> currentEntry : mapOrders.entrySet()) {
+		for (Map.Entry<Integer, Order> currentEntry : orders_.entrySet()) {
 			 int tempKey  = currentEntry.getKey();
 			 if(tempKey > maxKey)
 				 maxKey = tempKey;		 
@@ -70,15 +67,14 @@ public class Admin extends User {
 	}
 	
 	public String cancelOrder(int orderId) {
-		Map <Integer, Order> mapOrders = ordersDB_.getOrders();
-		Order order = mapOrders.get(orderId);
+		Order order = isOrderExist(orderId);
 		if  (order == null)
 			return "Order does not exist!";
 		
 		//check if order status is 'pending'
 		if(order.getOrderStatus().equals("pending")) {
 			order.setOrderStatus("canceled");
-			mapOrders.put(orderId, order);
+			orders_.put(orderId, order);
 			return "Order id- " + orderId + " successfully canceled";
 		}
 		if(order.getOrderStatus().equals("canceled"))
@@ -88,27 +84,35 @@ public class Admin extends User {
 	
 	
 	public String deleteOrder(int orderId) {
-		Map <Integer, Order> mapOrders = ordersDB_.getOrders();
-		Order order = mapOrders.get(orderId);
+		Order order = isOrderExist(orderId);
 		if  (order == null)
 			return "Order does not exist!";
 		
-		//check if order status is 'canceled OR approved'
-		if(order.getOrderStatus().equals("canceled") || order.getOrderStatus().equals("approved")) {
-			mapOrders.remove(orderId);
+		//check if order status is 'canceled, approved or denied'
+		if(order.getOrderStatus().equals("canceled") || order.getOrderStatus().equals("approved") || order.getOrderStatus().equals("denied")) {
+			orders_.remove(orderId);
 			return "Order id- " + orderId + " successfully deleted";
 		}
 		return "Order id- " + orderId + " can not be deleted because its waiting for supplier's response.\nIf"
-					+ " you want to delete this order - 1. first you need to cancel this order\n"
-					+ "                                   2. delete the order.";	
+					+ " you want to delete this order - 1. Cancel this order\n"
+					+ "                                   2. Delete this order.";	
 	}
 	
+	public String editOrder(int orderId, int quantity) {
+		Order order = isOrderExist(orderId);
+		if  (order == null)
+			return "Order does not exist!";
+		if(order.getOrderStatus().equals("canceled") || order.getOrderStatus().equals("approved") || order.getOrderStatus().equals("denied"))
+			return "Order id- " + orderId + " can not be edited because its already " + order.getOrderStatus() + " by the supplier.";
+		if(order.getQuantity() == quantity) {
+			return "Order quantity is already set to - " + order.getQuantity();
+		}
+		order.setQuantity(quantity);
+		return "Order quantity successfully updated to- " + order.getQuantity();	
+	}
 	
-	public Order isOrderExist(Map <Integer, Order> mapOrders,  int orderId) {
-		
-		Order order = mapOrders.get(orderId);
-		return order;
-		
+	private Order isOrderExist(int orderId) {
+		return orders_.get(orderId);
 	}
 	
 	
@@ -116,14 +120,3 @@ public class Admin extends User {
 		ordersDB_.saveToFile();
 	}
 }
-
-
-
-
-
-
-
-
-
-
-

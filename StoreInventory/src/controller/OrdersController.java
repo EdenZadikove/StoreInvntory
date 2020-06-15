@@ -11,7 +11,6 @@ public class OrdersController {
 	
 	private Model model_;
 	
-	
 	public OrdersController() throws IOException {
 		model_ = new Model();
 	}
@@ -29,11 +28,16 @@ public class OrdersController {
 		return model_.deleteOrder(orderId);
 	}
 	
+	public String editOrder(int orderId, int quantity) {
+		return model_.editOrder(orderId, quantity);
+	}
+	
+	
 	public void saveToFile() throws IOException {
 		model_.saveToFile_orders();
 	}
 	
-	public ArrayList<String> showOrdersTable() throws IOException{
-		return model_.showOrdersTable();
+	public ArrayList<String> showOrdersTable(int isFiltered) throws IOException{
+		return model_.showOrdersTable(isFiltered);
 	}
 }

@@ -20,6 +20,7 @@ public abstract class FileManager<E> {
 		return file.exists();
 	}
 
+	@SuppressWarnings("unchecked")
 	public E readFromFile(E element) throws IOException 
 	{
 		if(!isFileExsits()) {

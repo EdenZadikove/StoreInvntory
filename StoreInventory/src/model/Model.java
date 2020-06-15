@@ -37,9 +37,9 @@ public class Model    {
 		this.user_ = user;
 	}
 	
-	public ArrayList<String> showOrdersTable() throws IOException{
-		
-		return ((Admin)user_).showOrdersTable();
+	public ArrayList<String> showOrdersTable(int isFiltered) throws IOException{
+		if(isFiltered == 0) return ((Admin)user_).showOrdersTable();
+		return ((Supplier)user_).showOrdersTable();
 	}
 	
 
@@ -61,4 +61,7 @@ public class Model    {
 		((Admin)user_).saveToFile();
 	}
 
+	public String editOrder(int orderId, int quantity) {
+		return ((Admin)user_).editOrder(orderId, quantity);
 	}
+}

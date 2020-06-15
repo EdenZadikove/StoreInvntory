@@ -26,8 +26,8 @@ public class Welcome {
 		
 		userType = afterLogin(command, login);
 		if(userType == 0) exit(1);
-		else  command = nevigateMenu(userType);
-
+		nevigateMenu(userType);
+		exit(0);
 	}
 	
 	private int afterLogin(int command, Login login) throws IOException {	
@@ -43,27 +43,21 @@ public class Welcome {
 		return userType;
 	}
 	
-	private int nevigateMenu(int userType) throws IOException {
-		int command = 0;
-		
-		
-
+	private void nevigateMenu(int userType) throws IOException {
 		switch(userType) {
 		case 1:
 			AdminMenu adminMenu = new AdminMenu();
 			adminMenu.menuManager();
-			exit(0);
 			break;
 		case 2:
 			BasicUserMenu basicUserMenu = new BasicUserMenu();
-			command = basicUserMenu.menu();
+			basicUserMenu.menu();
 			break;
 		case 3:
 			SupplierMenu supplierMenu = new SupplierMenu();
-			command = supplierMenu.menu();
+			supplierMenu.menuManager();
 			break;
 		}
-		return command;
 	}
 	
 	

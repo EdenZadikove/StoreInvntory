@@ -36,8 +36,8 @@ public class OrdersDB extends FileManager<Object> {
 		return orders_;
 	}
 	
-	public void setOrders(Map<Integer, Order> orders_2) {
-		this.orders_ = orders_2;
+	public void setOrders(Map<Integer, Order> orders_) {
+		OrdersDB.orders_ = orders_;
 	}
 	
 	public void saveToFile() throws IOException {
