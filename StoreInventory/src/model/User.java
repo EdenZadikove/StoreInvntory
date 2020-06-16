@@ -74,5 +74,7 @@ public abstract class User implements Serializable{
 		return 1;
 	}
 	
+	
+	
 	public abstract void logOut(); //abstract method
 }

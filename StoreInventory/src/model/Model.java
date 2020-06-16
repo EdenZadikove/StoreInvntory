@@ -1,9 +1,6 @@
 package model;
-import java.util.Map;
-import java.util.Set;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
+
 import java.io.IOException;
 
 public class Model    {
@@ -37,10 +34,7 @@ public class Model    {
 		this.user_ = user;
 	}
 	
-	public ArrayList<String> showOrdersTable(int isFiltered) throws IOException{
-		if(isFiltered == 0) return ((Admin)user_).showOrdersTable();
-		return ((Supplier)user_).showOrdersTable();
-	}
+
 	
 
 	/*ORDERS Functions*/
@@ -64,4 +58,27 @@ public class Model    {
 	public String editOrder(int orderId, int quantity) {
 		return ((Admin)user_).editOrder(orderId, quantity);
 	}
+	
+	public int getOrdersSize() {
+		return ((Admin)user_).getOrdersSize();
+	}
+	
+	//Supplier
+	public ArrayList<String> showOrdersTable(int isFiltered) throws IOException{
+		if(isFiltered == 0) return ((Admin)user_).showOrdersTable();
+		return ((Supplier)user_).showOrdersTable();
+	}
+	
+	public int getPendingOrdersSize() {
+		return ((Supplier)user_).getPendingOrdersSize();
+	}
+	
+	public void saveToFile_ordersSupplier() throws IOException {
+		((Supplier)user_).saveToFileOrders();
+	}
+	
+	public String changeOrderStatus(int orderId, String action) {
+		return ((Supplier)user_).changeOrderStatus(orderId, action);
+	}
+	
 }

@@ -64,7 +64,7 @@ public class OrdersSupplier extends Orders {
 		switch(command) {
 		case 1: //View pending orders table
 			showProgressBar(prevScreensTemp, "View pending orders table" );
-			showOrdersTable(1, "\nPending Orders Table:\n", "\nNo Pending Orders\n"); //filtered table
+			showOrdersTable(1, "\nPending Orders Table:\n", "No Pending Orders"); //filtered table
 			result = showMenuAgain();
 			break;
 		case 2: //Approved order
@@ -79,7 +79,7 @@ public class OrdersSupplier extends Orders {
 			else result = showMenuAgain();
 			break;
 		default: //Exit screen
-			ordersController_.saveToFile();
+			ordersController_.saveToFile_ordersSupplier();
 			break;
 		}
 		return result;
@@ -88,8 +88,8 @@ public class OrdersSupplier extends Orders {
 	private int navigateAction(String action) throws IOException {
 		String introduction = "\n1.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu\n" +
 				  "\n2.  Press '-1' in any stage if you want show orders table in order to choose order ID";
-		if(action.equals("approved")) return actions(introduction, "approved", 1); 
-		return actions(introduction, "denied", 1);
+		if(action.equals("approved")) return actions(introduction, "approved", 1,3); 
+		return actions(introduction, "denied", 1, 3);
 		
 	}
 

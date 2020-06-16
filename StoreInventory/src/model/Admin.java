@@ -115,6 +115,9 @@ public class Admin extends User {
 		return orders_.get(orderId);
 	}
 	
+	public int getOrdersSize() {
+		return orders_.size();
+	}
 	
 	public void saveToFile() throws IOException {
 		ordersDB_.saveToFile();

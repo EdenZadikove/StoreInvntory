@@ -78,7 +78,7 @@ public class OrdersAdmin extends Orders {
 		switch(command) {
 		case 1: //View orders table
 			showProgressBar(prevScreensTemp, "View orders table" );
-			showOrdersTable(0, "\nOrders Table:\n", "\nNo Orders\n");
+			showOrdersTable(0, "\nOrders Table:\n", "No Orders");
 			result = showMenuAgain();
 			break;
 		case 2: //Create a new order
@@ -158,19 +158,19 @@ public class OrdersAdmin extends Orders {
 							  "\n2.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu\n" +
 							  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID";
 							  
-		return actions(introduction, "cancel", 0);
+		return actions(introduction, "cancel", 0, 1);
 	}
 	
 	
 	private int deleteOrder() throws IOException {
 		
-		String introduction = "\n1.  Pay attention: - you can only delete orders with status 'denied' OR 'approved'\n" + 
+		String introduction = "\n1.  Pay attention: - you can only delete orders with status 'denied', 'approved' or 'canceled'\n" + 
 				  "\n                   - By deleting order you won't see it in the table anymore.\n" +
 				  "\n                   - This action can not be undo!\n" + 
 				  "\n2.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu.\n" +
 				  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID.\n";
 				  
-		return actions(introduction, "delete", 0);
+		return actions(introduction, "delete", 0, 1);
 	}
 	
 	private int editOrder() throws IOException {
@@ -180,7 +180,7 @@ public class OrdersAdmin extends Orders {
 				  "\n2.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu.\n" + 
 				  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID.";
 				  
-		return actions(introduction, "edit", 0);
+		return actions(introduction, "edit", 0, 1);
 	}
 	
 	

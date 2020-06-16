@@ -46,7 +46,31 @@ public class Supplier extends User {
 			}
 		}
 	}
+	
+	public int getPendingOrdersSize() {
+		return orders_.size();
+	}
+	
+	public String changeOrderStatus(int orderId, String action) {
+		Order order = isOrderExist(orderId);
+		if  (order == null)
+			return "Order does not exist!";
+		String oldStatus = order.getOrderStatus();
+		order.setOrderStatus(action);
+		orders_.put(orderId, order);
+		
+		return "Order ID - " + orderId + " is successfully updated from " + oldStatus + " to " + order.getOrderStatus();
+	}
+	
+	private Order isOrderExist(int orderId) {
+		return orders_.get(orderId);
+	}
+	
 
+	public void saveToFileOrders() throws IOException {
+		ordersDB_.saveToFile();
+	}
+	
 	@Override
 	public void logOut() {
 		// TODO Auto-generated method stub

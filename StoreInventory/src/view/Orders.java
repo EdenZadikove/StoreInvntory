@@ -12,6 +12,7 @@ public abstract class Orders{
 
 	protected OrdersController ordersController_;
 	protected String prevScreens = "Main Menu";
+	protected ArrayList<String> ordersList = new ArrayList<String>();
 
 	public Orders () throws IOException {
 		super();
@@ -41,18 +42,20 @@ public abstract class Orders{
 	
 		ordersList = ordersController_.showOrdersTable(isFiltered);
 		
-		if(ordersList.size() == 0) System.out.println(emptyTableHeader);
-		System.out.println(tableHeader);
-		System.out.println("| Order ID            | Item Name            | Quantity             | Order Status         |");
-		
-		for(String order : ordersList) {
-			String OrderId = StringUtils.substringBetween(order, "OrderId:", ";");
-			String ItemName = StringUtils.substringBetween(order, "ItemName:", ";");
-			String Quantity = StringUtils.substringBetween(order, "Quantity:", ";");
-			String OrderStatus = StringUtils.substringBetween(order, "OrderStatus:", ";");
-			System.out.printf("| %-20s| %-20s | %-20s | %-20s |\n",OrderId, ItemName, Quantity, OrderStatus);
+		if(ordersList.size() == 0) {
+			System.out.println(emptyTableHeader);
+		} else {
+			System.out.println(tableHeader);
+			System.out.println("| Order ID            | Item Name            | Quantity             | Order Status         |");
+			
+			for(String order : ordersList) {
+				String OrderId = StringUtils.substringBetween(order, "OrderId:", ";");
+				String ItemName = StringUtils.substringBetween(order, "ItemName:", ";");
+				String Quantity = StringUtils.substringBetween(order, "Quantity:", ";");
+				String OrderStatus = StringUtils.substringBetween(order, "OrderStatus:", ";");
+				System.out.printf("| %-20s| %-20s | %-20s | %-20s |\n",OrderId, ItemName, Quantity, OrderStatus);
+			}
 		}
-		
 	}
 	
 	protected boolean showMenuAgain() {
@@ -70,16 +73,24 @@ public abstract class Orders{
 	}
 	
 	
-	protected int actions(String introduction, String action, int isFilterd) throws IOException {
+	protected int actions(String introduction, String action, int isFilterd, int userType) throws IOException {
 		Scanner scanner = new Scanner(System.in);
 		int validCommandFlag = 0;
 		int orderId = 0; //if orderId == 0----> go back to Orders main menu
-		
+		int timesToLoop = 1;
 		System.out.println("\n----------------------------------------INSTRUCTIONS----------------------------------------");
 		System.out.println(introduction);
 		System.out.println("\n--------------------------------------------------------------------------------------------");
 		
-		while(validCommandFlag == 0) {
+		String str = "How many items do you want to " + action + "?";
+		System.out.println(str);
+		
+		timesToLoop = scanner.nextInt();
+		
+		if(userType == 1) timesToLoop = validateInsertedData(1, ordersController_.getOrdersSize(), timesToLoop ,str, "! Times range is: 1 to " + ordersController_.getOrdersSize());
+		else timesToLoop = validateInsertedData(1, ordersController_.getPendingOrdersSize(), timesToLoop, str, "! Times range is: 1 to " + ordersController_.getPendingOrdersSize()); 		
+		
+		while(validCommandFlag == 0 ) {
 			
 			System.out.println("\nWhich item would you like to " + action +"?");
 			System.out.print("Order id: ");
@@ -102,6 +113,7 @@ public abstract class Orders{
 			switch(action){
 				case "delete": 
 					msg = ordersController_.deleteOrder(orderId);
+					
 					break; 
 				case "cancel":
 					msg = ordersController_.cancelOrder(orderId);
@@ -113,15 +125,15 @@ public abstract class Orders{
 					quantity = validateInsertedData(1, 100, quantity, "Update order quantity to: ", "! Quantity must be between 1 to 100");
 					msg = ordersController_.editOrder(orderId, quantity);
 					break;	
-				case "approve":
-					
-					break;
-				case "denied":
+				default:
+					msg = ordersController_.changeOrderStatus(orderId, action);
 					break;
 			}
 			System.out.println(msg);
 			if(msg.contains("successfully")) {
-				validCommandFlag = 1;
+				timesToLoop--;
+				if(timesToLoop == 0)
+					validCommandFlag = 1;
 			}
 		}
 		//end while

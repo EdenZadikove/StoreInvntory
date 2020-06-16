@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import model.Admin;
 import model.Model;
 import model.OrdersDB;
+import model.Supplier;
 
 public class OrdersController {
 	
@@ -39,5 +41,21 @@ public class OrdersController {
 	
 	public ArrayList<String> showOrdersTable(int isFiltered) throws IOException{
 		return model_.showOrdersTable(isFiltered);
+	}
+	
+	public int getOrdersSize() {
+		return model_.getOrdersSize();
+	}
+	
+	public int getPendingOrdersSize() {
+		return model_.getPendingOrdersSize();
+	}
+	
+	public void saveToFile_ordersSupplier() throws IOException {
+		model_.saveToFile_ordersSupplier();
+	}
+	
+	public String changeOrderStatus(int orderId, String action) {
+		return model_.changeOrderStatus(orderId, action);
 	}
 }
