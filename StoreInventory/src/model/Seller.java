@@ -7,11 +7,7 @@ public class Seller extends User {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public void logOut() {
-		// TODO Auto-generated method stub
 
-	}
 
 
 

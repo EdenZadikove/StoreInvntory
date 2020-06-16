@@ -3,9 +3,16 @@ package view;
 import java.io.IOException;
 import java.util.Scanner;
 
+import controller.Controller;
+
 public class SupplierMenu {
 	
 	@SuppressWarnings("resource")
+	private Controller controller_ = null;
+	
+	public SupplierMenu() {
+		controller_ = new Controller();
+	}
 	
 	public void menuManager() throws IOException {
 		int command;
@@ -13,6 +20,7 @@ public class SupplierMenu {
 		while(showMainMenuAgain == -1) {
 			command =  mainMenu();
 			showMainMenuAgain = showSelectedScreen(command);
+			if(showMainMenuAgain == 0) showSelectedScreen(0);
 		}
 	}
 	
@@ -26,7 +34,7 @@ public class SupplierMenu {
 		
 		
 		System.out.println("Orders Manager ========> 1");
-		System.out.println("Exit           ========> 0");
+		System.out.println("Logout         ========> 0");
 		
 		System.out.println();
 		System.out.print("I want to view: ");
@@ -55,12 +63,12 @@ public class SupplierMenu {
 		int showMainMenuAgain = 0;
 		switch(command) {
 		case 0:
-			System.out.println("Exit the program...\n");
+			System.out.println("Logout...\n");
+			controller_.logout();
 			break;
 		case 1:
 			OrdersSupplier ordersSupplier = new OrdersSupplier();
 			ordersSupplier.showMenu();
-			showMainMenuAgain++; //orders manager is actually 2 (see admin menu)
 			break;
 		}
 		return showMainMenuAgain;

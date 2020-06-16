@@ -7,6 +7,7 @@ import java.util.Scanner;
 import org.apache.commons.lang3.StringUtils;
 
 import controller.OrdersController;
+import model.Model;
 
 public abstract class Orders{
 
@@ -69,7 +70,8 @@ public abstract class Orders{
 		scanner.nextLine(); //ignore enter char
 		
 		command = validateInsertedData(0, 1, command, "My choice: ", "! Invalid choice. Please try again"); 
-		return command == 1;
+		return command == 1; //true - show menu again
+		
 	}
 	
 	
@@ -78,6 +80,7 @@ public abstract class Orders{
 		int validCommandFlag = 0;
 		int orderId = 0; //if orderId == 0----> go back to Orders main menu
 		int timesToLoop = 1;
+		
 		System.out.println("\n----------------------------------------INSTRUCTIONS----------------------------------------");
 		System.out.println(introduction);
 		System.out.println("\n--------------------------------------------------------------------------------------------");
@@ -86,13 +89,19 @@ public abstract class Orders{
 		System.out.println(str);
 		
 		timesToLoop = scanner.nextInt();
-		
-		if(userType == 1) timesToLoop = validateInsertedData(1, ordersController_.getOrdersSize(), timesToLoop ,str, "! Times range is: 1 to " + ordersController_.getOrdersSize());
-		else timesToLoop = validateInsertedData(1, ordersController_.getPendingOrdersSize(), timesToLoop, str, "! Times range is: 1 to " + ordersController_.getPendingOrdersSize()); 		
+
+		if(userType == 1) {
+			int itemsCounter = ordersController_.itemsCounterByFilter("all");
+			timesToLoop = validateInsertedData(1, itemsCounter, timesToLoop, str, "! Items range is: 1 to " + itemsCounter);
+		}
+		else {
+			int itemsCounter = ordersController_.itemsCounterByFilter("pending");
+			timesToLoop = validateInsertedData(1, itemsCounter, timesToLoop, str, "! Items range is: 1 to " + itemsCounter); 		
+		}
 		
 		while(validCommandFlag == 0 ) {
 			
-			System.out.println("\nWhich item would you like to " + action +"?");
+			System.out.println("Which item would you like to " + action +"?");
 			System.out.print("Order id: ");
 			
 			orderId = scanner.nextInt();
@@ -102,7 +111,15 @@ public abstract class Orders{
 				System.out.println("Going back to Orders Manager Menu...\n");
 				break;
 			} if(orderId == -1) {
-				showOrdersTable(0, "\nOrders Table:\n", "\nNo Orders\n");
+				switch(userType) {
+				case 1: //admin
+					showOrdersTable(0, "\nOrders Table:\n", "\nNo orders\n");
+					break;
+				case 3: //supplier
+					showOrdersTable(1, "\nPending orders Table:\n", "\nNo pending orders\n");
+					break;
+				}
+				
 				System.out.println("\nWhich item would you like to " + action +"?");
 				System.out.print("Order id: ");
 				
@@ -138,6 +155,15 @@ public abstract class Orders{
 		}
 		//end while
 		return orderId;
+	}
+	
+	
+	protected boolean isEmptyMap(String filter) {
+		if(ordersController_.itemsCounterByFilter(filter) == 0) { //empty orders map
+			System.out.println("Action can not be taken. No orders in the table.");
+			return true;
+		}
+		return false;
 	}
 	
 }

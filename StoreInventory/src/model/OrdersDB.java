@@ -1,16 +1,14 @@
 package model;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.Hashtable;
 import java.util.Map;
 
 
 public class OrdersDB extends FileManager<Object> {
 
-	private static String path_ = "C:\\Users\\97250\\eclipse-workspace\\store-inventory-project---java\\StoreInventory\\files\\orders.txt";
-	private static Map<Integer, Order> orders_ = new Hashtable <Integer, Order>();
-	private static OrdersDB instance = null;
+	private static String path_ = "..\\StoreInventory\\files\\orders.txt";
+	private static Map<Integer, Order> orders_ = null;
+	private static OrdersDB instance_ = null;
 	
 	
 	@SuppressWarnings("unchecked")
@@ -20,20 +18,26 @@ public class OrdersDB extends FileManager<Object> {
 	}
 	
 	//Singletone
-	public static OrdersDB getInstance() {
-		if (instance == null) {
+	public static  OrdersDB getInstance() {
+		if (instance_ == null) {
 			try {
-				instance = new OrdersDB();
+				instance_ = new OrdersDB();
 			}
 			catch(IOException e) {
 				e.printStackTrace();
 			}
 		}
-		return instance;
+		return instance_;
+	}
+	
+	public  void resetInstance() {
+		instance_ = null;
+		orders_ = null;
 	}
 	
 	public Map<Integer, Order> getOrders(){
 		return orders_;
+		
 	}
 	
 	public void setOrders(Map<Integer, Order> orders_) {

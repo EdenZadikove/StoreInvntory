@@ -15,7 +15,7 @@ public class TESTS_2 {
 
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		UsersDB  usersDB_ = new UsersDB();
+		UsersDB  usersDB_ = UsersDB.getInstance();
 		
 		Map<String, User> users_ = new Hashtable <String, User>();
 		User user1 = new Admin("Eden Zadikove", 123, "050-2312093", "eden");

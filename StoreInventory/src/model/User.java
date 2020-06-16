@@ -1,5 +1,9 @@
 package model;
 import java.io.Serializable;
+import java.util.Map;
+
+import static model.User.ordersDB_;
+
 import java.io.IOException;
 
 public abstract class User implements Serializable{
@@ -10,6 +14,8 @@ public abstract class User implements Serializable{
 	private String phoneNumber;
 	private String email;
 	private int userType; //1 = admin, 2 = user, 3 = supplier
+	protected static OrdersDB ordersDB_ = null;
+	protected Map<Integer, Order> orders_ = null; 
 	
 	public User(String userName, int password, String phoneNumber, String email, int userType) {
 		super();
@@ -19,6 +25,9 @@ public abstract class User implements Serializable{
 		this.email = email;
 		this.userType = userType;
 		
+		ordersDB_ = OrdersDB.getInstance();
+		orders_ = ordersDB_.getOrders();
+
 	}
 	
 	public String getUserName() {
@@ -69,12 +78,18 @@ public abstract class User implements Serializable{
 				phoneNumber + "::" + email + "::" + userType;
 	}
 	
-	@Override
-	public int hashCode() {
-		return 1;
+	public int itemsCounterByFilter(String filter) {
+		int itemsCounter = 0;
+		if(filter.equals("all"))
+			return orders_.size();
+		for (Map.Entry<Integer, Order> entry : orders_.entrySet()) 
+			if(entry.getValue().getOrderStatus().equals(filter)) itemsCounter++;
+
+		return itemsCounter;
 	}
 	
 	
-	
-	public abstract void logOut(); //abstract method
+	protected void logOut() {
+		 UsersDB.resetInstance(); 
+	}
 }

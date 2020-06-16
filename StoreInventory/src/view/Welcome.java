@@ -15,35 +15,49 @@ public class Welcome {
 		Scanner scanner = new Scanner(System.in);
 		int command;
 		int userType = 0;
+		boolean showWelcomeMenuAgain = true;
 		
-		System.out.println("\n-----------------------------Welcome To Store Inventory System!-----------------------------\n");
-		System.out.println("Login ========> 1");
-		System.out.println("Exit  ========> 0");
-		System.out.print("I want to: ");
+		while(showWelcomeMenuAgain) {
+			System.out.println("\n-----------------------------Welcome To Store Inventory System!-----------------------------\n");
+			System.out.println("Login ========> 1");
+			System.out.println("Exit  ========> 0");
+			System.out.print("I want to: ");
+			
+			command = scanner.nextInt();
+			scanner.nextLine(); //ignore enter char
+			command = validateInsertedData(0, 1, command, "I want to: ", "! Invalid choice. Please try again.");
+			if(command == 0) //user want to exit
+				showWelcomeMenuAgain = false;
+			else {
+				userType = signIn(login); //do login
+				if(userType == 0) showWelcomeMenuAgain = false; //3 wrong login attempts. exit the system
+			}
+			nevigateMenu(userType); //returned from user menu
+			userType = 0; //reset next session
+		}
 		
-		command = scanner.nextInt();
-		scanner.nextLine(); //ignore enter char
-		
-		userType = afterLogin(command, login);
-		if(userType == 0) exit(1);
-		nevigateMenu(userType);
-		exit(0);
+		exit(0); //exit success
 	}
 	
-	private int afterLogin(int command, Login login) throws IOException {	
-		int userType = 0;	
-		switch(command) {
-		case 1: 
-			userType = login.signIn();
-			break;
-		case 0:
-			exit(0);
-			break;
+	private int validateInsertedData(int start, int end, int command, String text, String errorMsg) {
+		Scanner scanner = new Scanner(System.in);
+		while (!(command <= end && command >= start)) {
+			System.out.println(); // print enter
+			System.out.println(errorMsg);
+			System.out.print(text);	
+			command = scanner.nextInt();
+			scanner.nextLine(); //ignore enter char
 		}
-		return userType;
+		System.out.println(); // print enter
+		return command;
+	}
+	
+	private int signIn(Login login) throws IOException {	
+		return login.signIn();
 	}
 	
 	private void nevigateMenu(int userType) throws IOException {
+		
 		switch(userType) {
 		case 1:
 			AdminMenu adminMenu = new AdminMenu();
@@ -58,11 +72,14 @@ public class Welcome {
 			supplierMenu.menuManager();
 			break;
 		}
+		
+		//we are here after user did logout
+		
 	}
 	
 	
 	private void exit(int status) throws IOException {
-		//model_.saveToFile_orders();
+		
 		System.out.println("Bye Bye");
 		System.exit(status); //exit with fail
 		

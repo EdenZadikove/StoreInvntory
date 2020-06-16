@@ -9,6 +9,12 @@ public class Model    {
 	
 	public Model() {}
 	
+	//User Functions
+	
+	public void logout() {
+		user_.logOut();
+	}
+	
 	public int signIn(String email, int password) throws IOException {
 		LoginRepository loginRepository = new LoginRepository();
 		User user = loginRepository.validateData(email, password);
@@ -31,9 +37,12 @@ public class Model    {
 	}
 	
 	public void setUser(User user) {
-		this.user_ = user;
+		Model.user_ = user;
 	}
 	
+	public int itemsCounterByFilter(String filter) {
+		return Model.user_.itemsCounterByFilter(filter);
+	}
 
 	
 
@@ -67,10 +76,6 @@ public class Model    {
 	public ArrayList<String> showOrdersTable(int isFiltered) throws IOException{
 		if(isFiltered == 0) return ((Admin)user_).showOrdersTable();
 		return ((Supplier)user_).showOrdersTable();
-	}
-	
-	public int getPendingOrdersSize() {
-		return ((Supplier)user_).getPendingOrdersSize();
 	}
 	
 	public void saveToFile_ordersSupplier() throws IOException {

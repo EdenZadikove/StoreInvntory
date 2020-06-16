@@ -7,19 +7,11 @@ import java.util.Map;
 
 public class Admin extends User {
 	
-	private static OrdersDB ordersDB_ = null;
-	private Map<Integer, Order> orders_ = new Hashtable <Integer, Order>(); 
-	//private UsersDB usersDB_ = new UsersDB();
+	
 	
 	public Admin(String userName, int passwrod, String phoneNumber, String email) throws IOException {
 		super(userName, passwrod, phoneNumber, email, 1);
-		ordersDB_ = OrdersDB.getInstance();
-		orders_ = ordersDB_.getOrders();
-	}
-	
-	@Override
-	public void logOut() {
-		// TODO Auto-generated method stub
+		
 	}
 	
 	
@@ -122,4 +114,5 @@ public class Admin extends User {
 	public void saveToFile() throws IOException {
 		ordersDB_.saveToFile();
 	}
+	
 }

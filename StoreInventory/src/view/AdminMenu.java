@@ -3,17 +3,28 @@ package view;
 import java.io.IOException;
 import java.util.Scanner;
 
+import controller.Controller;
+
 public class AdminMenu {
+	private Store store_ = null;
+	private OrdersAdmin ordersAdmin_ = null;
+	private Users users_ = null;
+	private Controller controller_ = null;
 	
-	public AdminMenu() {}
+	public AdminMenu() throws IOException {
+		store_ = new Store();
+		ordersAdmin_ = new OrdersAdmin();
+		users_ = new Users();
+		controller_ = new Controller();
+	}
 	
-	@SuppressWarnings("resource")
 	public void menuManager() throws IOException {
 		int command;
-		int showMainMenuAgain = -1; //-1 - show main menu
+		int showMainMenuAgain = -1; //1 - show main menu, 0 - Logout
 		while(showMainMenuAgain == -1) {
 			command =  mainMenu();
 			showMainMenuAgain = showSelectedScreen(command);
+			if(showMainMenuAgain == 0) showSelectedScreen(0);
 		}
 	}
 
@@ -28,7 +39,7 @@ public class AdminMenu {
 		System.out.println("Store Manager  ========> 1");
 		System.out.println("Orders Manager ========> 2");
 		System.out.println("Users Manager  ========> 3");
-		System.out.println("Exit           ========> 0");
+		System.out.println("Logout         ========> 0");
 		
 		System.out.println();
 		System.out.print("I want to view: ");
@@ -55,22 +66,20 @@ public class AdminMenu {
 	
 	
 	private int showSelectedScreen(int command) throws IOException {
-		int showMainMenuAgain = 0;
+		int showMainMenuAgain = 0;  //logout
 		switch(command) {
 		case 0:
-			System.out.println("Exit the program...\n");
+			System.out.println("Logout...");
+			controller_.logout();
 			break;
 		case 1:
-			Store store = new Store();
-			store.showMenu();
+			showMainMenuAgain = store_.showMenu(); //-1 - show again. 0- logout
 			break;
 		case 2:
-			OrdersAdmin ordersAdmin = new OrdersAdmin();
-			showMainMenuAgain = ordersAdmin.showMenu();
+			showMainMenuAgain = ordersAdmin_.showMenu(); //-1 - show again. 0- logout
 			break;
 		case 3:
-			Users users = new Users();
-			users.showMenu();
+			users_.showMenu();
 			break;
 		}
 		return showMainMenuAgain;

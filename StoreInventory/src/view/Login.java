@@ -23,8 +23,7 @@ public class Login {
 		int userType = 0;
 		
 		System.out.println("\n-------------------------------------------Login--------------------------------------------\n");
-		
-	
+
 		while(userType == 0 && loginAttempts != 0) {
 			
 			System.out.print("Email: ");

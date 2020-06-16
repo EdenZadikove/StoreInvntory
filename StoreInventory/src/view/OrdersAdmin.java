@@ -41,8 +41,8 @@ public class OrdersAdmin extends Orders {
 				if(command == -1) {
 					System.out.println("Going back to Main Menu...\n");
 				}
-				else {
-					System.out.println("Exit the program...\n");
+				else { 
+					command = 0; //for logout
 					actionNavigate(0); //exit the program
 				}
 				validCommandFlag = 1; //end loop
@@ -66,13 +66,14 @@ public class OrdersAdmin extends Orders {
 		System.out.println("Edit pending order     ========> 5");
 		
 		System.out.println("Back to main menu      ========> -1");
-		System.out.println("Exit the program       ========> 0");
+		System.out.println("Logout                 ========> 0");
 	}
 	
 	
 	
 	private boolean actionNavigate(int command) throws IOException {
 		boolean result = false; //if result == true then show menu again
+		boolean isEmptyOrders = false; //not empty
 		String prevScreensTemp = prevScreens + " -----> " + "Orders Manager Menu";
 		int res = -1;
 		switch(command) {
@@ -88,23 +89,32 @@ public class OrdersAdmin extends Orders {
 			break;
 		case 3: //Cancel pending order 
 			showProgressBar(prevScreensTemp, "Cancel pending order");
-			res = cancelOrder(); 
-			if(res == 0) result = true;
-			else result = showMenuAgain();
+			isEmptyOrders = isEmptyMap("all");
+			if(!isEmptyOrders) {
+				res = cancelOrder(); 
+				if(res == 0) result = true; //show menu again
+				else result = showMenuAgain();
+			} else result = showMenuAgain();			
 			break;
 		case 4: //Delete existing order
 			showProgressBar(prevScreensTemp, "Delete existing order");
-			res = deleteOrder();
-			if(res == 0) result = true;
-			else result = showMenuAgain();
+			isEmptyOrders = isEmptyMap("all");
+			if(!isEmptyOrders) {
+				res = deleteOrder();
+				if(res == 0) result = true;
+				else result = showMenuAgain();
+			} else result = showMenuAgain();
 			break;
 		case 5: //Edit pending order
 			showProgressBar(prevScreensTemp, "Edit pending order");
-			res = editOrder();
-			if(res == 0) result = true;
-			else result = showMenuAgain();
+			isEmptyOrders = isEmptyMap("all");
+			if(!isEmptyOrders) {
+				res = editOrder();
+				if(res == 0) result = true;
+				else result = showMenuAgain();
+			}else result = showMenuAgain();
 			break;
-		default: //Exit screen
+		default: //Exit screen, for case 0 and -1
 			ordersController_.saveToFile();
 			break;
 		}
@@ -182,6 +192,8 @@ public class OrdersAdmin extends Orders {
 				  
 		return actions(introduction, "edit", 0, 1);
 	}
+	
+
 	
 	
 }

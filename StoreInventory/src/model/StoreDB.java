@@ -5,31 +5,39 @@ import java.util.Map;
 
 public class StoreDB extends FileManager<Object> {
 	
-	private static String path_ = "C:\\Users\\97250\\eclipse-workspace\\store-inventory-project---java\\StoreInventory\\files\\users.txt";
-	private Map <String, Product> products_ = new Hashtable<String, Product>();
-	private static StoreDB instance = null;
+	private static String path_ = "..\\StoreInventory\\files\\store.txt";
+	private static Map <String, Product> products_ = null;
+	private static StoreDB instance_ = null;
 	
-	private StoreDB() {
+	@SuppressWarnings("unchecked")
+	private StoreDB() throws IOException {
 		super(path_);
 		products_  = (Map<String, Product>)readFromFile(products_);
 	}
 	
 	//Singletone
 	public static StoreDB getInstance() {
-		if (instance == null) {
+		if (instance_ == null) {
 			try {
-				instance = new StoreDB();
+				instance_ = new StoreDB();
 			}
 			catch(IOException e) {
 				e.printStackTrace();
 			}
 		}
-		return instance;
+		return instance_;
 	}
 	
-	
+	public void resetInstance() {
+		instance_ = null;
+		products_ = null;
+	}
 	
 	public Map<String, Product> getProducts(){
 		return products_;
+	}
+	
+	public void saveToFile() throws IOException {
+		writeToFile(products_);
 	}
 }

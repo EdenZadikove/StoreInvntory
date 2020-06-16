@@ -1,21 +1,11 @@
 package model;
 
-import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Map;
-
 public class LoginRepository {
 	
-	private UsersDB users_;
+	private UsersDB users_ = null;
 
 	public LoginRepository() {
-		try {
-			users_ = new UsersDB();
-		}
-		catch(IOException e) {
-			e.printStackTrace();
-		}
-		 
+		users_ = UsersDB.getInstance();
 	}
 	
 	public User validateData(String email, int password) {

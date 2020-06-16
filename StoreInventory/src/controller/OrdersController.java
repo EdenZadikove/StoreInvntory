@@ -47,9 +47,10 @@ public class OrdersController {
 		return model_.getOrdersSize();
 	}
 	
-	public int getPendingOrdersSize() {
-		return model_.getPendingOrdersSize();
+	public int itemsCounterByFilter(String filter) {
+		return model_.itemsCounterByFilter(filter);
 	}
+
 	
 	public void saveToFile_ordersSupplier() throws IOException {
 		model_.saveToFile_ordersSupplier();
