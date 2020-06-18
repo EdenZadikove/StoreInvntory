@@ -2,16 +2,15 @@ package view;
 
 import java.io.IOException;
 import java.util.Scanner;
+
 import controller.Controller;
 
-public class SupplierMenu {
-	@SuppressWarnings("resource")
-	private OrdersSupplier ordersSupplier_ = null;
+public class SellerMenu {
 	private Controller controller_ = null;
-	
-	public SupplierMenu() throws IOException {
-		ordersSupplier_ = new OrdersSupplier();
+	private StoreSeller storeSeller_ = null;
+	public SellerMenu() throws IOException {
 		controller_ = new Controller();
+		storeSeller_ = new StoreSeller();
 	}
 	
 	public void menuManager() throws IOException {
@@ -25,6 +24,7 @@ public class SupplierMenu {
 			showMainMenuAgain = showSelectedScreen(0);
 	}
 	
+	
 	private int mainMenu() {
 		Scanner scanner = new Scanner(System.in);
 		int command = -1;
@@ -32,18 +32,16 @@ public class SupplierMenu {
 		System.out.println("\n-----------------------------------------Main Menu------------------------------------------\n");
 		System.out.println("|  Progress bar:  Main Menu                                                                |\n");
 		System.out.println("Which screen would you like to get?\n");
-		
-		
-		System.out.println("Orders Manager ========> 1");
+
+		System.out.println("Store Manager  ========> 1");
 		System.out.println("Logout         ========> 0");
-		
 		System.out.println();
 		System.out.print("I want to view: ");
 		
 		command = scanner.nextInt();
 		scanner.nextLine(); //ignore enter char
 		
-		command = validateInsertedData(0, 3, command, "I want to view: " ,"! Invalid choice. Please try again. ");
+		command = validateInsertedData(0, 1, command, "I want to view: " ,"! Invalid choice. Please try again. ");
 		return command;
 	}
 	
@@ -68,11 +66,9 @@ public class SupplierMenu {
 			controller_.logout();
 			break;
 		case 1:
-			
-			showMainMenuAgain = ordersSupplier_.showMenu();
+			showMainMenuAgain = storeSeller_.showMenu();
 			break;
 		}
 		return showMainMenuAgain;
 	}
-
 }

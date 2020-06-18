@@ -1,19 +1,10 @@
 package view;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
-import org.apache.commons.lang3.StringUtils;
-
-/* view orders - done
- * create order - done
- * cancel pending order - done
- * delete order - done
- * edit order quantity -  done*/
-
 public class OrdersAdmin extends Orders {
-
+	
 	public OrdersAdmin() throws IOException {
 		super();
 	}
@@ -24,17 +15,22 @@ public class OrdersAdmin extends Orders {
 		Scanner scanner = new Scanner(System.in);
 		int command = -1;
 		int validCommandFlag = 0;
+		boolean firstTimeMenuFlag = true; //If menu is printed for the first time- no need to print a separator
 		boolean showOrdersManagerMenu_again = false; //true- show again, false- don't show again
 
+		System.out.println(screenHeader);
+		
 		while(validCommandFlag == 0) {
-			
+			if(!firstTimeMenuFlag) System.out.println(viewFunctions.getSeperator());
 			showOrdersManagerMenu();
+			firstTimeMenuFlag = false;
 			
+			System.out.println();
 			System.out.print("I want to: ");
 			command = scanner.nextInt();
 			scanner.nextLine(); //ignore enter char
 			
-			command = validateInsertedData(-1,5,command, "I want to: ", "! Invalid choice!. Please try again"); //check if user chose a valid option.
+			command = viewFunctions.validateInsertedData(1,5,command, "I want to: ", "! Invalid choice!. Please try again"); //check if user chose a valid option.
 			showOrdersManagerMenu_again = actionNavigate(command); //command choice from Orders Manager Menu
 			
 			if(!showOrdersManagerMenu_again) {  //showOrdersManagerMenu_again == false
@@ -53,9 +49,8 @@ public class OrdersAdmin extends Orders {
 	}
 	
 	private void showOrdersManagerMenu() {
-		String screenHeader = "\n------------------------------------Orders Manager Menu-------------------------------------\n";
-		System.out.println(screenHeader);
-		showProgressBar(prevScreens, "Order Manager Menu");
+		System.out.println();
+		viewFunctions.showProgressBar(viewFunctions.getPrevScreens(), "Order Manager Menu");
 		
 		System.out.println("Which action would you like to take?\n");
 
@@ -64,9 +59,9 @@ public class OrdersAdmin extends Orders {
 		System.out.println("Cancel pending order   ========> 3");
 		System.out.println("Delete existing order  ========> 4");			
 		System.out.println("Edit pending order     ========> 5");
-		
+		System.out.println();
 		System.out.println("Back to main menu      ========> -1");
-		System.out.println("Logout                 ========> 0");
+		System.out.println("Save and Logout        ========> 0");
 	}
 	
 	
@@ -74,45 +69,64 @@ public class OrdersAdmin extends Orders {
 	private boolean actionNavigate(int command) throws IOException {
 		boolean result = false; //if result == true then show menu again
 		boolean isEmptyOrders = false; //not empty
-		String prevScreensTemp = prevScreens + " -----> " + "Orders Manager Menu";
+		String prevScreensTemp = viewFunctions.getPrevScreens() + " -----> " + "Orders Manager Menu";
 		int res = -1;
 		switch(command) {
 		case 1: //View orders table
-			showProgressBar(prevScreensTemp, "View orders table" );
-			showOrdersTable(0, "\nOrders Table:\n", "No Orders");
-			result = showMenuAgain();
+			System.out.println(viewFunctions.getSeperator());
+			System.out.println();
+			viewFunctions.showProgressBar(prevScreensTemp, "View orders table" );
+			showOrdersTable(0, "Orders Table:\n", "No Orders");
+			result = true;
 			break;
 		case 2: //Create a new order
-			showProgressBar(prevScreensTemp, "Create a new order");
+			System.out.println(viewFunctions.getSeperator());
+			System.out.println();
+			viewFunctions.showProgressBar(prevScreensTemp, "Create a new order");
 			createOrder(); 
-			result = showMenuAgain();
+			result = viewFunctions.anotherActions();
 			break;
 		case 3: //Cancel pending order 
-			showProgressBar(prevScreensTemp, "Cancel pending order");
-			isEmptyOrders = isEmptyMap("all");
+			System.out.println(viewFunctions.getSeperator());
+			System.out.println();
+			viewFunctions.showProgressBar(prevScreensTemp, "Cancel pending order");
+			isEmptyOrders = isEmptyMap("pending");
 			if(!isEmptyOrders) {
 				res = cancelOrder(); 
 				if(res == 0) result = true; //show menu again
-				else result = showMenuAgain();
-			} else result = showMenuAgain();			
+				else result = viewFunctions.anotherActions();
+			} else {
+				System.out.println();
+				result = viewFunctions.anotherActions();
+			}		
 			break;
 		case 4: //Delete existing order
-			showProgressBar(prevScreensTemp, "Delete existing order");
+			System.out.println(viewFunctions.getSeperator());
+			System.out.println();
+			viewFunctions.showProgressBar(prevScreensTemp, "Delete existing order");
 			isEmptyOrders = isEmptyMap("all");
 			if(!isEmptyOrders) {
 				res = deleteOrder();
 				if(res == 0) result = true;
-				else result = showMenuAgain();
-			} else result = showMenuAgain();
+				else result = viewFunctions.anotherActions();
+			} else {
+				System.out.println();
+				result = viewFunctions.anotherActions();
+			}
 			break;
 		case 5: //Edit pending order
-			showProgressBar(prevScreensTemp, "Edit pending order");
-			isEmptyOrders = isEmptyMap("all");
+			System.out.println(viewFunctions.getSeperator());
+			System.out.println();
+			viewFunctions.showProgressBar(prevScreensTemp, "Edit pending order");
+			isEmptyOrders = isEmptyMap("pending");
 			if(!isEmptyOrders) {
 				res = editOrder();
 				if(res == 0) result = true;
-				else result = showMenuAgain();
-			}else result = showMenuAgain();
+				else result = viewFunctions.anotherActions();
+			}else {
+				System.out.println();
+				result = viewFunctions.anotherActions();
+			}
 			break;
 		default: //Exit screen, for case 0 and -1
 			ordersController_.saveToFile();
@@ -127,27 +141,30 @@ public class OrdersAdmin extends Orders {
 		int item = -1;
 		int quantity = 0;
 		
-		System.out.println("\nWhich item would you like to order?\n");
+		System.out.println("Which item would you like to order?\n");
 		showItemsMenu();
-		
-		System.out.println("\nI would like to order: ");
+		System.out.println();
+		System.out.print("I would like to order: ");
 		item = scanner.nextInt();
 		scanner.nextLine();
 		
 		//check if user chose a valid option.
-		item = validateInsertedData(1, 6, item, "I would like to order: ", "! Invalid item. Please try again"); 
-		
+		item = viewFunctions.validateInsertedData_noZeroOne(1, 6, item, "I would like to order: ", "! Invalid item. Please try again"); 
+		System.out.println();
 		System.out.print("How many items would you like to order? ");
 		quantity = scanner.nextInt();
 		scanner.nextLine();
 		
 		//check if user chose a valid option.
-		quantity = validateInsertedData(1, 100, quantity, "I would like to order: ", "! Quantity must be between 1 to 100"); 
+		quantity = viewFunctions.validateInsertedData_noZeroOne(1, 100, quantity, "I would like to order: ", "! Quantity must be between 1 to 100"); 
 		
 		int orderId = ordersController_.createOrder(items[item-1], quantity);
 		
 		System.out.println("Order successfully created!");
 		System.out.println("Order id: " + orderId);
+		System.out.println();
+		System.out.println(viewFunctions.getSeperator());
+		System.out.println();
 	}
 	
 	private void showItemsMenu() {
@@ -166,9 +183,9 @@ public class OrdersAdmin extends Orders {
 	private int cancelOrder() throws IOException {
 		String introduction = "\n1.  Pay attention- you can only cancel orders with status 'pending'\n" + 
 							  "\n2.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu\n" +
-							  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID";
+							  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID\n";
 							  
-		return actions(introduction, "cancel", 0, 1);
+		return actions(introduction, "cancel", 0, 1, "pending");
 	}
 	
 	
@@ -180,7 +197,7 @@ public class OrdersAdmin extends Orders {
 				  "\n2.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu.\n" +
 				  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID.\n";
 				  
-		return actions(introduction, "delete", 0, 1);
+		return actions(introduction, "delete", 0, 1, "all"); //TO DO
 	}
 	
 	private int editOrder() throws IOException {
@@ -188,12 +205,8 @@ public class OrdersAdmin extends Orders {
 		String introduction = "\n1.  Pay attention: - you can only edit orders with status 'pending'\n" + 
 				  "\n                   - This action can not be undo!\n" +
 				  "\n2.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu.\n" + 
-				  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID.";
+				  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID.\n";
 				  
-		return actions(introduction, "edit", 0, 1);
+		return actions(introduction, "edit", 0, 1, "pending");
 	}
-	
-
-	
-	
 }

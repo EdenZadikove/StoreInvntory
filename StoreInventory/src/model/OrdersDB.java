@@ -30,7 +30,7 @@ public class OrdersDB extends FileManager<Object> {
 		return instance_;
 	}
 	
-	public  void resetInstance() {
+	public static  void resetInstance() {
 		instance_ = null;
 		orders_ = null;
 	}

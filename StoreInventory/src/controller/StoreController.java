@@ -1,12 +1,28 @@
 package controller;
 
-public class StoreController {
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 
-	public StoreController() {
-		
+import model.Model;
+
+public class StoreController {
+	private Model model_;
+	
+	public StoreController() throws IOException {
+		model_ = new Model();
+	}
+
+	public Map<String, String> getProducts() throws IOException{
+		return model_.getProducts();
 	}
 	
-	public void convertToTable() {
-		
+	public String editPrice(String itemName, double price) {
+		return model_.editPrice(itemName, price);
 	}
+	
+	public void saveToFile() throws IOException {
+		model_.saveToFile();
+	}
+	
 }

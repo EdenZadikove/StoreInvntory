@@ -1,13 +1,12 @@
 package model;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Map;
-
-import static model.User.ordersDB_;
-
+import java.util.Map.Entry;
 import java.io.IOException;
 
 public abstract class User implements Serializable{
-	
 	
 	private String userName;
 	private int password;
@@ -16,6 +15,8 @@ public abstract class User implements Serializable{
 	private int userType; //1 = admin, 2 = user, 3 = supplier
 	protected static OrdersDB ordersDB_ = null;
 	protected Map<Integer, Order> orders_ = null; 
+	protected static StoreDB storeDB_ = null;
+	protected Map<String, Product> products_ = null; 
 	
 	public User(String userName, int password, String phoneNumber, String email, int userType) {
 		super();
@@ -27,7 +28,9 @@ public abstract class User implements Serializable{
 		
 		ordersDB_ = OrdersDB.getInstance();
 		orders_ = ordersDB_.getOrders();
-
+		
+		storeDB_ = StoreDB.getInstance();
+		products_ = storeDB_.getProducts();
 	}
 	
 	public String getUserName() {
@@ -88,8 +91,27 @@ public abstract class User implements Serializable{
 		return itemsCounter;
 	}
 	
-	
+	public Map<String, String> getProducts(){
+		
+		Map<String, String> productsMap = new Hashtable<String, String>();
+		for (Entry<String, Product> entry : products_.entrySet()) {
+			String row = "ItemName:" + entry.getValue().getItemName() + ";" +
+						 "Session:" + entry.getValue().getSession() + ";" +
+						 "Quantity:" + entry.getValue().getQuantity() + ";" +
+						 "Price:" +  entry.getValue().getPrice() + ";";
+			productsMap.put(entry.getValue().getItemName(), row);
+		}
+		return productsMap;
+	}
+
 	protected void logOut() {
-		 UsersDB.resetInstance(); 
+		 UsersDB.resetInstance();
+		 StoreDB.resetInstance();
+		 OrdersDB.resetInstance();
+	}
+	
+	public void saveToFile() throws IOException {
+		ordersDB_.saveToFile();
+		storeDB_.saveToFile();
 	}
 }

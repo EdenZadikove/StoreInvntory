@@ -36,7 +36,7 @@ public class OrdersController {
 	
 	
 	public void saveToFile() throws IOException {
-		model_.saveToFile_orders();
+		model_.saveToFile();
 	}
 	
 	public ArrayList<String> showOrdersTable(int isFiltered) throws IOException{
@@ -51,11 +51,6 @@ public class OrdersController {
 		return model_.itemsCounterByFilter(filter);
 	}
 
-	
-	public void saveToFile_ordersSupplier() throws IOException {
-		model_.saveToFile_ordersSupplier();
-	}
-	
 	public String changeOrderStatus(int orderId, String action) {
 		return model_.changeOrderStatus(orderId, action);
 	}

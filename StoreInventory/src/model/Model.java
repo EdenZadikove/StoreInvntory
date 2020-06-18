@@ -1,6 +1,6 @@
 package model;
 import java.util.ArrayList;
-
+import java.util.Map;
 import java.io.IOException;
 
 public class Model    {
@@ -43,9 +43,22 @@ public class Model    {
 	public int itemsCounterByFilter(String filter) {
 		return Model.user_.itemsCounterByFilter(filter);
 	}
-
 	
-
+	public void saveToFile() throws IOException {
+		Model.user_.saveToFile();
+	}
+	
+	/*STORE Functions*/
+	
+	public Map<String, String> getProducts() throws IOException{
+		return user_.getProducts();
+	}
+	
+	public String editPrice(String itemName, double price) {
+		return ((Admin)user_).editPrice(itemName, price);
+	}
+	
+	
 	/*ORDERS Functions*/
 	
 	public int cretaeOrder(String itemName, int quantity) throws IOException {
@@ -59,10 +72,7 @@ public class Model    {
 	public String deleteOrder(int orderId) {
 		return ((Admin)user_).deleteOrder(orderId);
 	}
-	
-	public void saveToFile_orders() throws IOException {
-		((Admin)user_).saveToFile();
-	}
+
 
 	public String editOrder(int orderId, int quantity) {
 		return ((Admin)user_).editOrder(orderId, quantity);
@@ -72,18 +82,14 @@ public class Model    {
 		return ((Admin)user_).getOrdersSize();
 	}
 	
-	//Supplier
+	//Supplier and Admin
 	public ArrayList<String> showOrdersTable(int isFiltered) throws IOException{
 		if(isFiltered == 0) return ((Admin)user_).showOrdersTable();
 		return ((Supplier)user_).showOrdersTable();
 	}
 	
-	public void saveToFile_ordersSupplier() throws IOException {
-		((Supplier)user_).saveToFileOrders();
-	}
-	
 	public String changeOrderStatus(int orderId, String action) {
 		return ((Supplier)user_).changeOrderStatus(orderId, action);
 	}
-	
+
 }

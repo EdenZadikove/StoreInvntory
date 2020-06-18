@@ -22,7 +22,7 @@ public class Login {
 		Scanner scanner = new Scanner(System.in);
 		int userType = 0;
 		
-		System.out.println("\n-------------------------------------------Login--------------------------------------------\n");
+		System.out.println("-------------------------------------------Login--------------------------------------------\n");
 
 		while(userType == 0 && loginAttempts != 0) {
 			
@@ -34,17 +34,22 @@ public class Login {
 			
 			userType = loginController_.login(email, password);
 			if(userType == 0) {
-				if(loginAttempts != 1) {//last login attempt
-					System.out.println("\n! Email or password are incorrect. Please try again.");
+				if(loginAttempts != 1) {//if not last login attempt
+					System.out.println(); //enter
+					System.out.println("! Email or password are incorrect. Please try again.");
 				}
 				loginAttempts--;
-				System.out.println("You have " + loginAttempts + " more login attempts left.\n");
+				if(loginAttempts != 0) {
+					System.out.println("You have " + loginAttempts + " more login attempts left.");
+					System.out.println();
+				}
+					
+
 			}
 		}
 		//end while
 		
 		String msg;
-		
 		if(userType != 0) {
 			
 			msg = "Hello " + usersController_.getUserName() + "! You are now logged in as ";
@@ -58,15 +63,12 @@ public class Login {
 				case 3: 
 					msg += "Supplier";
 				break;
-				
 			}
 		}
 		else
-			msg = "! No more login attempts, exit the program.";
-		
-		System.out.println();
-		System.out.println(msg);
-		
+			msg = "! No more login attempts.";
+		System.out.println(); //enter
+		System.out.println(msg);		
 		return userType;
 	}
 }

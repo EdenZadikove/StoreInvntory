@@ -6,15 +6,12 @@ import java.util.Hashtable;
 import java.util.Map;
 
 public class Admin extends User {
-	
-	
-	
+
 	public Admin(String userName, int passwrod, String phoneNumber, String email) throws IOException {
 		super(userName, passwrod, phoneNumber, email, 1);
 		
 	}
-	
-	
+
 	/* ORDERS functions */
 	
 	public ArrayList<String> showOrdersTable() throws IOException {
@@ -110,9 +107,13 @@ public class Admin extends User {
 	public int getOrdersSize() {
 		return orders_.size();
 	}
+
+	//STORE Functions
 	
-	public void saveToFile() throws IOException {
-		ordersDB_.saveToFile();
+	public String editPrice(String itemName, double price) {
+		Product product  = products_.get(itemName);
+		double oldPrice = product.getPrice();
+		products_.get(itemName).setPrice(price);
+		return (itemName + " price successfully update from: " + oldPrice + " to " + product.getPrice());
 	}
-	
 }

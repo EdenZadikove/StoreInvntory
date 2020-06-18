@@ -21,7 +21,6 @@ public class Supplier extends User {
 			for(Iterator<Map.Entry<Integer, Order>> it = orders_.entrySet().iterator(); it.hasNext(); ) {
 			    Map.Entry<Integer, Order> entry = it.next();
 			    
-			    System.out.println(entry.getValue().getOrderStatus());
 			    if(entry.getValue().getOrderStatus().equals("pending")) {
 			    	String row = "OrderId:" + entry.getValue().getOrderId() + ";" +
 		    				     "ItemName:" + entry.getValue().getItemName() + ";" +
@@ -38,22 +37,28 @@ public class Supplier extends User {
 	public String changeOrderStatus(int orderId, String action) {
 		
 		Order order = isOrderExist(orderId);
-		if  (order == null)
+		if  (order == null || !order.getOrderStatus().equals("pending"))
 			return "Order does not exist!";
 		String oldStatus = order.getOrderStatus();
 		order.setOrderStatus(action);
 		orders_.put(orderId, order); //update original map
 		
+		if(action == "approved") {//update store inventory
+			updateStoreInventory(order.getItemName(), order.getQuantity());
+		}
+		
 		return "Order ID - " + orderId + " is successfully updated from " + oldStatus + " to " + order.getOrderStatus();
+		
+		
+	}
+	
+	private void updateStoreInventory(String itemName, int quantity) {
+		int newQuantity = products_.get(itemName).getQuantity() + quantity;
+		products_.get(itemName).setQuantity(newQuantity);
 	}
 	
 	private Order isOrderExist(int orderId) {
 		return orders_.get(orderId);
 	}
-	
-	public void saveToFileOrders() throws IOException {
-		ordersDB_.saveToFile();
-	}
-	
 
 }

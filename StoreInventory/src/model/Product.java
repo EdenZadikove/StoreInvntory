@@ -24,14 +24,6 @@ public class Product implements Serializable {
 		return session;
 	}
 
-	public void setSession(String session) {
-		this.session = session;
-	}
-
-	public void setItemName(String itemName) {
-		this.itemName = itemName;
-	}
-
 	public int getQuantity() {
 		return quantity;
 	}
