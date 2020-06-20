@@ -1,6 +1,9 @@
 package view;
 
+import java.io.IOException;
 import java.util.Scanner;
+
+import model.UsersDB;
 
 public class ViewFunctions {
 	/*Functions:
@@ -8,27 +11,104 @@ public class ViewFunctions {
 	 * validateInsertedData()
 	 * showMenuAgain()
 	 * */
-	protected String prevScreens = "Main Menu";
-	protected String seperator = "--------------------------------------------------------------------------------------------";
-	protected String instructionsHeader = "----------------------------------------INSTRUCTIONS----------------------------------------";
+	private static ViewFunctions instance_ = null;
+	private final int LENGTH = 114;
 	
-	public ViewFunctions() {}
+	private String prevScreens_ = "Main Menu";
+	private String seperator_;
+	private String welcomMenuHeader_;
+	private String loginHeader_;
+	private String mainMenuHeader_;
+	private String storeMenuHeader_;
+	private String orderMenuHeader_;
+	private String instructionsHeader_;
 	
-	protected void showProgressBar(String prevScreens, String currentScreen) {
-		final int PROGRESS_BAR_LENGTH = seperator.length() -1;
-		String fullProgreeBar = "|  Progress bar: " + prevScreens +  " -----> " + currentScreen;
+
+	private ViewFunctions() {
+		welcomMenuHeader_ = setHeader(LENGTH - "Welcome To Store Inventory System!".length(), "Welcome To Store Inventory System!");
+		seperator_ = setHeader(LENGTH, "");
+		instructionsHeader_ = setHeader(LENGTH-"INSTRUCTIONS".length(), "INSTRUCTIONS");
+		loginHeader_ = setHeader(LENGTH-"Login".length(), "Login");
+		mainMenuHeader_ = setHeader(LENGTH - "Main Menu".length(), "Main Menu");
+		storeMenuHeader_ = setHeader(LENGTH - "Store Manager Menu".length(), "Store Manager Menu");
+		orderMenuHeader_ = setHeader(LENGTH - "Order Manager Menu".length(), "Order Manager Menu");
+	}
+	
+	//Singletone
+		public static ViewFunctions getInstance() {
+			if (instance_ == null) {
+				instance_ = new ViewFunctions();
+			}
+			return instance_;
+		} 
+	
+	public String getLoginHeader() {
+		return loginHeader_;
+	}
+
+	public void setLoginHeader(String loginHeader_) {
+		this.loginHeader_ = loginHeader_;
+	}
+
+	public String getPrevScreens() {
+		return prevScreens_;
+	}
+
+	public String getSeperator() {
+		return seperator_;
+	}
+
+	public String getWelcomMenuHeader() {
+		return welcomMenuHeader_;
+	}
+
+	public String getMainMenuHeader() {
+		return mainMenuHeader_;
+	}
+
+	public String getStoreMenuHeader() {
+		return storeMenuHeader_;
+	}
+
+	public String getOrderMenuHeader() {
+		return orderMenuHeader_;
+	}
+
+	public String getInstructionsHeader() {
+		return instructionsHeader_;
+	}
+
+	
+
+	public String setHeader(int length, String header) {
+		String newHeader = "";
+		for(int i = 0; i < length/2 ; i++)//left side
+			newHeader += "-";
+		newHeader  += header; //header
+		int test  = (int) Math.ceil(length/2);
+		int test2 = (int) Math.ceil(length/2.0);
+		for(int i = 0; i <  (int) Math.ceil(length/2) ; i++) //right side. round up in not even
+			newHeader += "-";
+		return newHeader;
+	}
+	
+	public String showProgressBar(String prevScreens, String currentScreen) {
+		String fullProgreeBar = "|  Progress bar: ";
+		if(prevScreens.length() == 0) fullProgreeBar += currentScreen;
+		else fullProgreeBar = "|  Progress bar: " + prevScreens +  " -----> " + currentScreen;
+		
 		int fullProgreeBarSize = fullProgreeBar.length();
-		int lengthDeff = PROGRESS_BAR_LENGTH - fullProgreeBarSize;
+		int lengthDeff = LENGTH - fullProgreeBarSize;
 		
 		for(int i = 0; i < lengthDeff ; i++) {
 			fullProgreeBar = fullProgreeBar + " ";
 		}
 		fullProgreeBar = fullProgreeBar + "|\n";
-		System.out.println(fullProgreeBar);
+		return fullProgreeBar;
 	}
 	
 	
-	protected int validateInsertedData(int start, int end, int command, String text, String errorMsg) {
+	public int validateInsertedData(int start, int end, int command, String text, String errorMsg) {
 		/* If 0 --->  don't do anything
 		 * If -1 --->  don't do anything
 		 *  */		
@@ -45,7 +125,7 @@ public class ViewFunctions {
 	}
 	
 	
-	protected double validateInsertedData(int start, int end, double command, String text, String errorMsg) {
+	public double validateInsertedData(int start, int end, double command, String text, String errorMsg) {
 		/* If 0 --->  don't do anything
 		 * If -1 --->  don't do anything
 		 *  */		
@@ -60,7 +140,7 @@ public class ViewFunctions {
 		return command;
 	}
 	
-	protected int validateInsertedData_noZeroOne(int start, int end, int command, String text, String errorMsg) {		
+	public int validateInsertedData_noZeroOne(int start, int end, int command, String text, String errorMsg) {		
 		Scanner scanner = new Scanner(System.in);
 		while (!(command <= end && command >= start)) {
 			System.out.println(); // enter
@@ -72,10 +152,8 @@ public class ViewFunctions {
 		return command;
 	}
 	
-	
-	
 	//showMenuAgain
-	protected boolean anotherActions() {
+	public boolean anotherActions() {
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Would you like to take another action?\n");
 		System.out.println("Yes, show me the menu please    ========> 1");
@@ -88,17 +166,4 @@ public class ViewFunctions {
 		command = validateInsertedData_noZeroOne(0, 1, command, "My choice: ", "! Invalid choice. Please try again"); 
 		return command == 1; //true - show menu again
 	}
-	
-	public String getPrevScreens() {
-		return prevScreens;
-	}
-
-	public String getSeperator() {
-		return seperator;
-	}
-
-	public String getInstructionsHeader() {
-		return instructionsHeader;
-	}
-	
 }

@@ -25,4 +25,7 @@ public class StoreController {
 		model_.saveToFile();
 	}
 	
+	public String removeProduct(String itemName) {
+		return model_.removeProduct(itemName);
+	}
 }

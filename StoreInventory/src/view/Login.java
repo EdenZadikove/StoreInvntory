@@ -10,8 +10,11 @@ public class Login {
 	
 	private LoginController loginController_;
 	private UsersController usersController_;
-	private int loginAttempts = 3;
+	private int loginAttempts_ = 3;
+	private ViewFunctions viewFunctions_;
+
 	public Login() {
+		viewFunctions_ = ViewFunctions.getInstance();
 		loginController_ = new LoginController();
 		usersController_ = new UsersController();
 	}
@@ -22,9 +25,9 @@ public class Login {
 		Scanner scanner = new Scanner(System.in);
 		int userType = 0;
 		
-		System.out.println("-------------------------------------------Login--------------------------------------------\n");
-
-		while(userType == 0 && loginAttempts != 0) {
+		System.out.println(viewFunctions_.getLoginHeader() + "\n");
+		
+		while(userType == 0 && loginAttempts_ != 0) {
 			
 			System.out.print("Email: ");
 			String email = scanner.nextLine();
@@ -34,24 +37,21 @@ public class Login {
 			
 			userType = loginController_.login(email, password);
 			if(userType == 0) {
-				if(loginAttempts != 1) {//if not last login attempt
+				if(loginAttempts_ != 1) {//if not last login attempt
 					System.out.println(); //enter
 					System.out.println("! Email or password are incorrect. Please try again.");
 				}
-				loginAttempts--;
-				if(loginAttempts != 0) {
-					System.out.println("You have " + loginAttempts + " more login attempts left.");
+				loginAttempts_--;
+				if(loginAttempts_ != 0) {
+					System.out.println("You have " + loginAttempts_ + " more login attempts left.");
 					System.out.println();
 				}
-					
-
 			}
 		}
 		//end while
 		
 		String msg;
 		if(userType != 0) {
-			
 			msg = "Hello " + usersController_.getUserName() + "! You are now logged in as ";
 			switch(userType){
 				case 1: 

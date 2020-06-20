@@ -7,7 +7,7 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 
 		Welcome test = new Welcome();
-		test.welcome();
+		test.welcomeMenu();
 	}
 
 }

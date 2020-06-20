@@ -7,18 +7,20 @@ import model.Model;
 public class Welcome {
 	
 	private Login login_ = new Login();
-	private Model model_ = new Model();
-	private ViewFunctions viewFunctions_ = new ViewFunctions();
-	@SuppressWarnings("resource")
-	public void welcome() throws IOException {
+	private ViewFunctions viewFunctions_;
+		
+	public Welcome() {
+		viewFunctions_ = ViewFunctions.getInstance();
+	}
 	
+	public void welcomeMenu() throws IOException {	
 		Scanner scanner = new Scanner(System.in);
 		int command;
 		int userType = 0;
 		boolean showWelcomeMenuAgain = true;
 		
 		while(showWelcomeMenuAgain) {
-			System.out.println("\n-----------------------------Welcome To Store Inventory System!-----------------------------\n");
+			System.out.println("\n" + viewFunctions_.getWelcomMenuHeader() + "\n");
 			System.out.println("Login ========> 1");
 			System.out.println("Exit  ========> 0");
 			System.out.println(); //enter

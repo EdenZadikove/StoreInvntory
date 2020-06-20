@@ -13,28 +13,27 @@ import controller.StoreController;
 import model.Product;
 
 public abstract class Store {
-	protected ViewFunctions viewFunctions; 
+	protected ViewFunctions viewFunctions_; 
 	protected StoreController storeController_;
-	protected Map<String, String> productsMap = new Hashtable<String, String>();
-	protected String screenHeader = "-------------------------------------Store Manager Menu-------------------------------------";
-	protected String productsArray[] = {"Gloves","Swimsuit","Coat","Scarf","T-shirt","Short-pants"};
+	protected Map<String, String> productsMap_ = new Hashtable<String, String>();
+	
 	
 	public Store() throws IOException {
 		super();
-		viewFunctions = new ViewFunctions();
+		viewFunctions_ = ViewFunctions.getInstance();
 		storeController_ = new StoreController();
 		getProducts();
 	}
 	
 	protected void showProductsTable(int isFiltered, String tableHeader, String emptyTableHeader) throws IOException {
 		getProducts();
-		if(productsMap.size() == 0) {
+		if(productsMap_.size() == 0) {
 			System.out.println(emptyTableHeader);
 		} else {
 			System.out.println(tableHeader);
 			System.out.println();
 			System.out.println("| Item Name           | Session              | Quantity             | Price                |");
-			for (Entry<String, String> entry : productsMap.entrySet()) {
+			for (Entry<String, String> entry : productsMap_.entrySet()) {
 				String ItemName = StringUtils.substringBetween(entry.getValue(), "ItemName:", ";");
 				String Session = StringUtils.substringBetween(entry.getValue(), "Session:", ";");
 				String Quantity = StringUtils.substringBetween(entry.getValue(), "Quantity:", ";");
@@ -46,7 +45,8 @@ public abstract class Store {
 	}
 	
 	protected void getProducts() throws IOException {
-		productsMap = storeController_.getProducts();
+		productsMap_ = storeController_.getProducts();
 	}
+	
 	
 }

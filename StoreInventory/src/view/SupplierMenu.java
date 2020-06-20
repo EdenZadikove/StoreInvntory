@@ -6,12 +6,14 @@ import controller.Controller;
 
 public class SupplierMenu {
 	@SuppressWarnings("resource")
-	private OrdersSupplier ordersSupplier_ = null;
-	private Controller controller_ = null;
+	private OrdersSupplier ordersSupplier_;
+	private Controller controller_;
+	private ViewFunctions viewFunctions_;
 	
 	public SupplierMenu() throws IOException {
 		ordersSupplier_ = new OrdersSupplier();
 		controller_ = new Controller();
+		viewFunctions_ = ViewFunctions.getInstance();
 	}
 	
 	public void menuManager() throws IOException {
@@ -29,8 +31,8 @@ public class SupplierMenu {
 		Scanner scanner = new Scanner(System.in);
 		int command = -1;
 
-		System.out.println("\n-----------------------------------------Main Menu------------------------------------------\n");
-		System.out.println("|  Progress bar:  Main Menu                                                                |\n");
+		System.out.println("\n" +  viewFunctions_.getMainMenuHeader() +"\n");
+		System.out.println(viewFunctions_.showProgressBar("", "Main Menu") + "\n");
 		System.out.println("Which screen would you like to get?\n");
 		
 		
@@ -64,11 +66,10 @@ public class SupplierMenu {
 		int showMainMenuAgain = 0; //0- don't show again, -1- show again
 		switch(command) {
 		case 0:
-			System.out.println("Logout...\n");
+			System.out.println("Logout...");
 			controller_.logout();
 			break;
 		case 1:
-			
 			showMainMenuAgain = ordersSupplier_.showMenu();
 			break;
 		}

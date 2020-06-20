@@ -17,6 +17,10 @@ public class OrdersController {
 		model_ = new Model();
 	}
 	
+	public boolean isOrderExists(int orderId) {
+		return model_.isOrderExists(orderId);
+	}
+	
 	public int createOrder(String itemName, int quantity) throws IOException {
 		return model_.cretaeOrder(itemName, quantity);
 		
@@ -39,8 +43,8 @@ public class OrdersController {
 		model_.saveToFile();
 	}
 	
-	public ArrayList<String> showOrdersTable(int isFiltered) throws IOException{
-		return model_.showOrdersTable(isFiltered);
+	public ArrayList<String> getOrders(int isFiltered) throws IOException{
+		return model_.getOrders(isFiltered);
 	}
 	
 	public int getOrdersSize() {

@@ -2,14 +2,17 @@ package view;
 
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 
 public class StoreAdmin extends Store {
-	private String prevScreens;
+	private String prevScreens_;
+	private ArrayList <String> productsArray_ = new ArrayList<String>();
+	
 	public StoreAdmin() throws IOException {
 		super();
-		prevScreens = viewFunctions.getPrevScreens() + " -----> " + "Store Manager Menu";
+		prevScreens_ = viewFunctions_.getPrevScreens() + " -----> " + "Store Manager Menu";
 	}
 	
 	public int showMenu() throws IOException {
@@ -20,10 +23,10 @@ public class StoreAdmin extends Store {
 		boolean firstTimeMenuFlag = true; //If menu is printed for the first time- no need to print a separator
 		boolean showStoreManagerMenu_again = false; //true- show again, false- don't show again
 		
-		System.out.println(screenHeader);
+		System.out.println(viewFunctions_.getStoreMenuHeader());
 		
 		while(validCommandFlag == 0) {
-			if(!firstTimeMenuFlag) System.out.println(viewFunctions.getSeperator());
+			if(!firstTimeMenuFlag) System.out.println(viewFunctions_.getSeperator());	
 			showStoreManagerMenu();
 			firstTimeMenuFlag = false;
 			
@@ -32,7 +35,7 @@ public class StoreAdmin extends Store {
 			command = scanner.nextInt();
 			scanner.nextLine(); //ignore enter char
 			
-			command = viewFunctions.validateInsertedData(1,2,command, "I want to: ", "! Invalid choice!. Please try again"); //check if user chose a valid option.
+			command = viewFunctions_.validateInsertedData(1,3,command, "I want to: ", "! Invalid choice!. Please try again"); //check if user chose a valid option.
 			showStoreManagerMenu_again = actionNavigate(command); //command choice from Store Manager Menu
 			
 			if(!showStoreManagerMenu_again) {  //showStoreManagerMenu_again == false
@@ -56,48 +59,60 @@ public class StoreAdmin extends Store {
 		boolean isEmptyStore = false; //not empty
 		switch(command) {
 		case 1: //View pending orders table
-			System.out.println(viewFunctions.getSeperator());
-			viewFunctions.showProgressBar(prevScreens, "View store inventory" );
+			System.out.println(viewFunctions_.getSeperator());
+			System.out.println("\n" + viewFunctions_.showProgressBar(prevScreens_, "View store inventory"));
 			showProductsTable(1, "Store Inventory:", " "); 
 			result = true;
 			break;
 		case 2:
-			System.out.println(viewFunctions.getSeperator());
+			System.out.println(viewFunctions_.getSeperator());
 			System.out.println();
-			viewFunctions.showProgressBar(prevScreens, "Edit product price");
-			System.out.println(viewFunctions.getInstructionsHeader());
-			res = editProductPrice();
+			System.out.println(viewFunctions_.showProgressBar(prevScreens_, "Edit product price"));
+			System.out.println(viewFunctions_.getInstructionsHeader());
+			res = actions("edit price");
 			if(res == 0) result = true;//item is 0, user want to show menu again
-			else result = viewFunctions.anotherActions();
+			else result = viewFunctions_.anotherActions();
+			break;
+		case 3:
+			System.out.println(viewFunctions_.getSeperator());
+			System.out.println();
+			System.out.println(viewFunctions_.showProgressBar(prevScreens_, "Remove product"));
+			System.out.println(viewFunctions_.getInstructionsHeader());
+			res = actions("remove");
+			if(res == 0) result = true;//item is 0, user want to show menu again
+			else result = viewFunctions_.anotherActions();
+			break;
 		default: //Exit screen, for case 0 and -1
 			storeController_.saveToFile();
 		}
 		return result;
 	}
 	
-	
 	private void showStoreManagerMenu() {
 		System.out.println();
-		viewFunctions.showProgressBar(viewFunctions.getPrevScreens(), "Store Manager Menu");
+		System.out.println(viewFunctions_.showProgressBar("", prevScreens_));
 		
 		System.out.println("Which action would you like to take?\n");
 		System.out.println("View store inventory   ========> 1");
 		System.out.println("Edit product price     ========> 2");
+		System.out.println("Remove procudt         ========> 3");
 		System.out.println();
 		System.out.println("Back to main menu      ========> -1");
 		System.out.println("Save and Logout        ========> 0");
 	}
 
 	
-	private int editProductPrice() throws IOException {
+	private int actions(String action) throws IOException {
 		Scanner scanner = new Scanner(System.in);
 		int itemNumber = 0; //if itemNumber == 0----> go back to Store main menu
 		int timesToLoop = 1; // if timesToLoop == -1 then show again
-		int productsCounter = productsMap.size();
+		int productsCounter = productsMap_.size();
 		String introduction = "\n1.  Press '0' in any stage if you want to exit and go back to Store Manager Menu\n";
 		
+		
+		
 		System.out.println(introduction);
-		System.out.println(viewFunctions.getSeperator() + "\n");
+		System.out.println(viewFunctions_.getSeperator() + "\n");
 		
 		//If productsCounter == 1, then no need to ask how many times I want to do the action
 		if(productsCounter != 1) {
@@ -107,14 +122,14 @@ public class StoreAdmin extends Store {
 		}
 			
 		while(timesToLoop > 0){
-			
-			System.out.println("For each item would you like to set a new price?\n");
+			getProducts(); //Synchronized with DB
+			System.out.println("Which item would you like to " + action + "?\n");
 			showProducts();
 			System.out.println();
 			System.out.print("Item number: ");
 			itemNumber = scanner.nextInt();
 			scanner.nextLine(); //ignore enter char
-			itemNumber = validateInsertedData(1, productsMap.size(), itemNumber, "Item number: ", "! Invalid item number. Please try again." );
+			itemNumber = validateInsertedData(1, productsMap_.size(), itemNumber, "Item number: ", "! Invalid item number. Please try again." );
 			if(itemNumber == 0) {
 				//user want to exit
 				System.out.println("Going back to Store Manager Menu...\n");
@@ -122,25 +137,47 @@ public class StoreAdmin extends Store {
 			}	
 			
 			String msg = "";
-			String itemName = productsArray[itemNumber-1];
-			String product = productsMap.get(itemName);
-			String oldPrice = StringUtils.substringBetween(product, "Price:", ";");
+			String itemName = productsArray_.get(itemNumber - 1);
+			String product = productsMap_.get(itemName);
+			switch(action) {
+			case "edit price":
+				String oldPrice = StringUtils.substringBetween(product, "Price:", ";");
+				System.out.println("Selected item: " + itemName);
+				System.out.println("Current price (per unit): " + oldPrice + "$");
+				System.out.print("Set a new price: ");
+				double newPrice = scanner.nextDouble();
+				scanner.nextLine();
+				newPrice  = validatePrice(oldPrice, newPrice, itemName);
+				msg = storeController_.editPrice(itemName, newPrice);
+				break;
+			case "remove":
+				System.out.println("Are you sure you want to delete " + itemName + "?");
+				System.out.println("Yes  ========> 1");
+				System.out.println("No   ========> 0");
+				System.out.print("My choice: ");
+				int choice = scanner.nextInt();
+				scanner.nextLine();
+				itemNumber = viewFunctions_.validateInsertedData_noZeroOne(0,1, choice, "My choice: ", "! Invalid choice. Please try again.");
+				if(itemNumber == 1) msg = storeController_.removeProduct(itemName);
+				else {
+					System.out.println();
+					timesToLoop--;
+				}
+				break;
+			}
 			
-			System.out.println("Selected item: " + itemName);
-			System.out.println("Current price (per unit): " + oldPrice);
-			System.out.print("Set a new price: ");
-			double newPrice = scanner.nextDouble();
-			scanner.nextLine();
-			
-			newPrice  = validatePrice(oldPrice, newPrice, itemName);
-			msg = storeController_.editPrice(itemName, newPrice);
-			
-			System.out.println();
-			System.out.println(msg);
-			System.out.println();
-			if(msg.contains("successfully")) {
-				timesToLoop--;
-				System.out.println(viewFunctions.getSeperator());
+			if(itemNumber != 0) {
+				System.out.println();
+				System.out.println(msg);
+				System.out.println();
+				if(msg.contains("successfully")) {
+					timesToLoop--;
+					System.out.println(viewFunctions_.getSeperator());
+					System.out.println();
+				}
+			}
+			else {
+				System.out.println(viewFunctions_.getSeperator());
 				System.out.println();
 			}
 		}
@@ -149,10 +186,12 @@ public class StoreAdmin extends Store {
 	}
 	
 	
-	private void showProducts() {
+	private void showProducts() throws IOException {
 		int i = 1;
-		for (Entry<String, String> entry : productsMap.entrySet()) {
+		
+		for (Entry<String, String> entry : productsMap_.entrySet()) {
 			String itemName = StringUtils.substringBetween(entry.getValue(), "ItemName:", ";");
+			productsArray_.add(itemName);
 			System.out.println(calcStr(itemName, i++));
 		}
 	}

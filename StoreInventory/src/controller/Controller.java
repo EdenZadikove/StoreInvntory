@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.ArrayList;
+
 import model.Model;
 
 
@@ -14,5 +16,8 @@ public class Controller {
 		model_.logout();
 	}
 	
+	public ArrayList<String> getProductDetails(String product) {
+		return model_.getProductDetails(product);
+	}
 
 }

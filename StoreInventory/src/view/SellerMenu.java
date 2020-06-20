@@ -6,11 +6,14 @@ import java.util.Scanner;
 import controller.Controller;
 
 public class SellerMenu {
-	private Controller controller_ = null;
-	private StoreSeller storeSeller_ = null;
+	private Controller controller_ ;
+	private StoreSeller storeSeller_;
+	private ViewFunctions viewFunctions_;
+	
 	public SellerMenu() throws IOException {
 		controller_ = new Controller();
 		storeSeller_ = new StoreSeller();
+		viewFunctions_ = ViewFunctions.getInstance();
 	}
 	
 	public void menuManager() throws IOException {
@@ -29,8 +32,8 @@ public class SellerMenu {
 		Scanner scanner = new Scanner(System.in);
 		int command = -1;
 
-		System.out.println("\n-----------------------------------------Main Menu------------------------------------------\n");
-		System.out.println("|  Progress bar:  Main Menu                                                                |\n");
+		System.out.println("\n" + viewFunctions_.getMainMenuHeader() + "\n");
+		System.out.println(viewFunctions_.showProgressBar("", "Main Menu"));
 		System.out.println("Which screen would you like to get?\n");
 
 		System.out.println("Store Manager  ========> 1");

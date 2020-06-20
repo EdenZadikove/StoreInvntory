@@ -17,7 +17,7 @@ public class AdminMenu {
 		ordersAdmin_ = new OrdersAdmin();
 		users_ = new Users();
 		controller_ = new Controller();
-		viewFunctions_ = new ViewFunctions();
+		viewFunctions_ = ViewFunctions.getInstance();
 	}
 	
 	public void menuManager() throws IOException {
@@ -26,7 +26,7 @@ public class AdminMenu {
 		while(showMainMenuAgain == -1) {
 			command =  mainMenu();
 			showMainMenuAgain = showSelectedScreen(command);	
-		}
+		} 
 		if(showMainMenuAgain == 0 && command != 0) //command arrived from other screen
 			showMainMenuAgain = showSelectedScreen(0);
 	}
@@ -35,8 +35,8 @@ public class AdminMenu {
 		Scanner scanner = new Scanner(System.in);
 		int command = -1;
 
-		System.out.println("\n-----------------------------------------Main Menu------------------------------------------\n");
-		System.out.println("|  Progress bar:  Main Menu                                                                 |\n");
+		System.out.println("\n" + viewFunctions_.getMainMenuHeader() +"\n");
+		System.out.println(viewFunctions_.showProgressBar("", "Main Menu"));
 		System.out.println("Which screen would you like to get?\n");
 		
 		System.out.println("Store Manager    ========> 1");

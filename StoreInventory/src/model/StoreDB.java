@@ -46,14 +46,12 @@ public class StoreDB extends FileManager<Object> {
 	private void initStore() throws IOException {
 		if(products_.size() == 0) {
 			
-			Product p1 = new Product("Short-pants", "Summer", 20, 10);
-			Product p2 = new Product("T-shirt", "Summer", 30, 20);
-			Product p3 = new Product("Swimsuit", "Summer", 40, 30);
-			Product p4 = new Product("Coat", "Winter", 50, 40);
-			Product p5 = new Product("Gloves", "Winter", 60, 50);
-			Product p6 = new Product("Scarf", "Winter", 70, 60);
-		
-			//products_ = storeDB_.getProducts();
+			Product p1 = new Product("Gloves", "Winter", 60, 50);
+			Product p2 = new Product("Coat", "Winter", 50, 40);
+			Product p3 = new Product("Scarf", "Winter", 70, 60);
+			Product p4 = new Product("Swimsuit", "Summer", 40, 30);
+			Product p5 = new Product("Dress", "Summer", 20, 10);
+			Product p6 = new Product("Tshirt", "Summer", 30, 20);
 			
 			products_.put(p1.getItemName(), p1);
 			products_.put(p2.getItemName(), p2);

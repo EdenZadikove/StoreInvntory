@@ -1,13 +1,14 @@
 package model;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Map;
 
 
 public class OrdersDB extends FileManager<Object> {
 
 	private static String path_ = "..\\StoreInventory\\files\\orders.txt";
-	private static Map<Integer, Order> orders_ = null;
+	private static Map<Integer, Order> orders_ = new Hashtable<Integer, Order>();
 	private static OrdersDB instance_ = null;
 	
 	

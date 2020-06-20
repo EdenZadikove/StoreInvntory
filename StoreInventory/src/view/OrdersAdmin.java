@@ -1,6 +1,7 @@
 package view;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class OrdersAdmin extends Orders {
@@ -18,10 +19,10 @@ public class OrdersAdmin extends Orders {
 		boolean firstTimeMenuFlag = true; //If menu is printed for the first time- no need to print a separator
 		boolean showOrdersManagerMenu_again = false; //true- show again, false- don't show again
 
-		System.out.println(screenHeader);
+		System.out.println(viewFunctions_.getOrderMenuHeader());
 		
 		while(validCommandFlag == 0) {
-			if(!firstTimeMenuFlag) System.out.println(viewFunctions.getSeperator());
+			if(!firstTimeMenuFlag) System.out.println(viewFunctions_.getSeperator());
 			showOrdersManagerMenu();
 			firstTimeMenuFlag = false;
 			
@@ -30,7 +31,7 @@ public class OrdersAdmin extends Orders {
 			command = scanner.nextInt();
 			scanner.nextLine(); //ignore enter char
 			
-			command = viewFunctions.validateInsertedData(1,5,command, "I want to: ", "! Invalid choice!. Please try again"); //check if user chose a valid option.
+			command = viewFunctions_.validateInsertedData(1,5,command, "I want to: ", "! Invalid choice!. Please try again"); //check if user chose a valid option.
 			showOrdersManagerMenu_again = actionNavigate(command); //command choice from Orders Manager Menu
 			
 			if(!showOrdersManagerMenu_again) {  //showOrdersManagerMenu_again == false
@@ -50,7 +51,7 @@ public class OrdersAdmin extends Orders {
 	
 	private void showOrdersManagerMenu() {
 		System.out.println();
-		viewFunctions.showProgressBar(viewFunctions.getPrevScreens(), "Order Manager Menu");
+		viewFunctions_.showProgressBar(viewFunctions_.getPrevScreens(), "Order Manager Menu");
 		
 		System.out.println("Which action would you like to take?\n");
 
@@ -69,63 +70,63 @@ public class OrdersAdmin extends Orders {
 	private boolean actionNavigate(int command) throws IOException {
 		boolean result = false; //if result == true then show menu again
 		boolean isEmptyOrders = false; //not empty
-		String prevScreensTemp = viewFunctions.getPrevScreens() + " -----> " + "Orders Manager Menu";
+		String prevScreensTemp = viewFunctions_.getPrevScreens() + " -----> " + "Orders Manager Menu";
 		int res = -1;
 		switch(command) {
 		case 1: //View orders table
-			System.out.println(viewFunctions.getSeperator());
+			System.out.println(viewFunctions_.getSeperator());
 			System.out.println();
-			viewFunctions.showProgressBar(prevScreensTemp, "View orders table" );
-			showOrdersTable(0, "Orders Table:\n", "No Orders");
+			System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "View orders table"));
+			showOrdersTable(0, "Orders Table:\n", "No orders. Create a new order and come back to see it here :)\n");
 			result = true;
 			break;
 		case 2: //Create a new order
-			System.out.println(viewFunctions.getSeperator());
+			System.out.println(viewFunctions_.getSeperator());
 			System.out.println();
-			viewFunctions.showProgressBar(prevScreensTemp, "Create a new order");
+			System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "Create a new order"));
 			createOrder(); 
-			result = viewFunctions.anotherActions();
+			result = viewFunctions_.anotherActions();
 			break;
 		case 3: //Cancel pending order 
-			System.out.println(viewFunctions.getSeperator());
+			System.out.println(viewFunctions_.getSeperator());
 			System.out.println();
-			viewFunctions.showProgressBar(prevScreensTemp, "Cancel pending order");
+			System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "Cancel pending order"));
 			isEmptyOrders = isEmptyMap("pending");
 			if(!isEmptyOrders) {
 				res = cancelOrder(); 
 				if(res == 0) result = true; //show menu again
-				else result = viewFunctions.anotherActions();
+				else result = viewFunctions_.anotherActions();
 			} else {
 				System.out.println();
-				result = viewFunctions.anotherActions();
+				result = viewFunctions_.anotherActions();
 			}		
 			break;
 		case 4: //Delete existing order
-			System.out.println(viewFunctions.getSeperator());
+			System.out.println(viewFunctions_.getSeperator());
 			System.out.println();
-			viewFunctions.showProgressBar(prevScreensTemp, "Delete existing order");
+			System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "Delete existing order"));
 			isEmptyOrders = isEmptyMap("all");
 			if(!isEmptyOrders) {
 				res = deleteOrder();
 				if(res == 0) result = true;
-				else result = viewFunctions.anotherActions();
+				else result = viewFunctions_.anotherActions();
 			} else {
 				System.out.println();
-				result = viewFunctions.anotherActions();
+				result = viewFunctions_.anotherActions();
 			}
 			break;
 		case 5: //Edit pending order
-			System.out.println(viewFunctions.getSeperator());
+			System.out.println(viewFunctions_.getSeperator());
 			System.out.println();
-			viewFunctions.showProgressBar(prevScreensTemp, "Edit pending order");
+			System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "Edit pending order"));
 			isEmptyOrders = isEmptyMap("pending");
 			if(!isEmptyOrders) {
 				res = editOrder();
 				if(res == 0) result = true;
-				else result = viewFunctions.anotherActions();
+				else result = viewFunctions_.anotherActions();
 			}else {
 				System.out.println();
-				result = viewFunctions.anotherActions();
+				result = viewFunctions_.anotherActions();
 			}
 			break;
 		default: //Exit screen, for case 0 and -1
@@ -137,7 +138,6 @@ public class OrdersAdmin extends Orders {
 	
 	private void createOrder() throws IOException {
 		Scanner scanner = new Scanner(System.in);
-		String items[] = {"Short-pants", "T-shirt", "Swimsuit", "Coat", "Gloves", "Scarf"} ;
 		int item = -1;
 		int quantity = 0;
 		
@@ -149,34 +149,54 @@ public class OrdersAdmin extends Orders {
 		scanner.nextLine();
 		
 		//check if user chose a valid option.
-		item = viewFunctions.validateInsertedData_noZeroOne(1, 6, item, "I would like to order: ", "! Invalid item. Please try again"); 
+		item = viewFunctions_.validateInsertedData_noZeroOne(1, 6, item, "I would like to order: ", "! Invalid item. Please try again"); 
+		//print selected item details
 		System.out.println();
+		System.out.println("Selected item details: \n");
+		printProductsDetails(ProductsEnum.values()[item-1]);
+		System.out.println();
+		
 		System.out.print("How many items would you like to order? ");
 		quantity = scanner.nextInt();
 		scanner.nextLine();
 		
 		//check if user chose a valid option.
-		quantity = viewFunctions.validateInsertedData_noZeroOne(1, 100, quantity, "I would like to order: ", "! Quantity must be between 1 to 100"); 
+		quantity = viewFunctions_.validateInsertedData_noZeroOne(1, 100, quantity, "I would like to order: ", "! Quantity must be between 1 to 100"); 
 		
-		int orderId = ordersController_.createOrder(items[item-1], quantity);
-		
+		int orderId = ordersController_.createOrder(ProductsEnum.values()[item-1].toString(), quantity);
+		System.out.println();
 		System.out.println("Order successfully created!");
 		System.out.println("Order id: " + orderId);
 		System.out.println();
-		System.out.println(viewFunctions.getSeperator());
+		System.out.println(viewFunctions_.getSeperator());
 		System.out.println();
 	}
 	
 	private void showItemsMenu() {
 		
-		System.out.println("Short-pants  ========>  1");
-		System.out.println("T-shirt      ========>  2");
-		System.out.println("Swimsuit     ========>  3");
-		System.out.println("Coat         ========>  4");
-		System.out.println("Gloves       ========>  5");
-		System.out.println("Scarf        ========>  6");
+		System.out.println(calcString(ProductsEnum.Gloves.toString(), 1));
+		System.out.println(calcString(ProductsEnum.Coat.toString(), 2));
+		System.out.println(calcString(ProductsEnum.Scarf.toString(), 3));
+		System.out.println(calcString(ProductsEnum.Swimsuit.toString(), 4));
+		System.out.println(calcString(ProductsEnum.Tshirt.toString(), 5));
+		System.out.println(calcString(ProductsEnum.Dress.toString(), 6));
 	}
 	
+	private String calcString(String productStr, int index) {
+		final int LENGTH = 11 - productStr.length();
+		for(int i = 0; i <= LENGTH; i++) 
+			productStr += " ";
+		return productStr + "========>  " + index;	
+	}
+	
+	private void printProductsDetails(ProductsEnum p) {
+		ArrayList <String> details;
+		details = p.getProductsDetails(p.toString());
+		System.out.println("Item Name: " + details.get(0));
+		System.out.println("Item Session: " + details.get(1));
+		System.out.println("Item Price (per unit): " + details.get(2) + "$");
+		System.out.println("Currently available in store inventory: " + details.get(3) + " units");
+	}
 	
 	
 	@SuppressWarnings("resource")

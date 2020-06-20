@@ -2,19 +2,18 @@ package model;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Map;
 
 public class Admin extends User {
 
 	public Admin(String userName, int passwrod, String phoneNumber, String email) throws IOException {
 		super(userName, passwrod, phoneNumber, email, 1);
-		
 	}
 
 	/* ORDERS functions */
 	
-	public ArrayList<String> showOrdersTable() throws IOException {
+	@Override
+	public ArrayList<String> getOrders(){
 		
 		ArrayList<String> ordersList = new ArrayList<String>();
 		
@@ -22,7 +21,8 @@ public class Admin extends User {
 			String row = "OrderId:" + entry.getValue().getOrderId() + ";" +
 						 "ItemName:" + entry.getValue().getItemName() + ";" +
 						 "Quantity:" + entry.getValue().getQuantity() + ";" +
-						 "OrderStatus:" +  entry.getValue().getOrderStatus() + ";";
+						 "OrderStatus:" +  entry.getValue().getOrderStatus() + ";" +
+						 "OrderDate:" + entry.getValue().getOrderDate() + ";";
 			ordersList.add(row);
 		}
 		return ordersList;
@@ -67,8 +67,8 @@ public class Admin extends User {
 			return "Order id- " + orderId + " successfully canceled";
 		}
 		if(order.getOrderStatus().equals("canceled"))
-			return "Order id- " + orderId + " can not be canceled because its already done.";
-		return "Order id- " + orderId + " can not be canceled because its already " + order.getOrderStatus() + " by the supplier.";
+			return "! Order id- " + orderId + " can not be canceled because its already done.";
+		return "! Order id- " + orderId + " can not be canceled because its already " + order.getOrderStatus() + " by the supplier.";
 	}
 	
 	
@@ -115,5 +115,11 @@ public class Admin extends User {
 		double oldPrice = product.getPrice();
 		products_.get(itemName).setPrice(price);
 		return (itemName + " price successfully update from: " + oldPrice + " to " + product.getPrice());
+	}
+	
+	public String removeProduct(String itemName) {
+		String msg = "";
+		products_.remove(itemName);
+		return itemName + " successfully removed.";
 	}
 }

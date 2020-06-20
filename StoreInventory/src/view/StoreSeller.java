@@ -4,14 +4,13 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class StoreSeller extends Store {
-	private String prevScreens;
+	private String prevScreens_;
+	
 	public StoreSeller() throws IOException {
 		super();
-		prevScreens = viewFunctions.getPrevScreens() + " -----> " + "Store Manager Menu";
+		prevScreens_ = viewFunctions_.getPrevScreens() + " -----> " + "Store Manager Menu";
 	}
-	
-	
-	
+
 	public int showMenu() throws IOException {
 		
 		Scanner scanner = new Scanner(System.in);
@@ -20,10 +19,10 @@ public class StoreSeller extends Store {
 		boolean firstTimeMenuFlag = true; //If menu is printed for the first time- no need to print a separator
 		boolean showStoreManagerMenu_again = false; //true- show again, false- don't show again
 		
-		System.out.println(screenHeader);
+		System.out.println(viewFunctions_.getStoreMenuHeader());
 		
 		while(validCommandFlag == 0) {
-			if(!firstTimeMenuFlag) System.out.println(viewFunctions.getSeperator());
+			if(!firstTimeMenuFlag) System.out.println(viewFunctions_.getSeperator());
 			showStoreSellerMenu();
 			firstTimeMenuFlag = false;
 			
@@ -32,7 +31,7 @@ public class StoreSeller extends Store {
 			command = scanner.nextInt();
 			scanner.nextLine(); //ignore enter char
 			
-			command = viewFunctions.validateInsertedData(1,2,command, "I want to: ", "! Invalid choice!. Please try again"); //check if user chose a valid option.
+			command = viewFunctions_.validateInsertedData(1,2,command, "I want to: ", "! Invalid choice!. Please try again"); //check if user chose a valid option.
 			showStoreManagerMenu_again = actionNavigate(command); //command choice from Store Manager Menu
 			
 			if(!showStoreManagerMenu_again) {  //showStoreManagerMenu_again == false
@@ -49,10 +48,9 @@ public class StoreSeller extends Store {
 		return command;
 	}
 	
-
 	private void showStoreSellerMenu() {
 		System.out.println();
-		viewFunctions.showProgressBar(viewFunctions.getPrevScreens(), "Store Manager Menu");
+		viewFunctions_.showProgressBar(viewFunctions_.getPrevScreens(), "Store Manager Menu");
 		
 		System.out.println("Which action would you like to take?\n");
 		System.out.println("View store inventory   ========> 1");
@@ -67,8 +65,8 @@ public class StoreSeller extends Store {
 		boolean isEmptyStore = false; //not empty
 		switch(command) {
 		case 1: //View store inventory
-			System.out.println(viewFunctions.getSeperator());
-			viewFunctions.showProgressBar(prevScreens, "View store inventory" );
+			System.out.println(viewFunctions_.getSeperator());
+			System.out.println(viewFunctions_.showProgressBar(prevScreens_, "View store inventory"));
 			showProductsTable(1, "Store Inventory:", " "); 
 			result = true;
 			break;

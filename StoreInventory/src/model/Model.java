@@ -27,17 +27,23 @@ public class Model    {
 		return 0;
 	}
 	
-	public String getUserName() {
-		return user_.getUserName();
-	}
-	
 	private void createUser(User user) throws IOException {
 		UsersFactory usersFactory = new UsersFactory();
 		setUser(usersFactory.getUser(user));
 	}
 	
+	public String getUserName() {
+		return user_.getUserName();
+	}
+	
+
+	
 	public void setUser(User user) {
 		Model.user_ = user;
+	}
+	
+	public ArrayList<String> getProductDetails(String product) {
+		 return Model.user_.getProductDetails(product);
 	}
 	
 	public int itemsCounterByFilter(String filter) {
@@ -58,8 +64,16 @@ public class Model    {
 		return ((Admin)user_).editPrice(itemName, price);
 	}
 	
+	public String removeProduct(String itemName) {
+		return ((Admin)user_).removeProduct(itemName);
+	}
+	
 	
 	/*ORDERS Functions*/
+	
+	public boolean isOrderExists(int orderId) {
+		return Model.user_.isOrderExists(orderId);
+	}
 	
 	public int cretaeOrder(String itemName, int quantity) throws IOException {
 		return ((Admin)user_).cretaeOrder(itemName, quantity);
@@ -83,9 +97,9 @@ public class Model    {
 	}
 	
 	//Supplier and Admin
-	public ArrayList<String> showOrdersTable(int isFiltered) throws IOException{
-		if(isFiltered == 0) return ((Admin)user_).showOrdersTable();
-		return ((Supplier)user_).showOrdersTable();
+	public ArrayList<String> getOrders(int isFiltered) throws IOException{
+		if(isFiltered == 0) return ((Admin)user_).getOrders();
+		return ((Supplier)user_).getOrders();
 	}
 	
 	public String changeOrderStatus(int orderId, String action) {

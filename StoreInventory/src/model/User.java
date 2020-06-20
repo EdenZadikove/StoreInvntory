@@ -81,6 +81,11 @@ public abstract class User implements Serializable{
 				phoneNumber + "::" + email + "::" + userType;
 	}
 	
+	public boolean isOrderExists(int orderId) {
+		return orders_.get(orderId) != null;
+	}
+	
+	
 	public int itemsCounterByFilter(String filter) {
 		int itemsCounter = 0;
 		if(filter.equals("all"))
@@ -103,6 +108,18 @@ public abstract class User implements Serializable{
 		}
 		return productsMap;
 	}
+	
+	public ArrayList<String> getProductDetails(String product) {
+		ArrayList <String> details = new ArrayList<String>();
+		Product p = products_.get(product);
+		details.add(p.getItemName());
+		details.add(p.getSession());
+		details.add(String.valueOf(p.getPrice()));
+		details.add(String.valueOf(p.getQuantity()));
+
+		return details;
+		
+	}
 
 	protected void logOut() {
 		 UsersDB.resetInstance();
@@ -114,4 +131,7 @@ public abstract class User implements Serializable{
 		ordersDB_.saveToFile();
 		storeDB_.saveToFile();
 	}
+	
+	 
+	public abstract ArrayList<String> getOrders();
 }
