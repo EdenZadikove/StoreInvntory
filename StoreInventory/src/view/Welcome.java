@@ -1,8 +1,7 @@
 package view;
+
 import java.io.IOException;
 import java.util.Scanner;
-
-import model.Model;
 
 public class Welcome {
 	
@@ -68,7 +67,6 @@ public class Welcome {
 		System.out.println();
 		System.out.println("Exit the program...\nBye Bye");
 		System.exit(status); 
-		
 	}
 	
 	private void clearConsole() {

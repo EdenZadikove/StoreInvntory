@@ -3,7 +3,6 @@ package view;
 import java.io.IOException;
 import java.util.Scanner;
 
-import org.apache.commons.lang3.StringUtils;
 
 public class OrdersSupplier extends Orders {
 

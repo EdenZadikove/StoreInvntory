@@ -5,7 +5,6 @@ import java.util.Scanner;
 import controller.Controller;
 
 public class SupplierMenu {
-	@SuppressWarnings("resource")
 	private OrdersSupplier ordersSupplier_;
 	private Controller controller_;
 	private ViewFunctions viewFunctions_;

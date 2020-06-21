@@ -28,7 +28,6 @@ public class Admin extends User {
 		return ordersList;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public int cretaeOrder(String itemName, int Quntity) throws IOException {
 		
 		int orderId = calculateOrderId();
@@ -118,7 +117,6 @@ public class Admin extends User {
 	}
 	
 	public String removeProduct(String itemName) {
-		String msg = "";
 		products_.remove(itemName);
 		return itemName + " successfully removed.";
 	}

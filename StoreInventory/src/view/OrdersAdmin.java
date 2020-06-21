@@ -198,8 +198,7 @@ public class OrdersAdmin extends Orders {
 		System.out.println("Currently available in store inventory: " + details.get(3) + " units");
 	}
 	
-	
-	@SuppressWarnings("resource")
+
 	private int cancelOrder() throws IOException {
 		String introduction = "\n1.  Pay attention- you can only cancel orders with status 'pending'\n" + 
 							  "\n2.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu\n" +

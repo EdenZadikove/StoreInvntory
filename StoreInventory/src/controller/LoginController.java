@@ -1,8 +1,6 @@
 package controller;
 
 import java.io.IOException;
-
-import model.LoginRepository;
 import model.Model;
 
 public class LoginController {

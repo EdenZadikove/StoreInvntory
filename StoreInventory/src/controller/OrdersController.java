@@ -2,12 +2,6 @@ package controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
-
-import model.Admin;
-import model.Model;
-import model.OrdersDB;
-import model.Supplier;
 
 public class OrdersController {
 	

@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Seller extends User {
 	
 	public Seller(String userName, int passwrod, String phoneNumber, String email) {
@@ -7,8 +9,9 @@ public class Seller extends User {
 		// TODO Auto-generated constructor stub
 	}
 
-
-
-
-
+	@Override
+	public ArrayList<String> getOrders() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

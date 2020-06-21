@@ -1,16 +1,11 @@
 package view;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Map.Entry;
-
 import org.apache.commons.lang3.StringUtils;
-
 import controller.StoreController;
-import model.Product;
 
 public abstract class Store {
 	protected ViewFunctions viewFunctions_; 
