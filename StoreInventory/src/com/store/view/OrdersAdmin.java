@@ -9,7 +9,6 @@ public class OrdersAdmin extends Orders {
 		super();
 	}
 	
-	@SuppressWarnings("resource")
 	public int showMenu() throws IOException {
 		
 		int command = -1;
@@ -25,16 +24,13 @@ public class OrdersAdmin extends Orders {
 			firstTimeMenuFlag = false;
 			
 			System.out.println();
-			System.out.print("I want to: ");
-			command = scanner_.nextInt();
-			scanner_.nextLine(); //ignore enter char
-			
+			command = viewFunctions_.validateIntInput("I want to: ");
 			command = viewFunctions_.validateInsertedData(1,5,command, "I want to: ", "! Invalid choice!. Please try again"); //check if user chose a valid option.
 			showOrdersManagerMenu_again = actionNavigate(command); //command choice from Orders Manager Menu
 			
 			if(!showOrdersManagerMenu_again) {  //showOrdersManagerMenu_again == false
 				if(command == -1) {
-					System.out.println("Going back to Main Menu...\n");
+					System.out.println("Going back to Main Menu...");
 				}
 				else { 
 					command = 0; //for logout
@@ -137,29 +133,30 @@ public class OrdersAdmin extends Orders {
 		System.out.println("Which item would you like to order?\n");
 		showItemsMenu();
 		System.out.println();
-		System.out.print("I would like to order: ");
-		item = scanner_.nextInt();
-		scanner_.nextLine();
-		
-		//check if user chose a valid option.
+		item = viewFunctions_.validateIntInput("I would like to order: ");
 		item = viewFunctions_.validateInsertedData_noZeroOne(1, 6, item, "I would like to order: ", "! Invalid item. Please try again"); 
+		
 		//print selected item details
+		System.out.println();
+		System.out.println(viewFunctions_.getSeperator());
 		System.out.println();
 		System.out.println("Selected item details: \n");
 		printProductsDetails(ProductsEnum.values()[item-1]);
 		System.out.println();
 		
-		System.out.print("How many items would you like to order? ");
-		quantity = scanner_.nextInt();
-		scanner_.nextLine();
-		
-		//check if user chose a valid option.
+		quantity = viewFunctions_.validateIntInput("How many items would you like to order? ");
 		quantity = viewFunctions_.validateInsertedData_noZeroOne(1, 100, quantity, "I would like to order: ", "! Quantity must be between 1 to 100"); 
 		
 		int orderId = ordersController_.createOrder(ProductsEnum.values()[item-1].toString(), quantity);
 		System.out.println();
-		System.out.println("Order successfully created!");
-		System.out.println("Order id: " + orderId);
+		System.out.println(viewFunctions_.getSeperator());
+		System.out.println();
+		System.out.println("Order successfully created!\n");
+		System.out.println("Order Summery:");
+		System.out.println("Order ID:    " + orderId);
+		System.out.println("Item Name:   " + ProductsEnum.values()[item-1]);
+		System.out.println("Quantity:    " + quantity);
+		System.out.println("Order Status: pending");
 		System.out.println();
 		System.out.println(viewFunctions_.getSeperator());
 		System.out.println();
@@ -193,7 +190,7 @@ public class OrdersAdmin extends Orders {
 	private int cancelOrder() throws IOException {
 		String introduction = "\n1.  Pay attention- you can only cancel orders with status 'pending'\n" + 
 							  "\n2.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu\n" +
-							  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID\n";
+							  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID";
 		return actions(introduction, "cancel", 0, 1, "pending");
 	}
 	
@@ -202,15 +199,15 @@ public class OrdersAdmin extends Orders {
 				  "\n                   - By deleting order you won't see it in the table anymore.\n" +
 				  "\n                   - This action can not be undo!\n" + 
 				  "\n2.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu.\n" +
-				  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID.\n";
-		return actions(introduction, "delete", 0, 1, "all"); //TO DO
+				  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID.";
+		return actions(introduction, "delete", 0, 1, "all");
 	}
 	
 	private int editOrder() throws IOException {
 		String introduction = "\n1.  Pay attention: - you can only edit orders with status 'pending'\n" + 
 				  "\n                   - This action can not be undo!\n" +
 				  "\n2.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu.\n" + 
-				  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID.\n";
+				  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID.";
 		return actions(introduction, "edit", 0, 1, "pending");
 	}
 }

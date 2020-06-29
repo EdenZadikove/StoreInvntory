@@ -23,17 +23,23 @@ public class Login {
 	}
 	
 	public int signIn() throws IOException {
-		int userType = 0;
-		System.out.println(viewFunctions_.getLoginHeader() + "\n");
-		while(userType == 0 && loginAttempts_ != 0) {	
+		int userType = 0; //if userType == 0, then login attempt failed
+		int password = -1; //initialize password to negative value (password can be only positive numbers)
+		String email = "";
+		System.out.println(viewFunctions_.getLoginHeader() + "\n"); //print login header
+		
+		while(userType == 0 && loginAttempts_ != 0) {	//while user have login attempts
 			System.out.print("Email: ");
-			String email = scanner_.nextLine();
-			System.out.print("Password: ");
+			email = scanner_.nextLine();
+			password = viewFunctions_.validateIntInput("Password: "); //catch exception in scannerInt
 			
-			int password = scanner_.nextInt();
-			scanner_.nextLine();
+			try{
+				userType = loginController_.login(email, password); //if userType == 0 then userName or password are incorrect
+			}
+			catch(IllegalArgumentException e) {
+				System.out.println(e.getMessage());
+			}
 			
-			userType = loginController_.login(email, password); //if userType == 0 then userName or password are incorrect
 			if(userType == 0) {
 				if(loginAttempts_ != 1) //if not last login attempt
 					System.out.println("\n! Email or password are incorrect. Please try again.");
@@ -61,8 +67,7 @@ public class Login {
 		}
 		else
 			msg = "! No more login attempts.";
-		System.out.println(); //enter
-		System.out.println(msg);		
-		return userType;
+		System.out.println("\n" + viewFunctions_.getSeperator() + "\n\n" + msg);
+		return userType; //go back to welcome page
 	}
 }

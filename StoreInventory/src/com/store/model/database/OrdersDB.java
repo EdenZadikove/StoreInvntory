@@ -1,8 +1,10 @@
-package com.store.model;
+package com.store.model.database;
 
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
+
+import com.store.model.entities.Order;
 
 
 public class OrdersDB extends FileManager<Object> {

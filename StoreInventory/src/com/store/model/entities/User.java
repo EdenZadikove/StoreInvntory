@@ -1,10 +1,6 @@
-package com.store.model;
+package com.store.model.entities;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.io.IOException;
+
 
 public abstract class User implements Serializable{
 	

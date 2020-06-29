@@ -1,17 +1,14 @@
 package com.store.view;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 public class Welcome {
 	
 	private Login login_;
 	private ViewFunctions viewFunctions_;
-	private Scanner scanner_;
-	
+
 	public Welcome() {
 		viewFunctions_ = ViewFunctions.getInstance();
-		scanner_ = new Scanner(System.in);
 	}
 	
 	public void welcomeMenu() throws IOException {		
@@ -25,10 +22,7 @@ public class Welcome {
 			System.out.println("Login ========> 1");
 			System.out.println("Exit  ========> 0");
 			System.out.println(); //enter
-			System.out.print("I want to: ");
-		
-			command = scanner_.nextInt();
-			scanner_.nextLine(); //ignore enter char
+			command = viewFunctions_.validateIntInput("I want to: ");
 			
 			viewFunctions_.validateInsertedData(0, 1, command, "I want to: ", "! Invalid choice. Please try again.");
 			if(command == 0) //user want to exit
@@ -65,7 +59,7 @@ public class Welcome {
 	}
 	
 	private void exit(int status) throws IOException {
-		System.out.println("\nExit the program...\nBye Bye");
+		System.out.println("Exit the program...\nBye Bye");
 		System.exit(status); 
 	}
 	

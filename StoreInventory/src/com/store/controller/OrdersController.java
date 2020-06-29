@@ -12,8 +12,8 @@ public class OrdersController {
 		model_ = new Model();
 	}
 	
-	public boolean isOrderExists(int orderId) {
-		return model_.isOrderExists(orderId);
+	public boolean isOrderExists(int orderId, String statusFilter,  String action) throws Exception {
+		return model_.isOrderExists(orderId, statusFilter, action);
 	}
 	
 	public int createOrder(String itemName, int quantity) throws IOException {
@@ -21,15 +21,21 @@ public class OrdersController {
 		
 	}
 	
-	public String cancelOrder(int orderId) {
+	public boolean cancelOrder(int orderId) throws Exception {
 		return model_.cancelOrder(orderId);
 	}
 	
-	public String deleteOrder(int orderId) {
+	public boolean deleteOrder(int orderId) throws Exception {
 		return model_.deleteOrder(orderId);
 	}
 	
-	public String editOrder(int orderId, int quantity) {
+	public String editOrder(int orderId, int quantity) {	
+		//check if order ID is valid
+		if(orderId < -1)
+			throw new IllegalArgumentException("! Order Id must be more then 0");	
+		if(quantity < 1 || quantity > 100)
+			throw new IllegalArgumentException("! Quantity must be between 1 to 100");
+	
 		return model_.editOrder(orderId, quantity);
 	}
 	
@@ -49,7 +55,7 @@ public class OrdersController {
 		return model_.itemsCounterByFilter(filter);
 	}
 
-	public String changeOrderStatus(int orderId, String action) {
+	public String changeOrderStatus(int orderId, String action) throws IOException {
 		return model_.changeOrderStatus(orderId, action);
 	}
 }

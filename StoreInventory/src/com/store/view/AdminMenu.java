@@ -1,25 +1,21 @@
 package com.store.view;
 
 import java.io.IOException;
-import java.util.Scanner;
-
-import com.store.controller.Controller;
+import com.store.controller.LoginController;
 
 public class AdminMenu {
 	private ViewFunctions viewFunctions_; 
 	private StoreAdmin storeAdmin_;
 	private OrdersAdmin ordersAdmin_;
 	private Users users_;
-	private Controller controller_;
-	private Scanner scanner_;
+	private LoginController loginController_;
 	
 	public AdminMenu() throws IOException {
 		viewFunctions_ = ViewFunctions.getInstance();
 		storeAdmin_ = new StoreAdmin();
 		ordersAdmin_ = new OrdersAdmin();
 		users_ = new Users();
-		controller_ = new Controller();
-		scanner_ = new Scanner(System.in);
+		loginController_ = new LoginController();
 	}
 	
 	public void menuManager() throws IOException {
@@ -43,12 +39,10 @@ public class AdminMenu {
 		System.out.println("Orders Manager   ========> 2");
 		System.out.println("Users Manager    ========> 3");
 		System.out.println("Logout           ========> 0");
-		System.out.print("\nI want to view: ");
-		
-		command = scanner_.nextInt();
-		scanner_.nextLine(); //ignore enter char
-		
-		viewFunctions_.validateInsertedData(0, 3, command, "I want to view: " ,"! Invalid choice. Please try again.");
+		System.out.println();
+		command = viewFunctions_.validateIntInput("I want to view: "); 
+		command = viewFunctions_.validateInsertedData_noZeroOne(0, 3, command, "I want to view: " ,"! Invalid choice. Please try again.");
+		System.out.println();
 		return command;
 	}
 	
@@ -57,7 +51,7 @@ public class AdminMenu {
 		switch(command) {
 		case 0:
 			System.out.println("Logout...");
-			controller_.logout();
+			loginController_.logout();
 			break;
 		case 1:
 			showMainMenuAgain = storeAdmin_.showMenu(); //-1 - show again. 0- logout

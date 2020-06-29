@@ -12,10 +12,6 @@ public class Controller {
 		 model_ = new Model(); 
 	}
 	
-	public void logout() {
-		model_.logout();
-	}
-	
 	public ArrayList<String> getProductDetails(String product) {
 		return model_.getProductDetails(product);
 	}

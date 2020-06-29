@@ -2,6 +2,11 @@ package com.store.model;
 
 import java.io.IOException;
 
+import com.store.model.entities.Admin;
+import com.store.model.entities.Seller;
+import com.store.model.entities.Supplier;
+import com.store.model.entities.User;
+
 public class UsersFactory {
 
 	public User getUser(User user) throws IOException {

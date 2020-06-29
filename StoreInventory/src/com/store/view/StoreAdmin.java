@@ -27,10 +27,7 @@ public class StoreAdmin extends Store {
 			showStoreManagerMenu();
 			firstTimeMenuFlag = false; //not the first time anymore
 			
-			System.out.print("I want to: ");
-			command = scanner_.nextInt();
-			scanner_.nextLine(); //ignore enter char
-			
+			command = viewFunctions_.validateIntInput("I want to: ");
 			command = viewFunctions_.validateInsertedData(1,3,command, "I want to: ", "! Invalid choice!. Please try again"); //check if user chose a valid option.
 			showStoreManagerMenu_again = actionNavigate(command); //command choice from Store Manager Menu
 			
@@ -93,6 +90,7 @@ public class StoreAdmin extends Store {
 		System.out.println();
 		System.out.println("Back to main menu      ========> -1");
 		System.out.println("Save and Logout        ========> 0");
+		System.out.println();
 	}
 
 	
@@ -123,14 +121,13 @@ public class StoreAdmin extends Store {
 		while(timesToLoop > 0){
 			getProducts(); //Synchronized with DB
 		
-			System.out.println(calcCounterStr("Which item would you like to edit price?", itemsCounter));
+			System.out.println(calcCounterStr("Which item would you like to " + action + "?", itemsCounter));
 			showProducts();
-			System.out.print("\nItem number: ");
-			itemNumber = scanner_.nextInt();
-			scanner_.nextLine(); //ignore enter char
+			System.out.println();
+			itemNumber = viewFunctions_.validateIntInput("Item number: ");
 			itemNumber = validateInsertedData(1, productsMap_.size(), itemNumber, "Item number: ", "! Invalid item number. Please try again." );
 			if(itemNumber == 0) {	//user want to exit
-				System.out.println("Going back to Store Manager Menu...\n");
+				System.out.println("Going back to Store Manager Menu...");
 				break; //exit while
 			}	
 			
@@ -140,6 +137,8 @@ public class StoreAdmin extends Store {
 			switch(action) {
 			case "edit price":
 				String oldPrice = StringUtils.substringBetween(product, "Price:", ";");
+				
+				System.out.println(viewFunctions_.getSeperator() + "\n");
 				System.out.println("Selected item: " + itemName);
 				System.out.println("Current price (per unit): " + oldPrice + "$");
 				System.out.print("Set a new price: ");
@@ -151,14 +150,12 @@ public class StoreAdmin extends Store {
 				msg = storeController_.editPrice(itemName, newPrice);
 				break;
 			case "remove":
-				System.out.println("Are you sure you want to delete " + itemName + "?");
+				System.out.println(viewFunctions_.getSeperator() + "\n");
+				System.out.println("Are you sure you want to delete " + itemName + "?\n");
 				System.out.println("Yes  ========> 1");
 				System.out.println("No   ========> 0");
-				System.out.print("My choice: ");
-				
-				int choice = scanner_.nextInt();
-				scanner_.nextLine();
-				
+
+				int choice = viewFunctions_.validateIntInput("\nMy choice: ");
 				itemNumber = viewFunctions_.validateInsertedData_noZeroOne(0,1, choice, "My choice: ", "! Invalid choice. Please try again.");
 				if(itemNumber == 1) msg = storeController_.removeProduct(itemName);
 				else {
@@ -169,11 +166,10 @@ public class StoreAdmin extends Store {
 				break; //end while
 			}
 			if(itemNumber != 0) {
-				System.out.println("\n" + msg + "\n");
+				System.out.println("\n" + viewFunctions_.getSeperator() + "\n\n" + msg + "\n");
 				if(msg.contains("successfully")) {
 					timesToLoop--;
 					itemsCounter++;
-					//System.out.println(viewFunctions_.getSeperator() + "\n");
 				}
 			}
 			
@@ -205,8 +201,7 @@ public class StoreAdmin extends Store {
 	
 	private int howManyTimes(int timesToLoop, int itemNumber, int productsCounter, String title) throws IOException {
 		System.out.println(title);
-		System.out.print("Number of items: ");
-		timesToLoop = scanner_.nextInt();
+		timesToLoop = viewFunctions_.validateIntInput("Number of items: ");
 		timesToLoop = validateInsertedData(1, productsCounter, timesToLoop, "Items number: ", "! Items range is: 1 to " + productsCounter);
 		return timesToLoop;
 	}
@@ -217,7 +212,7 @@ public class StoreAdmin extends Store {
 		while (validFlag == 0) {
 			errMsg = ""; //reset
 			if(String.valueOf(newPrice).equals(oldPrice)) {
-				errMsg = "\n! " + itemName + " price is already " + String.valueOf(newPrice);
+				errMsg = "\n! " + itemName + " price is already " + String.valueOf(newPrice) + "?";
 			}
 			else if((int)newPrice <= 0)
 				errMsg = "\n! " + itemName + " price must be more then 0";
@@ -233,15 +228,12 @@ public class StoreAdmin extends Store {
 		return newPrice;
 	}
 	
-	
 	private int validateInsertedData(int start, int end, int command, String text, String errorMsg) {
 		/* If 0 --->  don't do anything */		
 		while ((command != 0 ) &&  !(command <= end && command >= start)) {
 			System.out.println(); // print enter
 			System.out.println(errorMsg);
-			System.out.print(text);	
-			command = scanner_.nextInt();
-			scanner_.nextLine(); //ignore enter char
+			command = viewFunctions_.validateIntInput(text);
 		}
 		System.out.println(); // print enter
 		return command;

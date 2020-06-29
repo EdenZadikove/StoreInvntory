@@ -7,7 +7,6 @@ public class Users{
 		System.out.println("\nWhich action would you like to do?\n");
 		System.out.println("Create a new order     ========> 1");
 		System.out.println("Cancel existing order  ========> 2");
-		System.out.println("Back to main menu  	   ========> 3");
-		
+		System.out.println("Back to main menu  	   ========> 3");	
 	}
 }

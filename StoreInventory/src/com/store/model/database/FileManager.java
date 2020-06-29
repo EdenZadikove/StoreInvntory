@@ -1,4 +1,4 @@
-package com.store.model;
+package com.store.model.database;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

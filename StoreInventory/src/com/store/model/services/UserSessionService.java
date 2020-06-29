@@ -1,6 +1,12 @@
-package com.store.model;
+package com.store.model.services;
 
 import java.io.IOException;
+
+import com.store.model.UsersFactory;
+import com.store.model.database.OrdersDB;
+import com.store.model.database.StoreDB;
+import com.store.model.database.UsersDB;
+import com.store.model.entities.User;
 
 public class UserSessionService {
 	private UsersDB users_; 

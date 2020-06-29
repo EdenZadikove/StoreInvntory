@@ -1,4 +1,4 @@
-package com.store.model;
+package com.store.model.entities;
 
 public class Supplier extends User {
 	

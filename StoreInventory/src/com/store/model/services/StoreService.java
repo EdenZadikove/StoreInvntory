@@ -1,4 +1,4 @@
-package com.store.model;
+package com.store.model.services;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,9 +6,13 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.store.model.database.StoreDB;
+import com.store.model.entities.Product;
+import com.store.model.entities.Store;
+
 public class StoreService {
 	private static StoreDB storeDB_ = null;
-	private Map<String, Product> products_ = null; 
+	private Store store_;
 	private Map<String, Product> defaultProductDetails_;
 
 	public StoreService() {
@@ -34,10 +38,12 @@ public class StoreService {
 		defaultProductDetails_.put(p6.getItemName(), p6);
 	}
 	
-	public Map<String, String> getProducts(int userType){ //admin, seller
+	
+	//convert Map of objects to map of String. show store inventory in the view package
+	public Map<String, String> getProducts(int userType){
 		Map<String, String> productsMap = new Hashtable<String, String>(); 
 		
-		for (Entry<String, Product> entry : products_.entrySet()) {
+		for (Entry<String, Product> entry : store_.getProductsMap().entrySet()) {
 			String row = "ItemName:" + entry.getValue().getItemName() + ";" +
 						 "Season:" + entry.getValue().getSeason() + ";" +
 						 "Quantity:" + entry.getValue().getQuantity() + ";" +
@@ -47,46 +53,53 @@ public class StoreService {
 		return productsMap;
 	}
 	
-	public ArrayList<String> getProductDetails(String product) { //admin
+	public ArrayList<String> getProductDetails(String product) {
 		ArrayList <String> details = new ArrayList<String>();
-		Product p = products_.get(product);
+		Product p = store_.getProductsMap().get(product);
 		if(p == null) //product does not exists
-			p = defaultProductDetails_.get(product);
+			p = defaultProductDetails_.get(product); //initialize with default product
 		details.add(p.getItemName());
 		details.add(p.getSeason());
-		details.add(String.valueOf(p.getPrice()));
+		details.add(String.valueOf(p.getPrice())); //convert double to String
 		details.add(String.valueOf(p.getQuantity()));
 		return details;
 	}
 	
-	public String editPrice(String itemName, double price) { //admin
-		Product product  = products_.get(itemName);
-		double oldPrice = product.getPrice();
-		products_.get(itemName).setPrice(price);
-		return (itemName + " price successfully update from: " + oldPrice + "$ to " + product.getPrice() + "$");
+	public boolean editPrice(String itemName, double price) {
+		Product product  = store_.getProductsMap().get(itemName);
+		if(product == null)
+			return false;
+		//double oldPrice = product.getPrice();
+		store_.getProductsMap().get(itemName).setPrice(price);
+		return true;
+		
+		//return (itemName + " price successfully update from: " + oldPrice + "$ to " + product.getPrice() + "$");
 	}
 	
-	public String removeProduct(String itemName) { //admin
-		products_.remove(itemName);
-		return itemName + " successfully removed.";
+	public boolean removeProduct(String itemName) {
+		store_.getProductsMap().remove(itemName);
+		return true;
+		
+		//return itemName + " successfully removed.";
 	}
 		
 	
-	public void updateStoreInventory(String itemName, int quantity) {
-		if(!isOrderExists(itemName)) { //product is not exists in the store yet
-			Product p = defaultProductDetails_.get(itemName);
-			products_.put(itemName, p);
+	public void addProductToStoreInventory(String itemName, int quantity) throws IOException {
+		if(!isOrderExists(itemName)) { 		//product does not exists in the store yet
+			Product p = defaultProductDetails_.get(itemName); //create a new object
+			store_.getProductsMap().put(itemName, p);
 		}
-		int newQuantity = products_.get(itemName).getQuantity() + quantity;
-		products_.get(itemName).setQuantity(newQuantity); //set new quantity
+		int newQuantity = store_.getProductsMap().get(itemName).getQuantity() + quantity; //update quantity
+		store_.getProductsMap().get(itemName).setQuantity(newQuantity); //set new quantity
+		saveToFile();
 	}
 	
 	private boolean isOrderExists(String itemName) {
-		return products_.get(itemName) != null;
+		return store_.getProductsMap().get(itemName) != null;
 	}
 	
-	public void saveToFile() throws IOException { //admin
-		storeDB_.writeToFile(products_);
+	public void saveToFile() throws IOException {
+		storeDB_.writeToFile(store_);
 	}
 	
 }

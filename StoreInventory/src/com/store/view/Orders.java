@@ -22,24 +22,20 @@ public abstract class Orders{
 	protected void commandIsZeroOrNegetiveOne(int command, int userType) throws IOException{
 		String prevScreensTemp = viewFunctions_.getPrevScreens() + " -----> " + "Orders Manager Menu";
 		
-		if(command == 0) System.out.println("Going back to Orders Manager Menu...\n");
+		if(command == 0) System.out.println("\nGoing back to Orders Manager Menu...\n");
 		else if(command == -1) {
 			switch(userType) {
-			case 1: //admin
-				System.out.println();
-				System.out.println(viewFunctions_.getSeperator());
-				System.out.println();
-				System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "View pending orders table" ));
-				showOrdersTable("all", "Orders Table:\n", "No orders. Create a new order and come back to see it here :)\n");
-				System.out.println(viewFunctions_.getSeperator());
-				break;
-			case 3: //supplier
-				System.out.println();
-				System.out.println(viewFunctions_.getSeperator());
-				System.out.println();
-				System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "View pending orders table" ));
-				showOrdersTable("pending", "Pending orders Table:\n", "No pending orders\n");
-				System.out.println(viewFunctions_.getSeperator());
+				case 1: //admin
+					System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
+					System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "View pending orders table" ));
+					showOrdersTable("all", "Orders Table:\n", "No orders. Create a new order and come back to see it here :)\n");
+					System.out.println(viewFunctions_.getSeperator());
+					break;
+				case 3: //supplier
+					System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
+					System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "View pending orders table" ));
+					showOrdersTable("pending", "Pending orders Table:\n", "No pending orders\n");
+					System.out.println(viewFunctions_.getSeperator() + "\n");
 			}
 		}
 	}
@@ -67,55 +63,44 @@ public abstract class Orders{
 		 * If 0 ---> go back to Orders Manager Menu
 		 * If -1 ---> show orders table
 		 * If  times range is 1 ---> don't show "How many items do you want to" */
+		
 		int orderId = 0; //if orderId == 0----> go back to Orders main menu
 		int timesToLoop = 1; // if timesToLoop == -1 then show again
 		int itemsCounter = ordersController_.itemsCounterByFilter(filter);
 		System.out.println(viewFunctions_.getInstructionsHeader());
-		System.out.println(introduction);
-		System.out.println(viewFunctions_.getSeperator());
+		System.out.println(introduction + "\n");
+		System.out.println(viewFunctions_.getSeperator() +"\n");
 		
 		if(itemsCounter != 1) {
 			//If itemsCounter == 1, then no need to ask how many times I want to do the action
 			while (timesToLoop == -1) {
-				String str = "\nHow many items do you want to " + action + "?";
-				System.out.println(str);
-				timesToLoop = scanner_.nextInt();
-				timesToLoop = viewFunctions_.validateInsertedData(1, itemsCounter, timesToLoop, "", "! Items range is: 1 to " + itemsCounter);
+				System.out.println("How many items do you want to " + action + "?");
+				timesToLoop = viewFunctions_.validateIntInput("Number of items: ");
+				timesToLoop = viewFunctions_.validateInsertedData(1, itemsCounter, timesToLoop, "Number of items: ", "! Items range is: 1 to " + itemsCounter);
 				commandIsZeroOrNegetiveOne(timesToLoop, userType);
 			}
 		}
 
 		while(timesToLoop > 0 ) {
-			System.out.println();
-			System.out.println("Which item would you like to " + action +"?");
-			System.out.print("Order id: ");
-			
-			orderId = scanner_.nextInt();
-			scanner_.nextLine();
-			orderId = validateOrder(orderId);
+			System.out.println("Which order would you like to " + action + "?");
+			orderId = getOrderIdFromUser(filter, "Order id: ", action);   ///controller validate
 			commandIsZeroOrNegetiveOne(orderId, userType);
 
 			while(orderId == -1) {
-				System.out.println("\nWhich item would you like to " + action +"?");
-				System.out.print("Order id: ");
-				
-				orderId = scanner_.nextInt();
-				scanner_.nextLine();
-				orderId = validateOrder(orderId);
+				System.out.println("\nWhich order would you like to " + action +"?");
+				orderId = getOrderIdFromUser(filter, "Order id: ", action);
 				commandIsZeroOrNegetiveOne(orderId, userType);
 			}
-			if(orderId == 0) break;	
+			if(orderId == 0) break;	 //user want to stop and go back to orders-main-menu
 			int quantity = 1;
 			if(action == "edit") {
-				System.out.print("Update order quantity to: ");
-				quantity = scanner_.nextInt();
-				scanner_.nextLine();
-				quantity = viewFunctions_.validateInsertedData(1, 100, quantity, "Update order quantity to: ", "! Quantity must be between 1 to 100");
+				System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
+				quantity = viewFunctions_.validateIntInput("Update order quantity to: ");
+				//quantity = viewFunctions_.validateInsertedData(1, 100, quantity, "Update order quantity to: ", "! Quantity must be between 1 to 100");
 				commandIsZeroOrNegetiveOne(quantity, userType);
-				while(quantity == -1) {
-					System.out.print("Update order quantity to: ");
-					quantity =  scanner_.nextInt();
-					quantity = viewFunctions_.validateInsertedData(1, 100, quantity, "Update order quantity to: ", "! Quantity must be between 1 to 100");
+				while(quantity == -1) { //if quantity == -1, then user want to view orders table
+					quantity =  viewFunctions_.validateIntInput("Update order quantity to: ");
+					//quantity = viewFunctions_.validateInsertedData(1, 100, quantity, "Update order quantity to: ", "! Quantity must be between 1 to 100");
 					commandIsZeroOrNegetiveOne(quantity, userType);
 					System.out.println();
 				}
@@ -126,34 +111,53 @@ public abstract class Orders{
 			}
 			
 			String msg = "";
+			boolean res = false;
 			switch(action) {
-				case "delete": 
-					msg = ordersController_.deleteOrder(orderId);
+				case "delete":
+					try {
+						res = ordersController_.deleteOrder(orderId);
+						if(res)
+							msg = "Order id- " + orderId + " successfully deleted";
+					} catch(Exception e) {
+						msg = e.getMessage();
+					}
 					break; 
 				case "cancel":
-					msg = ordersController_.cancelOrder(orderId);
+					try {
+						res = ordersController_.cancelOrder(orderId);
+						if(res)
+							msg = "Order id- " + orderId + " successfully canceled";
+					}catch(Exception e) {
+						msg = e.getMessage();
+					}
+					
 					break;
 				case "edit":
-					msg = ordersController_.editOrder(orderId, quantity);
+					try {
+						msg = ordersController_.editOrder(orderId, quantity);
+					}
+					catch(IllegalArgumentException e) {
+						msg = e.getMessage();
+						//catchFlag = 1;
+						
+					}
 					break;	
 				default:
 					msg = ordersController_.changeOrderStatus(orderId, action);
 					break;
 			}
+			
 			System.out.println();
 			if(msg.contains("approved") && !msg.contains("!") )
 				msg +=" \nStore inventory updated.";
-			System.out.println(msg);
+			System.out.println(viewFunctions_.getSeperator() + "\n\n" + msg + "\n\n" + viewFunctions_.getSeperator() +"\n");
 			
-			if(msg.contains("successfully")) {
-				timesToLoop--;
-				System.out.println(viewFunctions_.getSeperator());
-				System.out.println();
-			}
+			if(msg.contains("successfully")) timesToLoop--;
 		}
 		//end while
 		return orderId;
 	}
+
 	
 	protected boolean isEmptyMap(String filter) {
 		if(ordersController_.itemsCounterByFilter(filter) == 0) { //empty orders map
@@ -165,14 +169,21 @@ public abstract class Orders{
 		return false;
 	}
 	
-	private int validateOrder(int orderId) throws IOException {
-		if(orderId != 0 && orderId != -1) {
-			while (!ordersController_.isOrderExists(orderId) && (orderId != 0 && orderId != -1)) {				
-				System.out.println(); // enter
-				System.out.println("! Order does not exists. Please try again.");
-				System.out.print("Order id: ");	
-				orderId = scanner_.nextInt();
-				scanner_.nextLine(); //ignore enter char
+	private int getOrderIdFromUser(String statusFilter, String text,  String action) throws IOException {
+		boolean continueFlag = true;
+		int orderId = -1;
+		while(continueFlag) {
+			orderId = viewFunctions_.validateIntInput(text);
+			try {
+				if(orderId != 0 && orderId != -1) {
+					if (!ordersController_.isOrderExists(orderId, statusFilter, action)) {
+						System.out.println("\n! Order does not exists. Please try again.");	
+					}
+					else continueFlag = false;
+				}
+				else continueFlag = false;
+			} catch(Exception e) {
+				System.out.println("\n" + e.getMessage());	
 			}
 		}
 		return orderId;

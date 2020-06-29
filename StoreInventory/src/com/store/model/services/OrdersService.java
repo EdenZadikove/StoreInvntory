@@ -1,10 +1,12 @@
-package com.store.model;
+package com.store.model.services;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.store.model.database.OrdersDB;
+import com.store.model.entities.Order;
 
 public class OrdersService {
 	
@@ -17,9 +19,7 @@ public class OrdersService {
 		orders_ = ordersDB_.getOrders();
 		storeService_ = new StoreService();
 	}
-	
-
-	
+		
 	public int cretaeOrder(String itemName, int Quntity) throws IOException {
 		int orderId = calculateOrderId();
 		Order newOrder = new Order(orderId, itemName, Quntity);
@@ -43,35 +43,37 @@ public class OrdersService {
 		 return maxKey + 1;
 	}
 	
-	public String cancelOrder(int orderId) {
+	public boolean cancelOrder(int orderId) throws Exception {
 		Order order = isOrderExist(orderId);
 		if  (order == null)
-			return "Order does not exist!";
+			throw new Exception("Order does not exist!");
+			//return "Order does not exist!";
 		
 		//check if order status is 'pending'
 		if(order.getOrderStatus().equals("pending")) {
 			order.setOrderStatus("canceled");
 			orders_.put(orderId, order);
-			return "Order id- " + orderId + " successfully canceled";
+			//return "Order id- " + orderId + " successfully canceled";
+			return true;
 		}
 		if(order.getOrderStatus().equals("canceled"))
-			return "! Order id- " + orderId + " can not be canceled because its already done.";
-		return "! Order id- " + orderId + " can not be canceled because its already " + order.getOrderStatus() + " by the supplier.";
+			throw new Exception("! Order id- " + orderId + " can not be canceled because its already done.");
+		throw new Exception("! Order id- " + orderId + " can not be canceled because its already " + order.getOrderStatus() + " by the supplier.");
 	}
 	
-	public String deleteOrder(int orderId) {
+	public boolean deleteOrder(int orderId) throws Exception {
 		Order order = isOrderExist(orderId);
 		if  (order == null)
-			return "Order does not exist!";
+			throw new Exception("Order does not exists!");
 		
 		//check if order status is 'canceled, approved or denied'
 		if(order.getOrderStatus().equals("canceled") || order.getOrderStatus().equals("approved") || order.getOrderStatus().equals("denied")) {
 			orders_.remove(orderId);
-			return "Order id- " + orderId + " successfully deleted";
+			return true;
 		}
-		return "Order id- " + orderId + " can not be deleted because its waiting for supplier's response.\nIf"
+		throw new Exception( "Order id- " + orderId + " can not be deleted because its waiting for supplier's response.\nIf"
 					+ " you want to delete this order - 1. Cancel this order\n"
-					+ "                                   2. Delete this order.";	
+					+ "                                   2. Delete this order.");	
 	}
 	
 	public String editOrder(int orderId, int quantity) {
@@ -100,7 +102,7 @@ public class OrdersService {
 		return itemsCounter;
 	}
 	
-	public String changeOrderStatus(int orderId, String action) {
+	public String changeOrderStatus(int orderId, String action) throws IOException {
 		
 		Order order = isOrderExist(orderId);
 		if  (order == null || !order.getOrderStatus().equals("pending"))
@@ -143,8 +145,39 @@ public class OrdersService {
 		return ordersList;
 	}
 	
-	public boolean isOrderExistBoolean(int orderId) {
-		return !(orders_.get(orderId) == null);
+	public boolean isOrderExistBoolean(int orderId, String statusFilter, String action) throws Exception {
+		Order order = orders_.get(orderId);
+		if(order == null) return false;
+		String orderStatus = order.getOrderStatus();
+		
+		switch(action) {
+		case "approved":
+			return  orderStatus.equals("pending");
+		case "denied":
+			return  orderStatus.equals("pending");
+		case "cancel":
+			if(!orderStatus.equals("pending")) {
+				throw new Exception("! Order id- " + orderId + 
+						" can not be canceled because it's status is: '" +
+						orderStatus + "'.");
+			}
+			break;
+		case "delete":
+			if(orderStatus.equals("pending")) {
+				throw new Exception("! Order id- " + orderId + 
+						" can not be deleted because it's status is: '" +
+						orderStatus + "'.");
+			}
+			break;
+		case "edit":
+			if(!orderStatus.equals("pending")) {
+				throw new Exception("! Order id- " + orderId + 
+						" can not be edited because it's status is: '" +
+						orderStatus + "'.");
+			}
+			break;
+		}
+		return true;
 	}
 	
 	public void saveToFileOrders() throws IOException {

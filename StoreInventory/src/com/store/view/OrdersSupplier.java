@@ -10,7 +10,6 @@ public class OrdersSupplier extends Orders {
 	}
 	
 	public int showMenu() throws IOException {
-		
 		int command = -1;
 		boolean firstTimeMenuFlag = true; //If menu is printed for the first time- no need to print a separator
 		int validCommandFlag = 0;
@@ -22,17 +21,14 @@ public class OrdersSupplier extends Orders {
 			if(!firstTimeMenuFlag) System.out.println(viewFunctions_.getSeperator());
 			showOrdersManagerMenu();
 			firstTimeMenuFlag = false;
-
-			System.out.print("I want to: ");
-			command = scanner_.nextInt();
-			scanner_.nextLine(); //ignore enter char
-			
+			System.out.println();
+			command = viewFunctions_.validateIntInput("I want to: ");
 			command = viewFunctions_.validateInsertedData(1,3,command, "I want to: ", "! Invalid choice!. Please try again"); //check if user chose a valid option.
 			showOrdersManagerMenu_again = actionNavigate(command); //command choice from Orders Manager Menu
 			
 			if(!showOrdersManagerMenu_again) {  //showOrdersManagerMenu_again == false
 				if(command == -1) {
-					System.out.println("Going back to Main Menu...\n");
+					System.out.println("Going back to Main Menu...");
 				}
 				else {
 					command = 0; //for logout
@@ -47,7 +43,7 @@ public class OrdersSupplier extends Orders {
 	
 	private void showOrdersManagerMenu() {
 		System.out.println();
-		viewFunctions_.showProgressBar(viewFunctions_.getPrevScreens(), "Order Manager Menu");		
+		System.out.println(viewFunctions_.showProgressBar(viewFunctions_.getPrevScreens(), "Orders Manager Menu"));		
 		System.out.println("Which action would you like to take?\n");
 		System.out.println("View pending orders table    ========> 1");
 		System.out.println("Approved order               ========> 2");
@@ -106,10 +102,10 @@ public class OrdersSupplier extends Orders {
 	}
 	
 	private int navigateAction(String action) throws IOException { //return orderId
-		
+
 		String introduction = "\n1.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu\n" +
 				  "\n2.  Press '-1' in any stage if you want show orders table in order to choose order ID";
-		if(action.equals("approved")) return actions(introduction, "approved", 1,3, "pending\n"); 
+		if(action.equals("approved")) return actions(introduction, "approved", 1,3, "pending"); 
 		return actions(introduction, "denied", 1, 3, "pending");
 	}
 }

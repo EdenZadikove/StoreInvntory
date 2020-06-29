@@ -1,19 +1,25 @@
-package com.store.model;
+package com.store.model.database;
 
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
 
+import com.store.model.entities.Product;
+import com.store.model.entities.Store;
+
 public class StoreDB extends FileManager<Object> {
 	
 	private static String path_ = "..\\StoreInventory\\files\\store.txt";
-	private static Map <String, Product> products_ = new Hashtable<String, Product>();
+	private static Map<String, Store> stores_ = new Hashtable<String, Store>() ;
+	//private static Map <String, Product> products_ = new Hashtable<String, Product>();
 	private static StoreDB instance_ = null;
 	
 	@SuppressWarnings("unchecked")
 	private StoreDB() throws IOException {
 		super(path_);
-		products_  = (Map<String, Product>)readFromFile(products_);
+		stores_ = (Map<String, Store>)readFromFile(stores_);
+		
+		//products_  = (Map<String, Product>)readFromFile(products_);
 		initStore();
 	}
 	
@@ -30,23 +36,23 @@ public class StoreDB extends FileManager<Object> {
 		return instance_;
 	}
 
-	public Map<String, Product> getProducts(){
-		return products_;
+	public Map<String, Store> getStores(){
+		return stores_;
 	}
 	
 	public static void resetInstance() {
 		instance_ = null;
-		products_ = null;
+		stores_ = null;
 	}
 	
 	private void initStore() throws IOException {
 		if(products_.size() == 0) {		
-			Product p1 = new Product("Gloves", "Winter", 60, 50);
-			Product p2 = new Product("Coat", "Winter", 50, 40);
-			Product p3 = new Product("Scarf", "Winter", 70, 60);
-			Product p4 = new Product("Swimsuit", "Summer", 40, 30);
-			Product p5 = new Product("Dress", "Summer", 20, 10);
-			Product p6 = new Product("Tshirt", "Summer", 30, 20);
+			Product p1 = new Product("Gloves", "Winter", 1, 50);
+			Product p2 = new Product("Coat", "Winter", 1, 40);
+			Product p3 = new Product("Scarf", "Winter", 1, 60);
+			Product p4 = new Product("Swimsuit", "Summer", 1, 30);
+			Product p5 = new Product("Dress", "Summer", 1, 10);
+			Product p6 = new Product("Tshirt", "Summer", 1, 20);
 			
 			products_.put(p1.getItemName(), p1);
 			products_.put(p2.getItemName(), p2);
@@ -57,6 +63,5 @@ public class StoreDB extends FileManager<Object> {
 			
 			writeToFile(products_);
 		}
-		
 	}
 }

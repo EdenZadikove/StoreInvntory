@@ -1,21 +1,17 @@
 package com.store.view;
 
 import java.io.IOException;
-import java.util.Scanner;
-
-import com.store.controller.Controller;
+import com.store.controller.LoginController;
 
 public class SupplierMenu {
 	private OrdersSupplier ordersSupplier_;
-	private Controller controller_;
+	private LoginController loginController_;
 	private ViewFunctions viewFunctions_;
-	private Scanner scanner_;
 	
 	public SupplierMenu() throws IOException {
 		ordersSupplier_ = new OrdersSupplier();
-		controller_ = new Controller();
+		loginController_ = new LoginController();
 		viewFunctions_ = ViewFunctions.getInstance();
-		scanner_ = new Scanner(System.in);
 	}
 	
 	public void menuManager() throws IOException {
@@ -36,25 +32,17 @@ public class SupplierMenu {
 		System.out.println("Which screen would you like to get?\n");
 		System.out.println("Orders Manager ========> 1");
 		System.out.println("Logout         ========> 0");
-		
 		System.out.println();
-		System.out.print("I want to view: ");
-		
-		command = scanner_.nextInt();
-		scanner_.nextLine(); //ignore enter char
-		
+		command = viewFunctions_.validateIntInput("I want to view: ");
 		command = validateInsertedData(0, 3, command, "I want to view: " ,"! Invalid choice. Please try again. ");
 		return command;
 	}
 	
 	private int validateInsertedData(int start, int end, int command, String text, String errorMsg) {
-		
 		while (!(command <= end && command >= start)) {
 			System.out.println(); // print enter
 			System.out.println(errorMsg);
-			System.out.print(text);	
-			command = scanner_.nextInt();
-			scanner_.nextLine(); //ignore enter char
+			command = viewFunctions_.validateIntInput(text);
 		}
 		System.out.println(); // print enter
 		return command;
@@ -65,7 +53,7 @@ public class SupplierMenu {
 		switch(command) {
 		case 0:
 			System.out.println("Logout...");
-			controller_.logout();
+			loginController_.logout();
 			break;
 		case 1:
 			showMainMenuAgain = ordersSupplier_.showMenu();

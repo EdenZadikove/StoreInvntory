@@ -24,10 +24,7 @@ public class StoreSeller extends Store {
 			firstTimeMenuFlag = false;
 			
 			System.out.println(); //enter
-			System.out.print("I want to: ");
-			command = scanner_.nextInt();
-			scanner_.nextLine(); //ignore enter char
-			
+			command = viewFunctions_.validateIntInput("I want to: ");
 			command = viewFunctions_.validateInsertedData(1,2,command, "I want to: ", "! Invalid choice!. Please try again"); //check if user chose a valid option.
 			showStoreManagerMenu_again = actionNavigate(command); //command choice from Store Manager Menu
 			

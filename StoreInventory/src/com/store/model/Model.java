@@ -1,6 +1,12 @@
 package com.store.model;
 import java.util.ArrayList;
 import java.util.Map;
+
+import com.store.model.entities.User;
+import com.store.model.services.OrdersService;
+import com.store.model.services.StoreService;
+import com.store.model.services.UserSessionService;
+
 import java.io.IOException;
 
 public class Model    {
@@ -55,19 +61,19 @@ public class Model    {
 	
 	/*ORDERS Functions*/
 	
-	public boolean isOrderExists(int orderId) {
-		return ordersService_.isOrderExistBoolean(orderId);
+	public boolean isOrderExists(int orderId, String statusFilter,  String action) throws Exception {
+		return ordersService_.isOrderExistBoolean(orderId, statusFilter, action);
 	}
 	
 	public int cretaeOrder(String itemName, int quantity) throws IOException {//admin
 		return ordersService_.cretaeOrder(itemName, quantity);
 	}
 	
-	public String cancelOrder(int orderId) { //admin
+	public boolean cancelOrder(int orderId) throws Exception { //admin
 		return ordersService_.cancelOrder(orderId);
 	}
 	
-	public String deleteOrder(int orderId) { //admin
+	public boolean deleteOrder(int orderId) throws Exception { //admin
 		return ordersService_.deleteOrder(orderId);
 	}
 
@@ -91,7 +97,7 @@ public class Model    {
 		return ordersService_.getOrders(filterStatus);
 	}
 	
-	public String changeOrderStatus(int orderId, String action) { //supplier
+	public String changeOrderStatus(int orderId, String action) throws IOException { //supplier
 		return ordersService_.changeOrderStatus(orderId, action);
 	}
 }

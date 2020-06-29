@@ -1,12 +1,9 @@
 package com.store.controller;
 
 import java.io.IOException;
-
 import com.store.model.Model;
 
 public class LoginController {
-	
-	//private LoginRepository loginRepo_; //model object
 	private Model model_;
 	
 	public LoginController()  {
@@ -14,11 +11,12 @@ public class LoginController {
 	}
 	
 	public int login(String email, int password) throws IOException {
-		//check data from view
-		if(email == "" || email == null) {
-			throw new IllegalArgumentException("Email or password must be not null");
-		}
-		
+		if(email.equals("") || email == null)
+			throw new IllegalArgumentException("! Email must be not null. Please tru again.");
 		return model_.signIn(email, password);
+	}
+	
+	public void logout() {
+		model_.logout();
 	}
 }

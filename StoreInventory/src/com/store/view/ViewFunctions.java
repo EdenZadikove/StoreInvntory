@@ -1,5 +1,6 @@
 package com.store.view;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ViewFunctions {
@@ -29,7 +30,7 @@ public class ViewFunctions {
 		loginHeader_ = setHeader(LENGTH-"Login".length(), "Login");
 		mainMenuHeader_ = setHeader(LENGTH - "Main Menu".length(), "Main Menu");
 		storeMenuHeader_ = setHeader(LENGTH - "Store Manager Menu".length(), "Store Manager Menu");
-		orderMenuHeader_ = setHeader(LENGTH - "Order Manager Menu".length(), "Order Manager Menu");
+		orderMenuHeader_ = setHeader(LENGTH - "Orders Manager Menu".length(), "Order Manager Menu");
 		scanner_ = new Scanner(System.in);
 	}
 	
@@ -106,9 +107,7 @@ public class ViewFunctions {
 		 * If -1 --->  don't do anything */		
 		while ((command != 0 && command != -1) &&  !(command <= end && command >= start)) {
 			System.out.println("\n" + errorMsg); // user insert wring data.
-			System.out.print(text);	//user try again
-			command = scanner_.nextInt();
-			scanner_.nextLine(); //ignore enter char
+			command = validateIntInput(text);
 		}
 		System.out.println(); // print enter
 		return command;
@@ -131,10 +130,10 @@ public class ViewFunctions {
 	public int validateInsertedData_noZeroOne(int start, int end, int command, String text, String errorMsg) {
 		while (!(command <= end && command >= start)) {
 			System.out.println("\n" + errorMsg);
-			System.out.print(text);	
-			command = scanner_.nextInt();
-			scanner_.nextLine(); //ignore enter char
+			//System.out.print(text);	
+			command = validateIntInput(text);
 		}
+		
 		return command;
 	}
 	
@@ -143,13 +142,28 @@ public class ViewFunctions {
 		System.out.println("Would you like to take another action?\n");
 		System.out.println("Yes, show me the menu please    ========> 1");
 		System.out.println("No, I'm done                    ========> 0\n");
-		System.out.print("My choice: ");
 
-		int command = scanner_.nextInt();
-		scanner_.nextLine(); //ignore enter char
-		
+		int command = validateIntInput("My choice: ");
 		command = validateInsertedData_noZeroOne(0, 1, command, "My choice: ", "! Invalid choice. Please try again");
 		System.out.println();
 		return command == 1; //true - show menu again, false- logout
+	}
+	
+	//catch exception for scannerInt, check id user insert integer.
+	public int validateIntInput(String text) {
+		boolean validFlag = false;
+		int num = -1;
+		while(!validFlag) {
+			try {
+				System.out.print(text);
+				num = scanner_.nextInt();
+				validFlag = true;
+				
+			} catch(InputMismatchException e) {
+				System.out.println("\n! Invalid input. Please insert numbers only.");
+				scanner_.nextLine();
+			}	
+		}
+		return num;
 	}
 }

@@ -1,8 +1,6 @@
-package com.store.model;
+package com.store.model.entities;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
 
 public class Admin extends User {
 
