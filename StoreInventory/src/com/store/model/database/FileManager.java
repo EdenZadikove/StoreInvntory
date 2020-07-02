@@ -31,11 +31,16 @@ public abstract class FileManager<E> {
 		return element;
 	}
 	
-	public void writeToFile(E element) throws IOException {
+	public void writeToFile(E element){
 		file.delete();
-		file.createNewFile(); 
-		try(ObjectOutputStream o = new ObjectOutputStream(new FileOutputStream(file))) {
+		try {
+			file.createNewFile();
+			ObjectOutputStream o = new ObjectOutputStream(new FileOutputStream(file));
 			o.writeObject(element);
+			o.close();
+					
+		} catch(IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

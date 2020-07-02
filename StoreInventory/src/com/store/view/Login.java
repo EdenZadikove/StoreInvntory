@@ -1,28 +1,24 @@
 package com.store.view;
 
-import java.io.IOException;
 import java.util.Scanner;
 
-import com.store.controller.LoginController;
-import com.store.controller.UsersController;
+import com.store.controller.UserSessionServiceController;
 
 public class Login {
 	
 	private ViewFunctions viewFunctions_;
-	private LoginController loginController_;
-	private UsersController usersController_;
+	private UserSessionServiceController userSessionServiceController_;
 	private int loginAttempts_;
 	private Scanner scanner_;
 
-	public Login() {
+	public Login(){
 		viewFunctions_ = ViewFunctions.getInstance();
-		loginController_ = new LoginController();
-		usersController_ = new UsersController();
+		userSessionServiceController_ = new UserSessionServiceController();
 		loginAttempts_ = 3;
 		scanner_ = new Scanner(System.in);
 	}
 	
-	public int signIn() throws IOException {
+	public int signIn(){
 		int userType = 0; //if userType == 0, then login attempt failed
 		int password = -1; //initialize password to negative value (password can be only positive numbers)
 		String email = "";
@@ -34,9 +30,8 @@ public class Login {
 			password = viewFunctions_.validateIntInput("Password: "); //catch exception in scannerInt
 			
 			try{
-				userType = loginController_.login(email, password); //if userType == 0 then userName or password are incorrect
-			}
-			catch(IllegalArgumentException e) {
+				userType = userSessionServiceController_.login(email, password); //if userType == 0 then userName or password are incorrect
+			} catch(IllegalArgumentException e) {
 				System.out.println(e.getMessage());
 			}
 			
@@ -52,7 +47,7 @@ public class Login {
 		
 		String msg = "";
 		if(userType != 0) {
-			msg = "Hello " + usersController_.getUserName() + "! You are now logged in as ";
+			msg = "Hello " + userSessionServiceController_.getUserName() + "! You are now logged in as ";
 			switch(userType){
 				case 1: 
 					msg += "an admin.";

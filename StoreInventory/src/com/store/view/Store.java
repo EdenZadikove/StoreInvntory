@@ -1,6 +1,5 @@
 package com.store.view;
 
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,7 +13,7 @@ public abstract class Store {
 	protected Map<String, String> productsMap_ = new Hashtable<String, String>();
 	protected Scanner scanner_;
 
-	public Store() throws IOException {
+	public Store(){
 		super();
 		viewFunctions_ = ViewFunctions.getInstance();
 		storeController_ = new StoreController();
@@ -22,7 +21,7 @@ public abstract class Store {
 		scanner_ = new Scanner(System.in);
 	}
 	
-	protected void showProductsTable(int isFiltered, String tableHeader, String emptyTableHeader) throws IOException {
+	protected void showProductsTable(String tableHeader, String emptyTableHeader) {
 		getProducts();
 		if(productsMap_.size() == 0) {
 			System.out.println(emptyTableHeader);
@@ -41,7 +40,17 @@ public abstract class Store {
 		System.out.println();
 	}
 	
-	protected void getProducts() throws IOException {
+	protected void getProducts() {
 		productsMap_ = storeController_.getProducts();
 	}	
+	
+	protected boolean isEmptyStore() {
+		if(productsMap_.size() == 0) { //empty store
+			System.out.println("! Action can not be taken. Store is empty.\n");
+			System.out.println(viewFunctions_.getSeperator());
+			return true;
+		}
+		return false;
+	}
+	
 }

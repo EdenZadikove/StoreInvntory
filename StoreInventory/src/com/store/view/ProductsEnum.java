@@ -1,20 +1,19 @@
 package com.store.view;
 
 import java.util.ArrayList;
-
-import com.store.controller.Controller;
+import com.store.controller.StoreController;
 
 public enum ProductsEnum {
 	Gloves, Coat, Scarf, Swimsuit, Tshirt, Dress, values;
 	
-	private Controller controller_;
+	private StoreController storeController_;
 	
 	ProductsEnum() {
-		controller_ = new Controller();
+		storeController_ = new StoreController();
 	}
 	
 	
 	public ArrayList<String> getProductsDetails(String product) {
-		return controller_.getProductDetails(product);
+		return storeController_.getProductDetails(product);
 	}
 }

@@ -1,56 +1,78 @@
 package com.store.model.services;
 
-import java.io.IOException;
+import java.util.Map;
 
 import com.store.model.UsersFactory;
-import com.store.model.database.OrdersDB;
-import com.store.model.database.StoreDB;
-import com.store.model.database.UsersDB;
+import com.store.model.database.OrdersRepository;
+import com.store.model.database.StoreRepository;
+import com.store.model.database.UsersRepository;
+import com.store.model.entities.Admin;
+import com.store.model.entities.Seller;
+import com.store.model.entities.Supplier;
 import com.store.model.entities.User;
 
 public class UserSessionService {
-	private UsersDB users_; 
+	private UsersRepository usersRepository_; 
 	private UsersFactory usersFactory_;
+	private Map<String, User> users_;
+	private static User activeUser_;
 	
 	public UserSessionService() {
-		users_ = UsersDB.getInstance();
+		usersRepository_ = UsersRepository.getInstance();
+		users_ = usersRepository_.getUsers();
 		usersFactory_ = new UsersFactory();
+		initUsers();
 	}
 	
-	public User signIn(String email, int password) throws IOException {
-		User user  = validateUser(email, password);
-		if(user == null)
-			return null;
-		createUser(user);
-		return user;
-	}
-
-	public void logOut() {
-		 UsersDB.resetInstance();
-		 StoreDB.resetInstance();
-		 OrdersDB.resetInstance();
-	}
-	
-	public int getUserType(User user) {
-		if(user == null)
+	public int signIn(String email, int password){
+		validateUser(email, password);
+		if(activeUser_ == null)
 			return 0;
-		return user.getUserType();
+		createUser();
+		return activeUser_.getUserType();
 	}
-	
-	public String getUserName(User user) {
-		return user.getUserName();
-	}
-	
-	private User validateUser(String email, int password) {
-		User user = users_.getUsers().get(email); 
-		if(user == null || user.getPassword() != password )
-			return null;
-		return user;
-	}
-	
-	private void createUser(User user) throws IOException {
-		usersFactory_.getUser(user);
-	}
-	
 
+	public void logout() {
+		 UsersRepository.resetInstance();
+		 StoreRepository.resetInstance();
+		 OrdersRepository.resetInstance();
+	}
+	
+	public int getUserType() {
+		if(activeUser_ == null)
+			return 0;
+		return activeUser_.getUserType();
+	}
+	
+	public String getUserName() {
+		return activeUser_.getUserName();
+	}
+	
+	public void saveToFileUsers() {
+		usersRepository_.writeToFile(users_);
+	}
+	
+	private void validateUser(String email, int password) {
+		activeUser_ = usersRepository_.getUsers().get(email); 
+		if(activeUser_ != null && activeUser_.getPassword() != password )
+			activeUser_ = null;
+	}
+	
+	private void createUser(){
+		usersFactory_.getUser(activeUser_);
+	}
+	
+	private void initUsers(){
+		if(users_.size() == 0) {		
+			User user1 = new Admin("Eden Zadikove", 123, "eden", 1, "Best-Store-Ever");
+			User user2 = new Seller("Danny Bernshtein", 456, "danny", 2,  "Best-Store-Ever");
+			User user3 = new Supplier("Sharom Mauda", 789, "sharon");
+
+			users_.put(user1.getEmail(), user1);
+			users_.put(user2.getEmail(), user2);
+			users_.put(user3.getEmail(), user3);
+			
+			saveToFileUsers();
+		}
+	}
 }

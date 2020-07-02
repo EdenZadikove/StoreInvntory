@@ -1,15 +1,14 @@
 package com.store.view;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class OrdersAdmin extends Orders {
 	
-	public OrdersAdmin() throws IOException {
+	public OrdersAdmin(){
 		super();
 	}
 	
-	public int showMenu() throws IOException {
+	public int showMenu(){
 		
 		int command = -1;
 		int validCommandFlag = 0;
@@ -57,7 +56,7 @@ public class OrdersAdmin extends Orders {
 		System.out.println("Save and Logout        ========> 0");
 	}
 	
-	private boolean actionNavigate(int command) throws IOException {
+	private boolean actionNavigate(int command){
 		boolean result = false; //if result == true then show menu again
 		boolean isEmptyOrders = false; //not empty
 		String prevScreensTemp = viewFunctions_.getPrevScreens() + " -----> " + "Orders Manager Menu";
@@ -78,8 +77,7 @@ public class OrdersAdmin extends Orders {
 			result = viewFunctions_.anotherActions();
 			break;
 		case 3: //Cancel pending order 
-			System.out.println(viewFunctions_.getSeperator());
-			System.out.println();
+			System.out.println(viewFunctions_.getSeperator() + "\n");
 			System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "Cancel pending order"));
 			isEmptyOrders = isEmptyMap("pending");
 			if(!isEmptyOrders) {
@@ -92,8 +90,7 @@ public class OrdersAdmin extends Orders {
 			}		
 			break;
 		case 4: //Delete existing order
-			System.out.println(viewFunctions_.getSeperator());
-			System.out.println();
+			System.out.println(viewFunctions_.getSeperator() + "\n");
 			System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "Delete existing order"));
 			isEmptyOrders = isEmptyMap("all");
 			if(!isEmptyOrders) {
@@ -126,7 +123,7 @@ public class OrdersAdmin extends Orders {
 		return result;
 	}
 	
-	private void createOrder() throws IOException {
+	private void createOrder(){
 		int item = -1;
 		int quantity = 0;
 		
@@ -137,29 +134,32 @@ public class OrdersAdmin extends Orders {
 		item = viewFunctions_.validateInsertedData_noZeroOne(1, 6, item, "I would like to order: ", "! Invalid item. Please try again"); 
 		
 		//print selected item details
-		System.out.println();
-		System.out.println(viewFunctions_.getSeperator());
-		System.out.println();
+		System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 		System.out.println("Selected item details: \n");
 		printProductsDetails(ProductsEnum.values()[item-1]);
 		System.out.println();
 		
-		quantity = viewFunctions_.validateIntInput("How many items would you like to order? ");
-		quantity = viewFunctions_.validateInsertedData_noZeroOne(1, 100, quantity, "I would like to order: ", "! Quantity must be between 1 to 100"); 
-		
-		int orderId = ordersController_.createOrder(ProductsEnum.values()[item-1].toString(), quantity);
-		System.out.println();
-		System.out.println(viewFunctions_.getSeperator());
-		System.out.println();
+		quantity = viewFunctions_.validateIntInput("How many items would you like to order? "); 
+		boolean validInputFlag = false;
+		int orderId = 0;
+		while(!validInputFlag) {
+			try {
+				orderId = ordersController_.createOrder(ProductsEnum.values()[item-1].toString(), quantity);
+				validInputFlag = true;
+			} catch(IllegalArgumentException e) {
+				System.out.println(e.getMessage());
+				quantity = viewFunctions_.validateIntInput("I would like to order: ");
+			}
+		}
+		 
+		System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 		System.out.println("Order successfully created!\n");
 		System.out.println("Order Summery:");
-		System.out.println("Order ID:    " + orderId);
-		System.out.println("Item Name:   " + ProductsEnum.values()[item-1]);
-		System.out.println("Quantity:    " + quantity);
+		System.out.println("Order ID:     " + orderId);
+		System.out.println("Item Name:    " + ProductsEnum.values()[item-1]);
+		System.out.println("Quantity:     " + quantity);
 		System.out.println("Order Status: pending");
-		System.out.println();
-		System.out.println(viewFunctions_.getSeperator());
-		System.out.println();
+		System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 	}
 	
 	private void showItemsMenu() {
@@ -181,20 +181,20 @@ public class OrdersAdmin extends Orders {
 	private void printProductsDetails(ProductsEnum p) {
 		ArrayList <String> details;
 		details = p.getProductsDetails(p.toString());
-		System.out.println("Item Name: " + details.get(0));
-		System.out.println("Item Session: " + details.get(1));
-		System.out.println("Item Price (per unit): " + details.get(2) + "$");
-		System.out.println("Currently available in store inventory: " + details.get(3) + " units");
+		System.out.println("Item name:             " + details.get(0));
+		System.out.println("Item session:          " + details.get(1));
+		System.out.println("Item price (per unit): " + details.get(2) + "$");
+		System.out.println("Available in stock:    " + details.get(3) + " units");
 	}
 	
-	private int cancelOrder() throws IOException {
+	private int cancelOrder() {
 		String introduction = "\n1.  Pay attention- you can only cancel orders with status 'pending'\n" + 
 							  "\n2.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu\n" +
 							  "\n3.  Press '-1' in any stage if you want show orders table in order to choose order ID";
 		return actions(introduction, "cancel", 0, 1, "pending");
 	}
 	
-	private int deleteOrder() throws IOException {	
+	private int deleteOrder() {
 		String introduction = "\n1.  Pay attention: - you can only delete orders with status 'denied', 'approved' or 'canceled'\n" + 
 				  "\n                   - By deleting order you won't see it in the table anymore.\n" +
 				  "\n                   - This action can not be undo!\n" + 
@@ -203,7 +203,7 @@ public class OrdersAdmin extends Orders {
 		return actions(introduction, "delete", 0, 1, "all");
 	}
 	
-	private int editOrder() throws IOException {
+	private int editOrder() {
 		String introduction = "\n1.  Pay attention: - you can only edit orders with status 'pending'\n" + 
 				  "\n                   - This action can not be undo!\n" +
 				  "\n2.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu.\n" + 

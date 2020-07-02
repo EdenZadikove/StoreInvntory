@@ -1,20 +1,20 @@
 package com.store.view;
 
-import java.io.IOException;
-import com.store.controller.LoginController;
+import com.store.controller.UserSessionServiceController;
 
-public class SellerMenu {
-	private LoginController loginController_ ;
+public class SellerMenu implements Menu {
+	private UserSessionServiceController userSessionService_ ;
 	private StoreSeller storeSeller_;
 	private ViewFunctions viewFunctions_;
 	
-	public SellerMenu() throws IOException {
-		loginController_ = new LoginController();
+	public SellerMenu() {
+		userSessionService_ = new UserSessionServiceController();
 		storeSeller_ = new StoreSeller();
 		viewFunctions_ = ViewFunctions.getInstance();
 	}
 	
-	public void menuManager() throws IOException {
+	@Override
+	public void menuManager(){
 		int command = 0;
 		int showMainMenuAgain = -1; //-1 - show main menu
 		while(showMainMenuAgain == -1) {
@@ -24,7 +24,6 @@ public class SellerMenu {
 		if(showMainMenuAgain == 0 && command != 0) //command arrived from other screen
 			showMainMenuAgain = showSelectedScreen(0);
 	}
-	
 	
 	private int mainMenu() {
 		int command = -1;
@@ -42,6 +41,20 @@ public class SellerMenu {
 		return command;
 	}
 	
+	private int showSelectedScreen(int command){
+		int showMainMenuAgain = 0; //0- don't show again, -1- show again
+		switch(command) {
+		case 0:
+			System.out.println("Logout...");
+			userSessionService_.logout();
+			break;
+		case 1:
+			showMainMenuAgain = storeSeller_.showMenu();
+			break;
+		}
+		return showMainMenuAgain;
+	}
+	
 	private int validateInsertedData(int start, int end, int command, String text, String errorMsg) {
 		while (!(command <= end && command >= start)) {
 			System.out.println(); // print enter
@@ -50,19 +63,5 @@ public class SellerMenu {
 		}
 		System.out.println(); // print enter
 		return command;
-	}
-	
-	private int showSelectedScreen(int command) throws IOException {
-		int showMainMenuAgain = 0; //0- don't show again, -1- show again
-		switch(command) {
-		case 0:
-			System.out.println("Logout...");
-			loginController_.logout();
-			break;
-		case 1:
-			showMainMenuAgain = storeSeller_.showMenu();
-			break;
-		}
-		return showMainMenuAgain;
 	}
 }

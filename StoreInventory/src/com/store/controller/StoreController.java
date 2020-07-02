@@ -1,30 +1,39 @@
 package com.store.controller;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
-import com.store.model.Model;
+import com.store.model.services.StoreService;
 
-public class StoreController {
-	private Model model_;
+public class StoreController {;
+	private StoreService storeService_;
 	
-	public StoreController() throws IOException {
-		model_ = new Model();
+	public StoreController(){
+		storeService_ = new StoreService();
 	}
 
-	public Map<String, String> getProducts() throws IOException{
-		return model_.getProducts();
+	public Map<String, String> getProducts(){
+		return storeService_.getProducts();
 	}
 	
-	public String editPrice(String itemName, double price) {
-		return model_.editPrice(itemName, price);
+	public boolean editPrice(String itemName, double price, double oldPrice) throws Exception {
+		//validate price
+		if(price == oldPrice)
+			throw new Exception("\n! " + itemName + " price is already " + price + ".");
+		else if(price <= 0)
+			throw new Exception("\n! " + itemName + " price must be more then 0");
+		return storeService_.editPrice(itemName, price);
 	}
 	
-	public String removeProduct(String itemName) {
-		return model_.removeProduct(itemName);
+	public boolean removeProduct(String itemName) {
+		return storeService_.removeProduct(itemName);
 	}
 	
-	public void saveToFileStore() throws IOException {
-		model_.saveToFileStore();
+	public ArrayList<String> getProductDetails(String product) {
+		return storeService_.getProductDetails(product);
+	}
+
+	public void saveToFileStore() {
+		storeService_.saveToFileStore();
 	}
 }

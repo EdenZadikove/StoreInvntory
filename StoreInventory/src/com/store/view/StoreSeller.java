@@ -1,16 +1,14 @@
 package com.store.view;
 
-import java.io.IOException;
-
 public class StoreSeller extends Store {
 	private String prevScreens_;
 	
-	public StoreSeller() throws IOException {
+	public StoreSeller(){
 		super();
 		prevScreens_ = viewFunctions_.getPrevScreens() + " -----> " + "Store Manager Menu";
 	}
 
-	public int showMenu() throws IOException {
+	public int showMenu(){
 		int command = -1; 
 		int validCommandFlag = 0;
 		boolean firstTimeMenuFlag = true; //If menu is printed for the first time- no need to print a separator
@@ -53,14 +51,14 @@ public class StoreSeller extends Store {
 	}
 	
 	
-	private boolean actionNavigate(int command) throws IOException {
+	private boolean actionNavigate(int command){
 		boolean result = false; //if result == true then show menu again
 	//	boolean isEmptyStore = false; //not empty
 		switch(command) {
 		case 1: //View store inventory
 			System.out.println(viewFunctions_.getSeperator());
 			System.out.println(viewFunctions_.showProgressBar(prevScreens_, "View store inventory"));
-			showProductsTable(1, "Store Inventory:", " "); 
+			showProductsTable("Store Inventory:", "! Empty Store. Create new orders to fill the store :)"); 
 			result = true;
 			break;
 		default: //Exit screen, for case 0 and -1

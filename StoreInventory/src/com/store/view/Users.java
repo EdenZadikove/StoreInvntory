@@ -1,9 +1,7 @@
 package com.store.view;
 
-import java.io.IOException;
-
 public class Users{
-	public void showMenu() throws IOException {
+	public void showMenu(){
 		System.out.println("\nWhich action would you like to do?\n");
 		System.out.println("Create a new order     ========> 1");
 		System.out.println("Cancel existing order  ========> 2");

@@ -53,7 +53,7 @@ public class Order implements Serializable {
 		return orderDate;
 	}
 
-	public String setFormatDate() {
+	private String setFormatDate() {
 		LocalDateTime  orderDate = LocalDateTime.now();
 		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy  HH:mm:ss");
 		return orderDate.format(myFormatObj);

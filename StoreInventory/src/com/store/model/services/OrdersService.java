@@ -1,34 +1,31 @@
 package com.store.model.services;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-
-import com.store.model.database.OrdersDB;
+import com.store.model.database.OrdersRepository;
 import com.store.model.entities.Order;
 
 public class OrdersService {
 	
-	private static OrdersDB ordersDB_;
+	private static OrdersRepository ordersRepository_;
 	private Map<Integer, Order> orders_; 
 	private StoreService storeService_;
 
 	public OrdersService(){
-		ordersDB_ = OrdersDB.getInstance();
-		orders_ = ordersDB_.getOrders();
+		ordersRepository_ = OrdersRepository.getInstance();
+		orders_ = ordersRepository_.getOrders();
 		storeService_ = new StoreService();
 	}
 		
-	public int cretaeOrder(String itemName, int Quntity) throws IOException {
-		int orderId = calculateOrderId();
+	public int createOrder(String itemName, int Quntity){
+		int orderId = calculateOrderId(); 
 		Order newOrder = new Order(orderId, itemName, Quntity);
 		orders_.put(orderId, newOrder);
-		ordersDB_.setOrders(orders_); //update orders map	
 		return orderId;
 	}
 
-	private int calculateOrderId() throws IOException {
+	private int calculateOrderId(){
 		int maxKey = 1;
 		//empty orders table
 		if(orders_.size() == 0)
@@ -44,16 +41,13 @@ public class OrdersService {
 	}
 	
 	public boolean cancelOrder(int orderId) throws Exception {
-		Order order = isOrderExist(orderId);
+		Order order = isOrderExists(orderId);
 		if  (order == null)
-			throw new Exception("Order does not exist!");
-			//return "Order does not exist!";
-		
+			return false;
 		//check if order status is 'pending'
 		if(order.getOrderStatus().equals("pending")) {
 			order.setOrderStatus("canceled");
 			orders_.put(orderId, order);
-			//return "Order id- " + orderId + " successfully canceled";
 			return true;
 		}
 		if(order.getOrderStatus().equals("canceled"))
@@ -62,31 +56,30 @@ public class OrdersService {
 	}
 	
 	public boolean deleteOrder(int orderId) throws Exception {
-		Order order = isOrderExist(orderId);
+		Order order = isOrderExists(orderId);
 		if  (order == null)
-			throw new Exception("Order does not exists!");
-		
+			return false;
 		//check if order status is 'canceled, approved or denied'
 		if(order.getOrderStatus().equals("canceled") || order.getOrderStatus().equals("approved") || order.getOrderStatus().equals("denied")) {
 			orders_.remove(orderId);
 			return true;
 		}
-		throw new Exception( "Order id- " + orderId + " can not be deleted because its waiting for supplier's response.\nIf"
+		throw new Exception("Order id- " + orderId + " can not be deleted because its waiting for supplier's response.\nIf"
 					+ " you want to delete this order - 1. Cancel this order\n"
 					+ "                                   2. Delete this order.");	
 	}
 	
-	public String editOrder(int orderId, int quantity) {
-		Order order = isOrderExist(orderId);
+	public boolean editOrder(int orderId, int quantity) throws Exception {
+		Order order = isOrderExists(orderId);
 		if  (order == null)
-			return "Order does not exist!";
+			return false;
 		if(order.getOrderStatus().equals("canceled") || order.getOrderStatus().equals("approved") || order.getOrderStatus().equals("denied"))
-			return "Order id- " + orderId + " can not be edited because its already " + order.getOrderStatus() + " by the supplier.";
+			throw new Exception("Order id- " + orderId + " can not be edited because its already " + order.getOrderStatus() + " by the supplier.");
 		if(order.getQuantity() == quantity) {
-			return "Order quantity is already set to - " + order.getQuantity();
+			throw new Exception("Order quantity is already set to - " + order.getQuantity());
 		}
 		order.setQuantity(quantity);
-		return "Order quantity successfully updated to- " + order.getQuantity();	
+		return true;
 	}
 		
 	public int getOrdersSize() {
@@ -102,24 +95,22 @@ public class OrdersService {
 		return itemsCounter;
 	}
 	
-	public String changeOrderStatus(int orderId, String action) throws IOException {
+	public boolean changeOrderStatus(int orderId, String action){
 		
-		Order order = isOrderExist(orderId);
+		Order order = isOrderExists(orderId);
 		if  (order == null || !order.getOrderStatus().equals("pending"))
-			return "Order does not exist!";
-		String oldStatus = order.getOrderStatus();
+			return false;
 		order.setOrderStatus(action);
 		orders_.put(orderId, order); //update original map
 		
 		if(action == "approved") {//update store inventory
-			storeService_.updateStoreInventory(order.getItemName(), order.getQuantity());
+			storeService_.addProductToStoreInventory(order.getItemName(), order.getQuantity());
 		}
-		return "Order ID - " + orderId + " is successfully updated from " + oldStatus + " to " + order.getOrderStatus();
+		return true;
 	}
 	
-
-	//convert from map to array list of strings
 	public ArrayList<String> getOrders(String filterStatus) {	
+		//convert from map to array list of strings
 		ArrayList<String> ordersList = new ArrayList<String>();
 		if(orders_.size() != 0) { //NOT empty map
 			for(Iterator<Map.Entry<Integer, Order>> it = orders_.entrySet().iterator(); it.hasNext(); ) {
@@ -145,7 +136,7 @@ public class OrdersService {
 		return ordersList;
 	}
 	
-	public boolean isOrderExistBoolean(int orderId, String statusFilter, String action) throws Exception {
+	public boolean isOrderExistsByFilter(int orderId, String statusFilter, String action) throws Exception {
 		Order order = orders_.get(orderId);
 		if(order == null) return false;
 		String orderStatus = order.getOrderStatus();
@@ -180,11 +171,11 @@ public class OrdersService {
 		return true;
 	}
 	
-	public void saveToFileOrders() throws IOException {
-		ordersDB_.writeToFile(orders_);
+	public void saveToFileOrders() {
+		ordersRepository_.writeToFile(orders_);
 	}
 	
-	private Order isOrderExist(int orderId) {
+	private Order isOrderExists(int orderId) {
 		return orders_.get(orderId);
 	}
 }

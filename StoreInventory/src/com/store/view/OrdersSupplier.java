@@ -1,15 +1,13 @@
 package com.store.view;
 
-import java.io.IOException;
-
 public class OrdersSupplier extends Orders {
 
-	public OrdersSupplier() throws IOException {
+	public OrdersSupplier() {
 		super();
 		ordersList_ = ordersController_.getOrders("pending");
 	}
 	
-	public int showMenu() throws IOException {
+	public int showMenu() {
 		int command = -1;
 		boolean firstTimeMenuFlag = true; //If menu is printed for the first time- no need to print a separator
 		int validCommandFlag = 0;
@@ -54,7 +52,7 @@ public class OrdersSupplier extends Orders {
 		
 	}
 	
-	private boolean actionNavigate(int command) throws IOException {
+	private boolean actionNavigate(int command) {
 		boolean result = false; //if result == true then show menu again
 		String prevScreensTemp = viewFunctions_.getPrevScreens() + " -----> " + "Orders Manager Menu";
 		int res = -1;
@@ -101,11 +99,12 @@ public class OrdersSupplier extends Orders {
 		return result;
 	}
 	
-	private int navigateAction(String action) throws IOException { //return orderId
+	private int navigateAction(String action)  { //return orderId
 
 		String introduction = "\n1.  Press '0' in any stage if you want to exit and go back to Orders Manager Menu\n" +
 				  "\n2.  Press '-1' in any stage if you want show orders table in order to choose order ID";
-		if(action.equals("approved")) return actions(introduction, "approved", 1,3, "pending"); 
+		if(action.equals("approved")) 
+			return actions(introduction, "approved", 1,3, "pending"); 
 		return actions(introduction, "denied", 1, 3, "pending");
 	}
 }

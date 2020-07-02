@@ -1,20 +1,20 @@
 package com.store.view;
 
-import java.io.IOException;
-import com.store.controller.LoginController;
+import com.store.controller.UserSessionServiceController;
 
-public class SupplierMenu {
+public class SupplierMenu implements Menu {
 	private OrdersSupplier ordersSupplier_;
-	private LoginController loginController_;
+	private UserSessionServiceController userSessionService_;
 	private ViewFunctions viewFunctions_;
 	
-	public SupplierMenu() throws IOException {
+	public SupplierMenu() {
 		ordersSupplier_ = new OrdersSupplier();
-		loginController_ = new LoginController();
+		userSessionService_ = new UserSessionServiceController();
 		viewFunctions_ = ViewFunctions.getInstance();
 	}
 	
-	public void menuManager() throws IOException {
+	@Override
+	public void menuManager() {
 		int command = 0;
 		int showMainMenuAgain = -1; //-1 - show main menu
 		while(showMainMenuAgain == -1) {
@@ -48,12 +48,12 @@ public class SupplierMenu {
 		return command;
 	}
 	
-	private int showSelectedScreen(int command) throws IOException {
+	private int showSelectedScreen(int command) {
 		int showMainMenuAgain = 0; //0- don't show again, -1- show again
 		switch(command) {
 		case 0:
 			System.out.println("Logout...");
-			loginController_.logout();
+			userSessionService_.logout();
 			break;
 		case 1:
 			showMainMenuAgain = ordersSupplier_.showMenu();

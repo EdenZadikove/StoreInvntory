@@ -1,61 +1,65 @@
 package com.store.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import com.store.model.Model;
+import com.store.model.services.OrdersService;
 
 public class OrdersController {
 	
-	private Model model_;
+	private OrdersService ordersService_;
 	
-	public OrdersController() throws IOException {
-		model_ = new Model();
+	public OrdersController(){
+		ordersService_ = new OrdersService();
 	}
 	
-	public boolean isOrderExists(int orderId, String statusFilter,  String action) throws Exception {
-		return model_.isOrderExists(orderId, statusFilter, action);
+	public boolean isOrderExistsByFilter(int orderId, String statusFilter, String action) throws Exception {
+		return ordersService_.isOrderExistsByFilter(orderId, statusFilter, action);
 	}
 	
-	public int createOrder(String itemName, int quantity) throws IOException {
-		return model_.cretaeOrder(itemName, quantity);
-		
+	public int createOrder(String itemName, int quantity){	
+		if(quantity < 1 || quantity > 100)
+			throw new IllegalArgumentException("\n! Quantity must be between 1 to 100");
+		return ordersService_.createOrder(itemName, quantity);
 	}
 	
 	public boolean cancelOrder(int orderId) throws Exception {
-		return model_.cancelOrder(orderId);
+		return ordersService_.cancelOrder(orderId);
 	}
 	
 	public boolean deleteOrder(int orderId) throws Exception {
-		return model_.deleteOrder(orderId);
+		return ordersService_.deleteOrder(orderId);
 	}
 	
-	public String editOrder(int orderId, int quantity) {	
+	public boolean editOrder(int orderId, int quantity) throws Exception{	
 		//check if order ID is valid
 		if(orderId < -1)
 			throw new IllegalArgumentException("! Order Id must be more then 0");	
 		if(quantity < 1 || quantity > 100)
 			throw new IllegalArgumentException("! Quantity must be between 1 to 100");
 	
-		return model_.editOrder(orderId, quantity);
+		return ordersService_.editOrder(orderId, quantity);
 	}
 	
-	public void saveToFile() throws IOException {
-		model_.saveToFileOrders();
+	public void saveToFileOrders()  {
+		ordersService_.saveToFileOrders();
 	}
 	
-	public ArrayList<String> getOrders(String filterStatus) throws IOException{
-		return model_.getOrders(filterStatus);
+	public ArrayList<String> getOrders(String filterStatus) throws IllegalArgumentException{
+		if(filterStatus == "" || filterStatus == null)
+			throw new IllegalArgumentException("! Invalid filter. contact your administrator");
+		return ordersService_.getOrders(filterStatus);
 	}
 	
 	public int getOrdersSize() {
-		return model_.getOrdersSize();
+		return ordersService_.getOrdersSize();
 	}
 	
-	public int itemsCounterByFilter(String filter) {
-		return model_.itemsCounterByFilter(filter);
+	public int itemsCounterByFilter(String filter) throws IllegalArgumentException {
+		if(filter == "" || filter == null)
+			throw new IllegalArgumentException("! Invalid filter. contact your administrator");
+		return ordersService_.itemsCounterByFilter(filter);
 	}
 
-	public String changeOrderStatus(int orderId, String action) throws IOException {
-		return model_.changeOrderStatus(orderId, action);
+	public boolean changeOrderStatus(int orderId, String action){
+		return ordersService_.changeOrderStatus(orderId, action);
 	}
 }

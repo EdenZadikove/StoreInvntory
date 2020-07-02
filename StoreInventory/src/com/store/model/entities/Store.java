@@ -6,15 +6,15 @@ import java.util.Map;
 public class Store implements Serializable {
 	private String storeName;
 	private String address;
-	private User manager;
-	private Map<String, Product> productsMap;
+	private String managerName;
+	private Map<String, Product> products_;
 	
-	public Store(String storeName, String address, User manager, Map<String, Product> productsMap) {
+	public Store(String storeName, String address, String managerName, Map<String, Product> products_) {
 		super();
 		this.storeName = storeName;
 		this.address = address;
-		this.manager = manager;
-		this.productsMap = productsMap;
+		this.managerName = managerName;
+		this.products_ = products_;
 	}
 
 	public String getStoreName() {
@@ -33,21 +33,19 @@ public class Store implements Serializable {
 		this.address = address;
 	}
 
-	public User getManager() {
-		return manager;
+	public String getManagerName() {
+		return managerName;
 	}
 
-	public void setManager(User manager) {
-		this.manager = manager;
+	public void setManagerName(String managerName) {
+		this.managerName = managerName;
 	}
 
 	public Map<String, Product> getProductsMap() {
-		return productsMap;
+		return products_;
 	}
 
 	public void setProductsMap(Map<String, Product> productsMap) {
-		this.productsMap = productsMap;
+		this.products_ = productsMap;
 	}
-	
-	
 }

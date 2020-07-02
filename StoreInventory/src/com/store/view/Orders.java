@@ -1,6 +1,5 @@
 package com.store.view;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import org.apache.commons.lang3.StringUtils;
@@ -12,14 +11,14 @@ public abstract class Orders{
 	protected ArrayList<String> ordersList_ = new ArrayList<String>();
 	protected Scanner scanner_;
 	
-	public Orders () throws IOException {
+	public Orders (){
 		super();
 		viewFunctions_ = ViewFunctions.getInstance();
 		ordersController_ = new OrdersController();
 		scanner_ = new Scanner(System.in);
 	}
 	
-	protected void commandIsZeroOrNegetiveOne(int command, int userType) throws IOException{
+	protected void commandIsZeroOrNegetiveOne(int command, int userType){
 		String prevScreensTemp = viewFunctions_.getPrevScreens() + " -----> " + "Orders Manager Menu";
 		
 		if(command == 0) System.out.println("\nGoing back to Orders Manager Menu...\n");
@@ -40,8 +39,14 @@ public abstract class Orders{
 		}
 	}
 	
-	protected void showOrdersTable(String filterStatus, String tableHeader, String emptyTableHeader) throws IOException {
-		ordersList_ = ordersController_.getOrders(filterStatus);
+	protected void showOrdersTable(String filterStatus, String tableHeader, String emptyTableHeader){
+		try {
+			ordersList_ = ordersController_.getOrders(filterStatus);
+		} catch(IllegalArgumentException e){
+			System.out.println(e.getMessage());
+			 System.exit(1); //exit with failure
+		}
+		
 		if(ordersList_.size() == 0) System.out.println(emptyTableHeader);
 		else {
 			System.out.println(tableHeader);
@@ -58,15 +63,26 @@ public abstract class Orders{
 		System.out.println();
 	}
 	
-	protected int actions(String introduction, String action, int isFilterd, int userType, String filter) throws IOException {	
+	protected int actions(String introduction, String action, int isFilterd, int userType, String filter) {	
 		/*validate:
 		 * If 0 ---> go back to Orders Manager Menu
 		 * If -1 ---> show orders table
 		 * If  times range is 1 ---> don't show "How many items do you want to" */
 		
 		int orderId = 0; //if orderId == 0----> go back to Orders main menu
-		int timesToLoop = 1; // if timesToLoop == -1 then show again
-		int itemsCounter = ordersController_.itemsCounterByFilter(filter);
+		int timesToLoop = -1; // if timesToLoop == -1 then show again
+		int itemsCounter = 0;
+		if(action.equals("delete"))
+			itemsCounter = (ordersController_.itemsCounterByFilter("approved")) + (ordersController_.itemsCounterByFilter("denied")) + (ordersController_.itemsCounterByFilter("canceled"));
+		else{
+			try {
+				itemsCounter = ordersController_.itemsCounterByFilter(filter);
+			} catch(IllegalArgumentException e) {
+				System.out.println(e.getMessage());
+				 System.exit(1); //exit with failure
+			}
+		}
+		
 		System.out.println(viewFunctions_.getInstructionsHeader());
 		System.out.println(introduction + "\n");
 		System.out.println(viewFunctions_.getSeperator() +"\n");
@@ -80,10 +96,10 @@ public abstract class Orders{
 				commandIsZeroOrNegetiveOne(timesToLoop, userType);
 			}
 		}
-
+		System.out.println(viewFunctions_.getSeperator() + "\n");
 		while(timesToLoop > 0 ) {
 			System.out.println("Which order would you like to " + action + "?");
-			orderId = getOrderIdFromUser(filter, "Order id: ", action);   ///controller validate
+			orderId = getOrderIdFromUser(filter, "Order id: ", action);
 			commandIsZeroOrNegetiveOne(orderId, userType);
 
 			while(orderId == -1) {
@@ -96,11 +112,9 @@ public abstract class Orders{
 			if(action == "edit") {
 				System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 				quantity = viewFunctions_.validateIntInput("Update order quantity to: ");
-				//quantity = viewFunctions_.validateInsertedData(1, 100, quantity, "Update order quantity to: ", "! Quantity must be between 1 to 100");
 				commandIsZeroOrNegetiveOne(quantity, userType);
 				while(quantity == -1) { //if quantity == -1, then user want to view orders table
 					quantity =  viewFunctions_.validateIntInput("Update order quantity to: ");
-					//quantity = viewFunctions_.validateInsertedData(1, 100, quantity, "Update order quantity to: ", "! Quantity must be between 1 to 100");
 					commandIsZeroOrNegetiveOne(quantity, userType);
 					System.out.println();
 				}
@@ -110,13 +124,11 @@ public abstract class Orders{
 				}
 			}
 			
-			String msg = "";
-			boolean res = false;
+			String msg = "! Order id- " + orderId + "does not exists.";
 			switch(action) {
 				case "delete":
 					try {
-						res = ordersController_.deleteOrder(orderId);
-						if(res)
+						if(ordersController_.deleteOrder(orderId))
 							msg = "Order id- " + orderId + " successfully deleted";
 					} catch(Exception e) {
 						msg = e.getMessage();
@@ -124,8 +136,7 @@ public abstract class Orders{
 					break; 
 				case "cancel":
 					try {
-						res = ordersController_.cancelOrder(orderId);
-						if(res)
+						if(ordersController_.cancelOrder(orderId))
 							msg = "Order id- " + orderId + " successfully canceled";
 					}catch(Exception e) {
 						msg = e.getMessage();
@@ -134,16 +145,19 @@ public abstract class Orders{
 					break;
 				case "edit":
 					try {
-						msg = ordersController_.editOrder(orderId, quantity);
-					}
-					catch(IllegalArgumentException e) {
+						if(ordersController_.editOrder(orderId, quantity))
+							msg = "Order id- " + orderId + " quantity successfully updated to " + quantity + "units.";
+					}catch(Exception e) {
 						msg = e.getMessage();
-						//catchFlag = 1;
-						
 					}
 					break;	
-				default:
-					msg = ordersController_.changeOrderStatus(orderId, action);
+				default: //approved or denied
+					try {
+						if(ordersController_.changeOrderStatus(orderId, action))
+							msg = "Order ID - " + orderId + " is successfully updated from 'pending' to " + "'" + action + "'.";
+					}catch(Exception e) {
+						msg = e.getMessage();
+					}
 					break;
 			}
 			
@@ -160,23 +174,32 @@ public abstract class Orders{
 
 	
 	protected boolean isEmptyMap(String filter) {
+		if(filter.equals("all")) {
+			if((ordersController_.itemsCounterByFilter("approved") == 0 && 
+					ordersController_.itemsCounterByFilter("denied") == 0 &&
+					ordersController_.itemsCounterByFilter("canceled") == 0)) {
+				System.out.println("! Action can not be taken. Only pending orders in the table.\n");
+				System.out.println(viewFunctions_.getSeperator());
+				return true;
+			}
+		}
+		
 		if(ordersController_.itemsCounterByFilter(filter) == 0) { //empty orders map
-			System.out.println("! Action can not be taken. No " + filter + " orders in the table.");
-			System.out.println();
+			System.out.println("! Action can not be taken. No " + filter + " orders in the table. \n");
 			System.out.println(viewFunctions_.getSeperator());
 			return true;
 		}
 		return false;
 	}
 	
-	private int getOrderIdFromUser(String statusFilter, String text,  String action) throws IOException {
+	private int getOrderIdFromUser(String statusFilter, String text,  String action){
 		boolean continueFlag = true;
 		int orderId = -1;
 		while(continueFlag) {
 			orderId = viewFunctions_.validateIntInput(text);
 			try {
 				if(orderId != 0 && orderId != -1) {
-					if (!ordersController_.isOrderExists(orderId, statusFilter, action)) {
+					if (!ordersController_.isOrderExistsByFilter(orderId, statusFilter, action)) {
 						System.out.println("\n! Order does not exists. Please try again.");	
 					}
 					else continueFlag = false;

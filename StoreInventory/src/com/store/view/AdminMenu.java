@@ -1,24 +1,24 @@
 package com.store.view;
 
-import java.io.IOException;
-import com.store.controller.LoginController;
+import com.store.controller.UserSessionServiceController;
 
-public class AdminMenu {
+public class AdminMenu implements Menu{
 	private ViewFunctions viewFunctions_; 
 	private StoreAdmin storeAdmin_;
 	private OrdersAdmin ordersAdmin_;
 	private Users users_;
-	private LoginController loginController_;
+	private UserSessionServiceController userSessionServiceController_;
 	
-	public AdminMenu() throws IOException {
+	public AdminMenu(){
 		viewFunctions_ = ViewFunctions.getInstance();
 		storeAdmin_ = new StoreAdmin();
 		ordersAdmin_ = new OrdersAdmin();
 		users_ = new Users();
-		loginController_ = new LoginController();
+		userSessionServiceController_ = new UserSessionServiceController();
 	}
 	
-	public void menuManager() throws IOException {
+	@Override
+	public void menuManager(){
 		int command = 0; //initialize variable
 		int showMainMenuAgain = -1; //-1 - show main menu, 0 - Logout
 		while(showMainMenuAgain == -1) { // while user want to show menu again
@@ -29,7 +29,7 @@ public class AdminMenu {
 			showMainMenuAgain = showSelectedScreen(0);
 	}
 
-	private int mainMenu() throws IOException {
+	private int mainMenu(){
 		int command = -1;
 
 		System.out.println("\n" + viewFunctions_.getMainMenuHeader() +"\n");
@@ -46,12 +46,12 @@ public class AdminMenu {
 		return command;
 	}
 	
-	private int showSelectedScreen(int command) throws IOException {
+	private int showSelectedScreen(int command){
 		int showMainMenuAgain = 0;  //0- logout, -1 - show menu again
 		switch(command) {
 		case 0:
 			System.out.println("Logout...");
-			loginController_.logout();
+			userSessionServiceController_.logout();
 			break;
 		case 1:
 			showMainMenuAgain = storeAdmin_.showMenu(); //-1 - show again. 0- logout

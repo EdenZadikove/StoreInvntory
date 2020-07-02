@@ -4,17 +4,15 @@ import java.io.Serializable;
 
 public abstract class User implements Serializable{
 	
-	private String userName;
-	private int password;
-	private String phoneNumber;
-	private String email;
-	private int userType; //1 = admin, 2 = user, 3 = supplier 
+	protected String userName;
+	protected int password;
+	protected String email;
+	protected int userType; //1 = admin, 2 = user, 3 = supplier 
 	
-	public User(String userName, int password, String phoneNumber, String email, int userType) {
+	public User(String userName, int password, String email, int userType) {
 		super();
 		this.userName = userName;
 		this.password = password;
-		this.phoneNumber = phoneNumber;
 		this.email = email;
 		this.userType = userType;
 	}
@@ -35,14 +33,6 @@ public abstract class User implements Serializable{
 		this.password = password;
 	}
 
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -60,10 +50,6 @@ public abstract class User implements Serializable{
 	{
 		this.userType = userType;
 	}
-	
-	public String toString()
-	{
-		return userName + "::" + password + "::" +
-				phoneNumber + "::" + email + "::" + userType;
-	}
+	//public abstract String toString();
+
 }

@@ -166,4 +166,21 @@ public class ViewFunctions {
 		}
 		return num;
 	}
+	
+	public double validateDoubleInput(String text) {
+		boolean validFlag = false;
+		double num = -1;
+		while(!validFlag) {
+			try {
+				System.out.print(text);
+				num = scanner_.nextDouble();
+				validFlag = true;
+				
+			} catch(InputMismatchException e) {
+				System.out.println("\n! Invalid input. Please insert numbers only.");
+				scanner_.nextLine();
+			}	
+		}
+		return num;
+	}
 }

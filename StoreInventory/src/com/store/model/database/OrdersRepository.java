@@ -7,24 +7,23 @@ import java.util.Map;
 import com.store.model.entities.Order;
 
 
-public class OrdersDB extends FileManager<Object> {
+public class OrdersRepository extends FileManager<Object> {
 
 	private static String path_ = "..\\StoreInventory\\files\\orders.txt";
 	private static Map<Integer, Order> orders_ = new Hashtable<Integer, Order>();
-	private static OrdersDB instance_ = null;
-	
+	private static OrdersRepository instance_ = null;
 	
 	@SuppressWarnings("unchecked")
-	private OrdersDB () throws IOException {
+	private OrdersRepository () throws IOException {
 		super(path_);
 		orders_ = (Map<Integer, Order>) readFromFile(orders_);
 	}
 	
-	//Singletone
-	public static  OrdersDB getInstance() {
+	//Singleton
+	public static OrdersRepository getInstance() {
 		if (instance_ == null) {
 			try {
-				instance_ = new OrdersDB();
+				instance_ = new OrdersRepository();
 			}
 			catch(IOException e) {
 				e.printStackTrace();
@@ -33,7 +32,7 @@ public class OrdersDB extends FileManager<Object> {
 		return instance_;
 	}
 	
-	public static  void resetInstance() {
+	public static void resetInstance() {
 		instance_ = null;
 		orders_ = null;
 	}
@@ -44,11 +43,8 @@ public class OrdersDB extends FileManager<Object> {
 	}
 	
 	public void setOrders(Map<Integer, Order> orders_) {
-		OrdersDB.orders_ = orders_;
+		OrdersRepository.orders_ = orders_;
 	}
 	
-	public void saveToFile() throws IOException {
-		writeToFile(orders_);
-	}
 }
 
