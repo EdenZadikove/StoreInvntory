@@ -4,12 +4,6 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ViewFunctions {
-	/*Functions:
-	 * showProgressBar()
-	 * validateInsertedData()
-	 * showMenuAgain()
-	 * */
-	private static ViewFunctions instance_ = null;
 	private final int LENGTH = 114;
 	
 	private String prevScreens_ = "Main Menu";
@@ -23,7 +17,7 @@ public class ViewFunctions {
 	private Scanner scanner_;
 	
 
-	private ViewFunctions() {
+	public ViewFunctions() {
 		welcomMenuHeader_ = setHeader(LENGTH - "Welcome To Store Inventory System!".length(), "Welcome To Store Inventory System!");
 		seperator_ = setHeader(LENGTH, "");
 		instructionsHeader_ = setHeader(LENGTH-"INSTRUCTIONS".length(), "INSTRUCTIONS");
@@ -33,13 +27,6 @@ public class ViewFunctions {
 		orderMenuHeader_ = setHeader(LENGTH - "Orders Manager Menu".length(), "Order Manager Menu");
 		scanner_ = new Scanner(System.in);
 	}
-	
-	//Singletone
-	public static ViewFunctions getInstance() {
-			if (instance_ == null)
-				instance_ = new ViewFunctions();
-			return instance_;
-		} 
 	
 	public String getLoginHeader() {
 		return loginHeader_;
@@ -139,14 +126,31 @@ public class ViewFunctions {
 	
 	//ask the user if he want to do another action
 	public boolean anotherActions() {
+		boolean again = true;
+		boolean anotherAction = true;
 		System.out.println("Would you like to take another action?\n");
 		System.out.println("Yes, show me the menu please    ========> 1");
 		System.out.println("No, I'm done                    ========> 0\n");
-
-		int command = validateIntInput("My choice: ");
-		command = validateInsertedData_noZeroOne(0, 1, command, "My choice: ", "! Invalid choice. Please try again");
+		scanner_.nextLine();
+		
+		while(again) {
+			System.out.print("My choice: ");
+			String userOption = scanner_.nextLine();
+			switch(userOption){
+			case "1":
+				anotherAction = true;
+				again = false;
+				break;
+			case "0":
+				anotherAction = false;
+				again = false;
+				break;
+			default:
+				System.out.println("! Invalid choice. Please choose an option from the menu.\n");
+			}
+		}
 		System.out.println();
-		return command == 1; //true - show menu again, false- logout
+		return anotherAction;
 	}
 	
 	//catch exception for scannerInt, check id user insert integer.

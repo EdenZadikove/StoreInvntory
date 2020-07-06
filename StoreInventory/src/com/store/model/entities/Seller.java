@@ -4,7 +4,7 @@ public class Seller extends User {
 	private int employeeNumber;
 	private String storeName;
 	
-	public Seller(String userName, int passwrod, String email, int employeeNumber, String storeName) {
+	public Seller(String userName, String passwrod, String email, int employeeNumber, String storeName) {
 		super(userName, passwrod, email, 2);
 		this.employeeNumber = employeeNumber;
 		this.storeName = storeName;

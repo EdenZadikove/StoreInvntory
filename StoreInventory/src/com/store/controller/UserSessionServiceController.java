@@ -10,9 +10,9 @@ public class UserSessionServiceController {
 		this.userSessionService_ = new UserSessionService();
 	}
 	
-	public int login(String email, int password) throws IllegalArgumentException{
+	public int login(String email, String password) throws IllegalArgumentException{
 		if(email.equals("") || email == null)
-			throw new IllegalArgumentException("! Email must be not null. Please tru again.");
+			throw new IllegalArgumentException("\n! Email must not be null. Please try again.");
 		return userSessionService_.signIn(email, password);
 	}
 	

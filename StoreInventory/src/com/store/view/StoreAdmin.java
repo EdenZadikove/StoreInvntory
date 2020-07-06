@@ -1,6 +1,8 @@
 package com.store.view;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 
@@ -103,12 +105,15 @@ public class StoreAdmin extends Store {
 		System.out.println("Remove procudt         ========> 3");
 		System.out.println();
 		System.out.println("Back to main menu      ========> -1");
-		System.out.println("Save and Logout        ========> 0");
+		System.out.println("Save and logout        ========> 0");
 		System.out.println();
 	}
 
 	
 	private int actions(String action){
+		Map<String, String> productsMap_ = new Hashtable<String, String>();
+		productsMap_ = getProducts();
+		
 		int itemNumber = 0; //if itemNumber == 0----> go back to Store main menu
 		int timesToLoop = 1; // if timesToLoop == -1 then show again
 		int productsCounter = productsMap_.size();
@@ -132,11 +137,9 @@ public class StoreAdmin extends Store {
 		
 		int itemsCounter = 1;
 		
-		while(timesToLoop > 0){
-			getProducts(); //Synchronized with DB
-		
+		while(timesToLoop > 0){	
 			System.out.println(calcCounterStr("Which item would you like to " + action + "?", itemsCounter));
-			showProducts();
+			showProducts(productsMap_);
 			System.out.println();
 			itemNumber = viewFunctions_.validateIntInput("Item number: ");
 			itemNumber = validateInsertedData(1, productsMap_.size(), itemNumber, "Item number: ", "! Invalid item number. Please try again." );
@@ -204,7 +207,7 @@ public class StoreAdmin extends Store {
 		return itemNumber;
 	}
 	
-	private void showProducts(){
+	private void showProducts(Map<String, String> productsMap_){
 		int i = 1;
 		for (Entry<String, String> entry : productsMap_.entrySet()) {
 			String itemName = StringUtils.substringBetween(entry.getValue(), "ItemName:", ";");

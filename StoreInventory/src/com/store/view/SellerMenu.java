@@ -10,7 +10,7 @@ public class SellerMenu implements Menu {
 	public SellerMenu() {
 		userSessionService_ = new UserSessionServiceController();
 		storeSeller_ = new StoreSeller();
-		viewFunctions_ = ViewFunctions.getInstance();
+		viewFunctions_ = new ViewFunctions();
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-package com.store.model.database;
+package com.store.model.repository;
 
 import java.io.IOException;
 import java.util.Hashtable;
@@ -6,16 +6,16 @@ import java.util.Map;
 
 import com.store.model.entities.User;
 
-public class UsersRepository extends FileManager<Object>{
+public class UsersRepository{
 	
 	private static String path_ = "..\\StoreInventory\\files\\users.txt";
-	private static Map<String, User> users_ = new Hashtable<String, User>();
+	private  Map<String, User> users_ = new Hashtable<String, User>();
 	private static UsersRepository instance_ = null;
-
-	@SuppressWarnings("unchecked")
+	private FileManager<Map<String, User>> fileManager; 
+	
 	private UsersRepository() throws IOException {
-		super(path_);	
-		users_ = (Map<String, User>) readFromFile(users_);
+		this.fileManager = new FileManager<>(path_);
+		users_ = fileManager.readFromFile(users_);
 	}
 	
 	//Singleton
@@ -31,12 +31,20 @@ public class UsersRepository extends FileManager<Object>{
 		return instance_;
 	}
 	
-	public static void resetInstance() {
+	public void resetInstance() {
 		instance_ = null;
 		users_ = null;
 	}
 	
 	public Map<String, User> getUsers(){
 		return users_;
+	}
+	
+	public void setUsers_(Map<String, User> users_) {
+		this.users_ = users_;
+	}
+
+	public void saveToFile() {
+		this.fileManager.writeToFile(users_);
 	}
 }

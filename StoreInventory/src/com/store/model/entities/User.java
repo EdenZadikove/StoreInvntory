@@ -1,15 +1,14 @@
 package com.store.model.entities;
 import java.io.Serializable;
 
-
 public abstract class User implements Serializable{
 	
 	protected String userName;
-	protected int password;
+	protected String password;
 	protected String email;
 	protected int userType; //1 = admin, 2 = user, 3 = supplier 
 	
-	public User(String userName, int password, String email, int userType) {
+	public User(String userName, String password, String email, int userType) {
 		super();
 		this.userName = userName;
 		this.password = password;
@@ -25,11 +24,11 @@ public abstract class User implements Serializable{
 		this.userName = userName;
 	}
 
-	public int getPassword() {
+	public String getPassword() {
 		return password;
 	}
 
-	public void setPassword(int password) {
+	public void setPassword(String password) {
 		this.password = password;
 	}
 

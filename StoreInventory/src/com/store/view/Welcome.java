@@ -9,7 +9,7 @@ public class Welcome {
 	private ArrayList<Menu> menuInterface = new ArrayList<Menu>();
 	
 	public Welcome() {
-		viewFunctions_ = ViewFunctions.getInstance();
+		viewFunctions_ = new ViewFunctions();
 		initMenuInterface();
 	}
 	

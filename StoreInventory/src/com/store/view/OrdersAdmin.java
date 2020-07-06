@@ -117,7 +117,7 @@ public class OrdersAdmin extends Orders {
 			}
 			break;
 		default: //Exit screen, for case 0 and -1
-			ordersController_.saveToFile();
+			ordersController_.saveToFileOrders();
 			break;
 		}
 		return result;
@@ -139,9 +139,11 @@ public class OrdersAdmin extends Orders {
 		printProductsDetails(ProductsEnum.values()[item-1]);
 		System.out.println();
 		
-		quantity = viewFunctions_.validateIntInput("How many items would you like to order? "); 
+		//Ask user how many items
 		boolean validInputFlag = false;
 		int orderId = 0;
+		quantity = viewFunctions_.validateIntInput("How many items would you like to order? "); 
+
 		while(!validInputFlag) {
 			try {
 				orderId = ordersController_.createOrder(ProductsEnum.values()[item-1].toString(), quantity);
@@ -151,7 +153,8 @@ public class OrdersAdmin extends Orders {
 				quantity = viewFunctions_.validateIntInput("I would like to order: ");
 			}
 		}
-		 
+		
+		//Print order summary 
 		System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 		System.out.println("Order successfully created!\n");
 		System.out.println("Order Summery:");
@@ -180,7 +183,7 @@ public class OrdersAdmin extends Orders {
 	
 	private void printProductsDetails(ProductsEnum p) {
 		ArrayList <String> details;
-		details = p.getProductsDetails(p.toString());
+		details = storeController_.getProductDetails(p.toString());
 		System.out.println("Item name:             " + details.get(0));
 		System.out.println("Item session:          " + details.get(1));
 		System.out.println("Item price (per unit): " + details.get(2) + "$");

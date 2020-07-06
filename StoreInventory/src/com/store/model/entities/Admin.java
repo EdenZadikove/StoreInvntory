@@ -1,11 +1,15 @@
 package com.store.model.entities;
 
+
 public class Admin extends User {
+	
+	private static final long serialVersionUID = 1L;
+	
 	private int employeeNumber;
 	private String storeName;
 	
-	public Admin(String userName, int passwrod, String email, int employeeNumber, String storeName){
-		super(userName, passwrod, email, 1);
+	public Admin(String userName, String password, String email, int employeeNumber, String storeName){
+		super(userName, password, email, 1);
 		this.employeeNumber = employeeNumber;
 		this.storeName = storeName;
 	}

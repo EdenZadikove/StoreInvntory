@@ -93,7 +93,7 @@ public class OrdersSupplier extends Orders {
 			}		
 			break;
 		default: //Exit screen for cases -1 and 0
-			ordersController_.saveToFile();
+			ordersController_.saveToFileOrders();
 			break;
 		}
 		return result;

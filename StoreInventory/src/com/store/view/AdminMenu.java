@@ -10,7 +10,7 @@ public class AdminMenu implements Menu{
 	private UserSessionServiceController userSessionServiceController_;
 	
 	public AdminMenu(){
-		viewFunctions_ = ViewFunctions.getInstance();
+		viewFunctions_ = new ViewFunctions();
 		storeAdmin_ = new StoreAdmin();
 		ordersAdmin_ = new OrdersAdmin();
 		users_ = new Users();
@@ -60,7 +60,7 @@ public class AdminMenu implements Menu{
 			showMainMenuAgain = ordersAdmin_.showMenu(); //-1 - show again. 0- logout
 			break;
 		case 3:
-			users_.showMenu();
+			showMainMenuAgain = users_.showMenu();
 			break;
 		}
 		return showMainMenuAgain;

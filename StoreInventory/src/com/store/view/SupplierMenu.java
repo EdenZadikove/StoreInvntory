@@ -10,7 +10,7 @@ public class SupplierMenu implements Menu {
 	public SupplierMenu() {
 		ordersSupplier_ = new OrdersSupplier();
 		userSessionService_ = new UserSessionServiceController();
-		viewFunctions_ = ViewFunctions.getInstance();
+		viewFunctions_ = new ViewFunctions();
 	}
 	
 	@Override

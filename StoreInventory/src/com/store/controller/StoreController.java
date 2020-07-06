@@ -17,11 +17,10 @@ public class StoreController {;
 	}
 	
 	public boolean editPrice(String itemName, double price, double oldPrice) throws Exception {
-		//validate price
 		if(price == oldPrice)
-			throw new Exception("\n! " + itemName + " price is already " + price + ".");
+			throw new Exception("\n! " + itemName + " price is already " + price + "$.");
 		else if(price <= 0)
-			throw new Exception("\n! " + itemName + " price must be more then 0");
+			throw new IllegalArgumentException("\n! " + itemName + " price must be more then 0");
 		return storeService_.editPrice(itemName, price);
 	}
 	
@@ -32,7 +31,10 @@ public class StoreController {;
 	public ArrayList<String> getProductDetails(String product) {
 		return storeService_.getProductDetails(product);
 	}
-
+	
+	public boolean isEmptyStore() {
+		return storeService_.isEmptyStore();
+	}
 	public void saveToFileStore() {
 		storeService_.saveToFileStore();
 	}

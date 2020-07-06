@@ -12,27 +12,29 @@ public class Login {
 	private Scanner scanner_;
 
 	public Login(){
-		viewFunctions_ = ViewFunctions.getInstance();
+		viewFunctions_ = new ViewFunctions();
 		userSessionServiceController_ = new UserSessionServiceController();
 		loginAttempts_ = 3;
 		scanner_ = new Scanner(System.in);
 	}
 	
 	public int signIn(){
-		int userType = 0; //if userType == 0, then login attempt failed
-		int password = -1; //initialize password to negative value (password can be only positive numbers)
+		int userType = -1; //if userType == 0, then login attempt failed
+		String password = "-1"; //initialize password to negative value.
 		String email = "";
 		System.out.println(viewFunctions_.getLoginHeader() + "\n"); //print login header
 		
-		while(userType == 0 && loginAttempts_ != 0) {	//while user have login attempts
+		while((userType == 0 || userType == -1) && loginAttempts_ != 0) {	//while user have login attempts
 			System.out.print("Email: ");
 			email = scanner_.nextLine();
-			password = viewFunctions_.validateIntInput("Password: "); //catch exception in scannerInt
+			System.out.print("Password: ");
+			password =  scanner_.nextLine(); //catch exception in scannerInt
 			
 			try{
 				userType = userSessionServiceController_.login(email, password); //if userType == 0 then userName or password are incorrect
 			} catch(IllegalArgumentException e) {
 				System.out.println(e.getMessage());
+				userType = -1;
 			}
 			
 			if(userType == 0) {

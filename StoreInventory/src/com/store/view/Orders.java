@@ -4,17 +4,20 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import org.apache.commons.lang3.StringUtils;
 import com.store.controller.OrdersController;
+import com.store.controller.StoreController;
 
 public abstract class Orders{
 	protected ViewFunctions viewFunctions_; 
 	protected OrdersController ordersController_;
+	protected StoreController storeController_;
 	protected ArrayList<String> ordersList_ = new ArrayList<String>();
 	protected Scanner scanner_;
 	
 	public Orders (){
 		super();
-		viewFunctions_ = ViewFunctions.getInstance();
+		viewFunctions_ = new ViewFunctions();
 		ordersController_ = new OrdersController();
+		storeController_ = new StoreController();
 		scanner_ = new Scanner(System.in);
 	}
 	
@@ -70,8 +73,9 @@ public abstract class Orders{
 		 * If  times range is 1 ---> don't show "How many items do you want to" */
 		
 		int orderId = 0; //if orderId == 0----> go back to Orders main menu
-		int timesToLoop = -1; // if timesToLoop == -1 then show again
+		int timesToLoop = 1; // if timesToLoop == -1 then show again
 		int itemsCounter = 0;
+		
 		if(action.equals("delete"))
 			itemsCounter = (ordersController_.itemsCounterByFilter("approved")) + (ordersController_.itemsCounterByFilter("denied")) + (ordersController_.itemsCounterByFilter("canceled"));
 		else{
@@ -89,26 +93,30 @@ public abstract class Orders{
 		
 		if(itemsCounter != 1) {
 			//If itemsCounter == 1, then no need to ask how many times I want to do the action
+			timesToLoop = -1;
 			while (timesToLoop == -1) {
 				System.out.println("How many items do you want to " + action + "?");
 				timesToLoop = viewFunctions_.validateIntInput("Number of items: ");
 				timesToLoop = viewFunctions_.validateInsertedData(1, itemsCounter, timesToLoop, "Number of items: ", "! Items range is: 1 to " + itemsCounter);
 				commandIsZeroOrNegetiveOne(timesToLoop, userType);
 			}
-		}
-		System.out.println(viewFunctions_.getSeperator() + "\n");
+		} 
+		
 		while(timesToLoop > 0 ) {
 			System.out.println("Which order would you like to " + action + "?");
-			orderId = getOrderIdFromUser(filter, "Order id: ", action);
+			orderId = viewFunctions_.validateIntInput("Order Id: "); 
 			commandIsZeroOrNegetiveOne(orderId, userType);
 
 			while(orderId == -1) {
 				System.out.println("\nWhich order would you like to " + action +"?");
-				orderId = getOrderIdFromUser(filter, "Order id: ", action);
+				orderId = viewFunctions_.validateIntInput("Order Id: "); 
 				commandIsZeroOrNegetiveOne(orderId, userType);
 			}
+			
 			if(orderId == 0) break;	 //user want to stop and go back to orders-main-menu
+			
 			int quantity = 1;
+			
 			if(action == "edit") {
 				System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 				quantity = viewFunctions_.validateIntInput("Update order quantity to: ");
@@ -124,41 +132,43 @@ public abstract class Orders{
 				}
 			}
 			
-			String msg = "! Order id- " + orderId + "does not exists.";
+			String msg = "";
 			switch(action) {
-				case "delete":
-					try {
-						if(ordersController_.deleteOrder(orderId))
-							msg = "Order id- " + orderId + " successfully deleted";
-					} catch(Exception e) {
-						msg = e.getMessage();
-					}
-					break; 
-				case "cancel":
-					try {
-						if(ordersController_.cancelOrder(orderId))
-							msg = "Order id- " + orderId + " successfully canceled";
-					}catch(Exception e) {
-						msg = e.getMessage();
-					}
-					
-					break;
-				case "edit":
-					try {
-						if(ordersController_.editOrder(orderId, quantity))
-							msg = "Order id- " + orderId + " quantity successfully updated to " + quantity + "units.";
-					}catch(Exception e) {
-						msg = e.getMessage();
-					}
-					break;	
-				default: //approved or denied
-					try {
-						if(ordersController_.changeOrderStatus(orderId, action))
-							msg = "Order ID - " + orderId + " is successfully updated from 'pending' to " + "'" + action + "'.";
-					}catch(Exception e) {
-						msg = e.getMessage();
-					}
-					break;
+			case "delete":
+				try {
+					if(ordersController_.deleteOrder(orderId))
+						msg = "Order id- " + orderId + " successfully deleted";
+					else msg = "Order id- " + orderId + " can not be deleted because its waiting for supplier's response.\nIf"
+							+ " you want to delete this order - 1. Cancel this order\n"
+							+ "                                   2. Delete this order.";
+				} catch(Exception e) {
+					msg = e.getMessage();
+				}
+				break; 
+			case "cancel":
+				try {
+					if(ordersController_.cancelOrder(orderId, getStatus(orderId)))
+						msg = "Order id- " + orderId + " successfully canceled";
+				}catch(Exception e) {
+					msg = e.getMessage();
+				}
+				break;
+			case "edit":
+				try {
+					if(ordersController_.editOrder(orderId, quantity))
+						msg = "Order id- " + orderId + " quantity successfully updated to " + quantity + "units.";
+				}catch(Exception e) {
+					msg = e.getMessage();
+				}
+				break;	
+			default: //approved or denied
+				try {
+					if(ordersController_.changeOrderStatus(orderId, action))
+						msg = "Order ID - " + orderId + " is successfully updated from 'pending' to " + "'" + action + "'.";
+				}catch(Exception e) {
+					msg = e.getMessage();
+				}
+				break;
 			}
 			
 			System.out.println();
@@ -178,8 +188,6 @@ public abstract class Orders{
 			if((ordersController_.itemsCounterByFilter("approved") == 0 && 
 					ordersController_.itemsCounterByFilter("denied") == 0 &&
 					ordersController_.itemsCounterByFilter("canceled") == 0)) {
-				System.out.println("! Action can not be taken. Only pending orders in the table.\n");
-				System.out.println(viewFunctions_.getSeperator());
 				return true;
 			}
 		}
@@ -192,23 +200,14 @@ public abstract class Orders{
 		return false;
 	}
 	
-	private int getOrderIdFromUser(String statusFilter, String text,  String action){
-		boolean continueFlag = true;
-		int orderId = -1;
-		while(continueFlag) {
-			orderId = viewFunctions_.validateIntInput(text);
-			try {
-				if(orderId != 0 && orderId != -1) {
-					if (!ordersController_.isOrderExistsByFilter(orderId, statusFilter, action)) {
-						System.out.println("\n! Order does not exists. Please try again.");	
-					}
-					else continueFlag = false;
-				}
-				else continueFlag = false;
-			} catch(Exception e) {
-				System.out.println("\n" + e.getMessage());	
+	private String getStatus(int orderId) {
+		String status = "";
+		for(String order : ordersList_) {
+			if(Integer.parseInt(StringUtils.substringBetween(order, "OrderId:", ";")) == orderId){
+				status = StringUtils.substringBetween(order, "OrderStatus:", ";");
+				break;
 			}
 		}
-		return orderId;
+		return status;
 	}
 }

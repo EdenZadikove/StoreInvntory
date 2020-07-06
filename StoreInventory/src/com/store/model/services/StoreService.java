@@ -5,12 +5,12 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.store.model.database.StoreRepository;
 import com.store.model.entities.Product;
 import com.store.model.entities.Store;
+import com.store.model.repository.StoreRepository;
 
 public class StoreService {
-	private static StoreRepository storeRepository_;
+	private StoreRepository storeRepository_;
 	private Store store_;
 	private Map<String, Product> defaultProductDetails_;
 
@@ -51,13 +51,16 @@ public class StoreService {
 		if(product == null)
 			return false;
 		store_.getProductsMap().get(itemName).setPrice(price);
+		storeRepository_.setStore(store_);
 		return true;
-		
-		//return (itemName + " price successfully update from: " + oldPrice + "$ to " + product.getPrice() + "$");
 	}
 	
 	public boolean removeProduct(String itemName) {
-		return (store_.getProductsMap().remove(itemName)) != null;
+		if(store_.getProductsMap().remove(itemName) != null) {
+			storeRepository_.setStore(store_);
+			return true;
+		}
+		return false; //item does not exists
 	}	
 	
 	public void addProductToStoreInventory(String itemName, int quantity) {
@@ -67,18 +70,14 @@ public class StoreService {
 		}
 		int newQuantity = store_.getProductsMap().get(itemName).getQuantity() + quantity; //update quantity
 		store_.getProductsMap().get(itemName).setQuantity(newQuantity); //set new quantity
-		saveToFileStore();
-	}
-	
-	public void saveToFileStore(){
-		storeRepository_.writeToFile(store_);
+		storeRepository_.setStore(store_);
 	}
 	
 	private void initStore(){
 		if(store_ == null) {
 			Map<String, Product> products = new Hashtable<String, Product>();
 			store_ = new Store("Best-Store-Ever", "Holon", "Eden Zadikove", products);
-			saveToFileStore();
+			storeRepository_.setStore(store_);
 		}
 	}
 	
@@ -99,7 +98,16 @@ public class StoreService {
 		defaultProductDetails_.put(p6.getItemName(), p6);
 	}
 	
-	private boolean isProductExists(String productName) {
+	
+	public boolean isEmptyStore() {
+		return store_.getProductsMap().size() == 0;
+	}
+	
+	public void saveToFileStore(){
+		storeRepository_.saveToFile();
+	}
+	
+	public boolean isProductExists(String productName) {
 		return store_.getProductsMap().get(productName) != null;
 	}
 }

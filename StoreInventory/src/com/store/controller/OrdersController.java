@@ -21,18 +21,24 @@ public class OrdersController {
 		return ordersService_.createOrder(itemName, quantity);
 	}
 	
-	public boolean cancelOrder(int orderId) throws Exception {
+	public boolean cancelOrder(int orderId, String CurrentStatus) throws Exception {
+		if(CurrentStatus.equals("canceled") || CurrentStatus.equals("approved") || CurrentStatus.equals("denied"))
+			throw new IllegalArgumentException("! Order id- " + orderId + " can not be canceled because its status is- '"+ CurrentStatus + "'.");
+		if(!ordersService_.isOrderExists(orderId))
+			throw new Exception("! Order id- " +  orderId + " does not exists.");
 		return ordersService_.cancelOrder(orderId);
 	}
 	
 	public boolean deleteOrder(int orderId) throws Exception {
-		return ordersService_.deleteOrder(orderId);
+		if(ordersService_.isOrderExists(orderId))
+			return ordersService_.deleteOrder(orderId);
+		throw new Exception("! Order id does not exists.");
+		
 	}
 	
 	public boolean editOrder(int orderId, int quantity) throws Exception{	
-		//check if order ID is valid
-		if(orderId < -1)
-			throw new IllegalArgumentException("! Order Id must be more then 0");	
+		if(!ordersService_.isOrderExists(orderId))
+			throw new Exception("! Order id does not exists.");
 		if(quantity < 1 || quantity > 100)
 			throw new IllegalArgumentException("! Quantity must be between 1 to 100");
 	

@@ -3,12 +3,13 @@ package com.store.model.services;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-import com.store.model.database.OrdersRepository;
+
 import com.store.model.entities.Order;
+import com.store.model.repository.OrdersRepository;
 
 public class OrdersService {
 	
-	private static OrdersRepository ordersRepository_;
+	private OrdersRepository ordersRepository_;
 	private Map<Integer, Order> orders_; 
 	private StoreService storeService_;
 
@@ -20,8 +21,8 @@ public class OrdersService {
 		
 	public int createOrder(String itemName, int Quntity){
 		int orderId = calculateOrderId(); 
-		Order newOrder = new Order(orderId, itemName, Quntity);
-		orders_.put(orderId, newOrder);
+		orders_.put(orderId, new Order(orderId, itemName, Quntity));
+		ordersRepository_.setOrders(orders_);
 		return orderId;
 	}
 
@@ -41,44 +42,37 @@ public class OrdersService {
 	}
 	
 	public boolean cancelOrder(int orderId) throws Exception {
-		Order order = isOrderExists(orderId);
-		if  (order == null)
-			return false;
+		Order order = orders_.get(orderId);
 		//check if order status is 'pending'
 		if(order.getOrderStatus().equals("pending")) {
 			order.setOrderStatus("canceled");
 			orders_.put(orderId, order);
+			ordersRepository_.setOrders(orders_);
 			return true;
 		}
-		if(order.getOrderStatus().equals("canceled"))
-			throw new Exception("! Order id- " + orderId + " can not be canceled because its already done.");
-		throw new Exception("! Order id- " + orderId + " can not be canceled because its already " + order.getOrderStatus() + " by the supplier.");
+		return false;
 	}
 	
-	public boolean deleteOrder(int orderId) throws Exception {
-		Order order = isOrderExists(orderId);
-		if  (order == null)
-			return false;
+	public boolean deleteOrder(int orderId){
+		Order order = orders_.get(orderId);
 		//check if order status is 'canceled, approved or denied'
 		if(order.getOrderStatus().equals("canceled") || order.getOrderStatus().equals("approved") || order.getOrderStatus().equals("denied")) {
 			orders_.remove(orderId);
+			ordersRepository_.setOrders(orders_);
 			return true;
 		}
-		throw new Exception("Order id- " + orderId + " can not be deleted because its waiting for supplier's response.\nIf"
-					+ " you want to delete this order - 1. Cancel this order\n"
-					+ "                                   2. Delete this order.");	
+		return false;
 	}
 	
 	public boolean editOrder(int orderId, int quantity) throws Exception {
-		Order order = isOrderExists(orderId);
-		if  (order == null)
-			return false;
+		Order order = orders_.get(orderId);
 		if(order.getOrderStatus().equals("canceled") || order.getOrderStatus().equals("approved") || order.getOrderStatus().equals("denied"))
 			throw new Exception("Order id- " + orderId + " can not be edited because its already " + order.getOrderStatus() + " by the supplier.");
 		if(order.getQuantity() == quantity) {
 			throw new Exception("Order quantity is already set to - " + order.getQuantity());
 		}
 		order.setQuantity(quantity);
+		ordersRepository_.setOrders(orders_);
 		return true;
 	}
 		
@@ -97,12 +91,12 @@ public class OrdersService {
 	
 	public boolean changeOrderStatus(int orderId, String action){
 		
-		Order order = isOrderExists(orderId);
+		Order order = orders_.get(orderId);
 		if  (order == null || !order.getOrderStatus().equals("pending"))
 			return false;
 		order.setOrderStatus(action);
-		orders_.put(orderId, order); //update original map
-		
+		orders_.put(orderId, order);
+		ordersRepository_.setOrders(orders_);
 		if(action == "approved") {//update store inventory
 			storeService_.addProductToStoreInventory(order.getItemName(), order.getQuantity());
 		}
@@ -171,11 +165,11 @@ public class OrdersService {
 		return true;
 	}
 	
-	public void saveToFileOrders() {
-		ordersRepository_.writeToFile(orders_);
+	public boolean isOrderExists(int orderId) {
+		return (orders_.get(orderId) != null);
 	}
 	
-	private Order isOrderExists(int orderId) {
-		return orders_.get(orderId);
+	public void saveToFileOrders() {
+		ordersRepository_.saveToFile();
 	}
 }
