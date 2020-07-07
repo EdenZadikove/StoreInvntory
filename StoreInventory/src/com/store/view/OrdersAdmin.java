@@ -149,7 +149,7 @@ public class OrdersAdmin extends Orders {
 				orderId = ordersController_.createOrder(ProductsEnum.values()[item-1].toString(), quantity);
 				validInputFlag = true;
 			} catch(IllegalArgumentException e) {
-				System.out.println(e.getMessage());
+				System.out.println("\n" + e.getMessage());
 				quantity = viewFunctions_.validateIntInput("I would like to order: ");
 			}
 		}

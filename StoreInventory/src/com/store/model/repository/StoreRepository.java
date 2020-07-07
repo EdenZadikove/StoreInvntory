@@ -6,7 +6,7 @@ import com.store.model.entities.Store;
 
 public class StoreRepository{
 	
-	private String path_ = "..\\StoreInventory\\files\\store.txt";
+	private static String path_ = "..\\StoreInventory\\files\\store.txt";
 	private Store store_ ;
 	private static StoreRepository instance_ = null;
 	private FileManager<Store> fileManager; 
@@ -37,15 +37,15 @@ public class StoreRepository{
 		this.store_ = store;
 	}
 	
-	public void setPath_(String path) {
-		this.path_ = path;
-	}
-	
 	public void resetInstance() {
 		instance_ = null;
 		store_ = null;
 	}
 	
+	public static void setPath_(String newPath) {
+		path_ = newPath;
+	}
+		
 	public void saveToFile(){
 		fileManager.writeToFile(store_);
 	}

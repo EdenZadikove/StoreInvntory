@@ -95,20 +95,25 @@ public abstract class Orders{
 			//If itemsCounter == 1, then no need to ask how many times I want to do the action
 			timesToLoop = -1;
 			while (timesToLoop == -1) {
-				System.out.println("How many items do you want to " + action + "?");
+				System.out.println("\nHow many items would you like to " + action + "?");
 				timesToLoop = viewFunctions_.validateIntInput("Number of items: ");
-				timesToLoop = viewFunctions_.validateInsertedData(1, itemsCounter, timesToLoop, "Number of items: ", "! Items range is: 1 to " + itemsCounter);
+				timesToLoop = viewFunctions_.validateInsertedData(1, itemsCounter, timesToLoop, "Number of items: ", "! Items range must be between 1 to " + itemsCounter);
 				commandIsZeroOrNegetiveOne(timesToLoop, userType);
 			}
 		} 
 		
+		int counter = 1;
+		System.out.println(viewFunctions_.getSeperator() +"\n");
 		while(timesToLoop > 0 ) {
-			System.out.println("Which order would you like to " + action + "?");
+			
+			String title = "Which order would you like to " + action + "?";
+			System.out.println(calcCounterStr(title, counter));
+			
 			orderId = viewFunctions_.validateIntInput("Order Id: "); 
 			commandIsZeroOrNegetiveOne(orderId, userType);
 
 			while(orderId == -1) {
-				System.out.println("\nWhich order would you like to " + action +"?");
+				System.out.println("\n" + calcCounterStr(title, counter));
 				orderId = viewFunctions_.validateIntInput("Order Id: "); 
 				commandIsZeroOrNegetiveOne(orderId, userType);
 			}
@@ -138,17 +143,16 @@ public abstract class Orders{
 				try {
 					if(ordersController_.deleteOrder(orderId))
 						msg = "Order id- " + orderId + " successfully deleted";
-					else msg = "Order id- " + orderId + " can not be deleted because its waiting for supplier's response.\nIf"
-							+ " you want to delete this order - 1. Cancel this order\n"
-							+ "                                   2. Delete this order.";
+					else msg = "! Order id- " + orderId + " does not exists. Please try again.";
 				} catch(Exception e) {
 					msg = e.getMessage();
 				}
 				break; 
 			case "cancel":
 				try {
-					if(ordersController_.cancelOrder(orderId, getStatus(orderId)))
+					if(ordersController_.cancelOrder(orderId))
 						msg = "Order id- " + orderId + " successfully canceled";
+					else msg = "! Order id- " + orderId + " does not exists. Please try again.";
 				}catch(Exception e) {
 					msg = e.getMessage();
 				}
@@ -157,6 +161,8 @@ public abstract class Orders{
 				try {
 					if(ordersController_.editOrder(orderId, quantity))
 						msg = "Order id- " + orderId + " quantity successfully updated to " + quantity + "units.";
+					else
+						msg = "! Order id- " + orderId + " does not exists. Please try again.";
 				}catch(Exception e) {
 					msg = e.getMessage();
 				}
@@ -170,13 +176,16 @@ public abstract class Orders{
 				}
 				break;
 			}
-			
 			System.out.println();
 			if(msg.contains("approved") && !msg.contains("!") )
 				msg +=" \nStore inventory updated.";
-			System.out.println(viewFunctions_.getSeperator() + "\n\n" + msg + "\n\n" + viewFunctions_.getSeperator() +"\n");
+			System.out.println(viewFunctions_.getSeperator() + "\n\n" + msg + "\n");
+			System.out.println(viewFunctions_.getSeperator() +"\n");
 			
-			if(msg.contains("successfully")) timesToLoop--;
+			if(msg.contains("successfully")) {
+				timesToLoop--;
+				counter++;
+			}
 		}
 		//end while
 		return orderId;
@@ -200,14 +209,12 @@ public abstract class Orders{
 		return false;
 	}
 	
-	private String getStatus(int orderId) {
-		String status = "";
-		for(String order : ordersList_) {
-			if(Integer.parseInt(StringUtils.substringBetween(order, "OrderId:", ";")) == orderId){
-				status = StringUtils.substringBetween(order, "OrderStatus:", ";");
-				break;
-			}
+	private String calcCounterStr(String title, int counter) {
+		String loopCounterStr = "Item number: " + counter;
+		int rowLength = 115 - loopCounterStr.length() - title.length();
+		for(int i = 0; i< rowLength; i++) {
+			title += " ";
 		}
-		return status;
+		return title += loopCounterStr;
 	}
 }

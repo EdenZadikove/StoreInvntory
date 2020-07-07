@@ -73,6 +73,19 @@ public class StoreService {
 		storeRepository_.setStore(store_);
 	}
 	
+	public boolean isEmptyStore() {
+		return store_.getProductsMap().size() == 0;
+	}
+	
+	public boolean isProductExists(String productName) {
+		return store_.getProductsMap().get(productName) != null;
+	}
+	
+	public void saveToFileStore(){
+		storeRepository_.saveToFile();
+	}
+	
+	
 	private void initStore(){
 		if(store_ == null) {
 			Map<String, Product> products = new Hashtable<String, Product>();
@@ -96,18 +109,5 @@ public class StoreService {
 		defaultProductDetails_.put(p4.getItemName(), p4);
 		defaultProductDetails_.put(p5.getItemName(), p5);
 		defaultProductDetails_.put(p6.getItemName(), p6);
-	}
-	
-	
-	public boolean isEmptyStore() {
-		return store_.getProductsMap().size() == 0;
-	}
-	
-	public void saveToFileStore(){
-		storeRepository_.saveToFile();
-	}
-	
-	public boolean isProductExists(String productName) {
-		return store_.getProductsMap().get(productName) != null;
 	}
 }

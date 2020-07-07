@@ -1,60 +1,88 @@
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import java.io.File;
 
 import com.store.controller.OrdersController;
 import com.store.controller.StoreController;
 import com.store.controller.UserSessionServiceController;
+import com.store.controller.UsersController;
+import com.store.model.repository.OrdersRepository;
 import com.store.model.repository.StoreRepository;
+import com.store.model.repository.UsersRepository;
+import com.store.model.services.OrdersService;
 import com.store.model.services.StoreService;
-import com.store.model.services.UserSessionService;
+import com.store.model.services.UsersService;
 
 class UnitTest {	
 
 	private OrdersController ordersController_;
 	private StoreController storeController_;
+	private UsersController usersController_;
+	private UserSessionServiceController userSessionServiceController_;
 	private StoreService storeService_;
+	private OrdersService ordersService_;
+	private UsersService usersService_;
+	
+	private static final String storePath_  = "..\\StoreInventory\\files\\tests\\store.text";
+	private static final String ordersPath_  = "..\\StoreInventory\\files\\tests\\orders.text";
+	private static final String usersPath_  = "..\\StoreInventory\\files\\tests\\users.text";
+	
+	private static final String DIR_PATH = "..\\StoreInventory\\files\\tests"; 
 	
 	@BeforeAll
-	public static void cerateDemoStore(){
-		StoreRepository storeRepository = StoreRepository.getInstance();
-		storeRepository.setPath_("..\\StoreInventory\\files\\DemoStore.txt");
+	public static void createsDemoDB(){
+		StoreRepository.setPath_(storePath_);
+		OrdersRepository.setPath_(ordersPath_);
+		UsersRepository.setPath_(usersPath_);		
 	}
+	
 	@BeforeEach
 	public void setUp() {
 		ordersController_ = new OrdersController();
 		storeController_ = new StoreController();
+		usersController_ = new UsersController();
+		userSessionServiceController_ = new UserSessionServiceController();
 		storeService_ = new StoreService();
+		ordersService_ = new OrdersService();
+		usersService_ = new UsersService();
 	}
 	
-	@AfterEach
-	public void tearDown() {
-		ordersController_ = null;
-		storeController_ = null;
+	@AfterAll
+	public static void deleteDemoDB(){
+		File dir = new File(DIR_PATH);
+		for(File file: dir.listFiles())
+				file.delete();
 	}
-	 
+	
+	//LOGIN
 	@Test
-	void failLoginEmptyEmailTest() {
-		UserSessionServiceController userSessionServiceController = new UserSessionServiceController();
+	void loginSuccess() {
 		try{
-			userSessionServiceController.login("", 123);
-			fail("Login success when should failed.");
-		} catch(IllegalArgumentException e) {
-			assertEquals("\n! Email must not be null. Please try again.", e.getMessage());
-		}
+			int userType = userSessionServiceController_.login("eden", "123");
+			assertEquals(userType, 1);
+		} catch(IllegalArgumentException e) {}
 	}
 
 	@Test
+	void failLoginEmptyEmailTest() {
+		try{
+			userSessionServiceController_.login("", "123");
+			fail("Login success when should failed.");
+		} catch(IllegalArgumentException e) {
+			assertEquals("! Order Id must be more then 0. Please try again.", e.getMessage());
+		}
+	}
+
+	//ORDERS
+	
+	@Test
 	void failCreatOrderNotValidQuantity() {
-		
 		assertThrows(IllegalArgumentException.class, () -> {
 			ordersController_.createOrder("Gloves", 0);
 		});
@@ -64,21 +92,43 @@ class UnitTest {
 	void cancelOrderOrderNotExists() {
 		ordersController_ = new OrdersController();
 		try {
-			ordersController_.cancelOrder(0, "pending");	
+			ordersController_.cancelOrder(0);	
 		} catch(Exception e) {
 			assertEquals("! Order id- 0 does not exists.", e.getMessage());
+		}	
+	}
+	
+	@Test
+	void editOrderQuantityOrderNotExists() {
+		int quantity = 100;
+		int orderId = 1;
+		
+		try {
+			boolean res = ordersService_.editOrder(orderId, quantity);
+			assertFalse(res);
+		} catch(Exception e) {}
+	}
+	
+	@Test 
+	void editOrderNotValidOrderId() {
+		int quantity = 100;
+		int orderId = -10; //orderId must be more then 0
+		try {
+			boolean res = ordersService_.editOrder(orderId, quantity);
+			fail("success when should be failed.");
+		} catch(Exception e) {
+			
 		}
 		
 	}
 	
-	@Test
-	void 
+	//STORE
 	
 	@Test
 	void editPriceProductNotExists(){	
 		boolean res;
 		try {
-			res = storeController_.editPrice("Gloves", 10.0, 5.0);
+			res = storeController_.editPrice("blabla", 10.0, 5.0);
 			assertFalse(res);
 		} catch(Exception e) {	}
 	}
@@ -103,9 +153,85 @@ class UnitTest {
 		}
 	}
 	
+	
+	
 	@Test
 	void removeProductNotExistsItem() {
 		boolean res = storeService_.removeProduct("bla bla");
 		assertFalse(res);
+	}
+	
+	@Test
+	void changeOrderStatusOrderNotExists() {
+		int orderId = 0; //orderId must be more then 0;
+		try {
+			boolean res = ordersService_.changeOrderStatus(orderId, "approved");
+			assertFalse(res);
+		}catch(Exception e) {}
+	}
+	
+	
+	@Test
+	void changeOrderStatusWithPendingStatus() {
+		//first create order with status "pending"
+		String itemName = "Gloves";
+		int quantity = 100;
+		int orderId = 0; //initialize
+		
+		try {
+			orderId = ordersController_.createOrder(itemName, quantity);
+		} catch (Exception e) {}
+		
+		// change order status to from "pending" to approved
+		try {
+			ordersService_.changeOrderStatus(orderId, "approved");
+		}catch(Exception e) {}
+		
+		//try to change order status from "approved" to denied (need to failed because only orders with status "pending" can be changed)
+		try {
+			boolean res = ordersService_.changeOrderStatus(orderId, "denied");
+			assertFalse(res);
+		}catch(Exception e) {}
+		
+	}
+	
+	//USERS
+	
+	@Test
+	void addExistingUser() {
+		String email = "eden";
+		try {
+			boolean res = usersController_.createNewUser("kuku", "koko", "123", email, "Admin");
+			assertFalse(res);
+		}catch(Exception e) {}
+	}
+	
+	@Test
+	void addUserEmptyValues() {
+		try {
+			usersController_.createNewUser("", "", "123", "", "Admin");
+			fail("Passed when should be failed.");
+		}catch(Exception e) {
+			assertEquals("! One or more of the inputs is empty. Please try again.", e.getMessage());
+		}
+	}
+	@Test
+	void deleteUserNotValidEmail() {
+		String email = "eden@";
+		try {
+			usersController_.deleteUser(email);
+			fail("Passed when should be failed.");
+		}catch(Exception e) {
+			assertEquals("! Email is not valid. Please try again.", e.getMessage());
+		}
+	}
+	
+	@Test
+	void deleteUserNotExists() {
+		String email = "blabla@gmail.com";
+		try {
+			boolean res = usersController_.deleteUser(email);
+			assertFalse(res);
+		}catch(Exception e) {}
 	}
 }

@@ -12,37 +12,36 @@ public class OrdersController {
 	}
 	
 	public boolean isOrderExistsByFilter(int orderId, String statusFilter, String action) throws Exception {
+		if(orderId < 0)
+			throw new IllegalArgumentException("! Order Id must be more then 0. Please try again.");
 		return ordersService_.isOrderExistsByFilter(orderId, statusFilter, action);
 	}
 	
 	public int createOrder(String itemName, int quantity){	
 		if(quantity < 1 || quantity > 100)
-			throw new IllegalArgumentException("\n! Quantity must be between 1 to 100");
+			throw new IllegalArgumentException("! Quantity must be between 1 to 100");
 		return ordersService_.createOrder(itemName, quantity);
 	}
 	
-	public boolean cancelOrder(int orderId, String CurrentStatus) throws Exception {
-		if(CurrentStatus.equals("canceled") || CurrentStatus.equals("approved") || CurrentStatus.equals("denied"))
-			throw new IllegalArgumentException("! Order id- " + orderId + " can not be canceled because its status is- '"+ CurrentStatus + "'.");
-		if(!ordersService_.isOrderExists(orderId))
-			throw new Exception("! Order id- " +  orderId + " does not exists.");
+	public boolean cancelOrder(int orderId) throws Exception {
+		if(orderId < 0)
+			throw new IllegalArgumentException("! Order Id must be more then 0. Please try again.");
 		return ordersService_.cancelOrder(orderId);
 	}
 	
 	public boolean deleteOrder(int orderId) throws Exception {
-		if(ordersService_.isOrderExists(orderId))
-			return ordersService_.deleteOrder(orderId);
-		throw new Exception("! Order id does not exists.");
+		if(orderId < 0)
+			throw new IllegalArgumentException("! Order Id must be more then 0. Please try again.");
+		return ordersService_.deleteOrder(orderId);
 		
 	}
 	
 	public boolean editOrder(int orderId, int quantity) throws Exception{	
-		if(!ordersService_.isOrderExists(orderId))
-			throw new Exception("! Order id does not exists.");
+		if(orderId < 0)
+			throw new IllegalArgumentException("! Order Id must be more then 0. Please try again.");
 		if(quantity < 1 || quantity > 100)
-			throw new IllegalArgumentException("! Quantity must be between 1 to 100");
-	
-		return ordersService_.editOrder(orderId, quantity);
+			throw new IllegalArgumentException("! Quantity must be between 1 to 100 units.");
+		return ordersService_.editOrder(orderId, quantity);	
 	}
 	
 	public void saveToFileOrders()  {
@@ -51,7 +50,7 @@ public class OrdersController {
 	
 	public ArrayList<String> getOrders(String filterStatus) throws IllegalArgumentException{
 		if(filterStatus == "" || filterStatus == null)
-			throw new IllegalArgumentException("! Invalid filter. contact your administrator");
+			throw new IllegalArgumentException("! Invalid filter. Please contact your administrator");
 		return ordersService_.getOrders(filterStatus);
 	}
 	
@@ -61,11 +60,13 @@ public class OrdersController {
 	
 	public int itemsCounterByFilter(String filter) throws IllegalArgumentException {
 		if(filter == "" || filter == null)
-			throw new IllegalArgumentException("! Invalid filter. contact your administrator");
+			throw new IllegalArgumentException("! Invalid filter. Please contact your administrator");
 		return ordersService_.itemsCounterByFilter(filter);
 	}
 
 	public boolean changeOrderStatus(int orderId, String action){
+		if(orderId < 0)
+			throw new IllegalArgumentException("! Order Id must be more then 0. Please try again.");
 		return ordersService_.changeOrderStatus(orderId, action);
 	}
 }

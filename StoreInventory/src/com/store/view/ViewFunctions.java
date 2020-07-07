@@ -162,7 +162,6 @@ public class ViewFunctions {
 				System.out.print(text);
 				num = scanner_.nextInt();
 				validFlag = true;
-				
 			} catch(InputMismatchException e) {
 				System.out.println("\n! Invalid input. Please insert numbers only.");
 				scanner_.nextLine();

@@ -43,8 +43,11 @@ public class OrdersService {
 	
 	public boolean cancelOrder(int orderId) throws Exception {
 		Order order = orders_.get(orderId);
+		if(!isOrderExists(orderId))
+			return false;
+		
 		//check if order status is 'pending'
-		if(order.getOrderStatus().equals("pending")) {
+		if(!order.getOrderStatus().equals("pending")) {
 			order.setOrderStatus("canceled");
 			orders_.put(orderId, order);
 			ordersRepository_.setOrders(orders_);
@@ -53,19 +56,25 @@ public class OrdersService {
 		return false;
 	}
 	
-	public boolean deleteOrder(int orderId){
+	public boolean deleteOrder(int orderId) throws Exception{
 		Order order = orders_.get(orderId);
-		//check if order status is 'canceled, approved or denied'
-		if(order.getOrderStatus().equals("canceled") || order.getOrderStatus().equals("approved") || order.getOrderStatus().equals("denied")) {
-			orders_.remove(orderId);
-			ordersRepository_.setOrders(orders_);
-			return true;
-		}
-		return false;
+		if(!isOrderExists(orderId))
+			return false;
+		
+		if(order.getOrderStatus().equals("pending"))
+			throw new Exception("! Order id- " + orderId + " can not be deleted because its waiting for supplier's response.\nIf"
+					+ " you want to delete this order - 1. Cancel this order\n"
+					+ "                                   2. Delete this order.");
+		
+		orders_.remove(orderId);
+		ordersRepository_.setOrders(orders_);
+		return true;
 	}
 	
 	public boolean editOrder(int orderId, int quantity) throws Exception {
 		Order order = orders_.get(orderId);
+		if(!isOrderExists(orderId))
+			return false;
 		if(order.getOrderStatus().equals("canceled") || order.getOrderStatus().equals("approved") || order.getOrderStatus().equals("denied"))
 			throw new Exception("Order id- " + orderId + " can not be edited because its already " + order.getOrderStatus() + " by the supplier.");
 		if(order.getQuantity() == quantity) {

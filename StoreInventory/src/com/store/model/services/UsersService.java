@@ -87,6 +87,7 @@ public class UsersService {
 		usersRepository_.saveToFile();
 	}
 	
+	
 	private boolean isExistsUser(String email) {
 		return users_.get(email.toLowerCase()) != null;
 	}
@@ -118,7 +119,4 @@ public class UsersService {
 			saveToFileUsers();
 		}
 	}
-	
-
-	
 }

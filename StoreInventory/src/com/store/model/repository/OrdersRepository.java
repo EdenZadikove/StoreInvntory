@@ -45,6 +45,10 @@ public class OrdersRepository{
 		this.orders_ = orders_;
 	}
 	
+	public static void setPath_(String newPath) {
+		path_ = newPath;
+	}
+	
 	public void saveToFile(){
 		fileManager.writeToFile(orders_);
 	}

@@ -44,6 +44,10 @@ public class UsersRepository{
 		this.users_ = users_;
 	}
 
+	public static void setPath_(String newPath) {
+		path_ = newPath;
+	}
+
 	public void saveToFile() {
 		this.fileManager.writeToFile(users_);
 	}

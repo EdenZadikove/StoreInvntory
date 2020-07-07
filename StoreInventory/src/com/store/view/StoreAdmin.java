@@ -155,7 +155,7 @@ public class StoreAdmin extends Store {
 			boolean validInputFlag = false;
 			switch(action) {
 			case "edit price":
-				double oldPrice =Double.parseDouble( StringUtils.substringBetween(product, "Price:", ";"));
+				double oldPrice = Double.parseDouble( StringUtils.substringBetween(product, "Price:", ";"));
 				System.out.println(viewFunctions_.getSeperator() + "\n");
 				System.out.println("Selected item: " + itemName);
 				System.out.println("Current price (per unit): " + oldPrice + "$");

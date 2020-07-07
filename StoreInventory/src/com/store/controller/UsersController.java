@@ -17,9 +17,9 @@ public class UsersController {
 	
 	public boolean createNewUser(String firstName, String lastName, String password, String email, String userType) {
 		if(isEmpty(firstName) || isEmpty(lastName) || isEmpty(password) || isEmpty(email) || isEmpty(userType))
-			throw new IllegalArgumentException("! One or more input is empty. Please try again");
+			throw new IllegalArgumentException("! One or more of the inputs is empty. Please try again.");
 		if(!isValidEmail(email))
-			throw new IllegalArgumentException("! Email is not valid. Please try again");
+			throw new IllegalArgumentException("! Email is not valid. Please try again.");
 		
 		//add validation
 		int userTypeNumber;
