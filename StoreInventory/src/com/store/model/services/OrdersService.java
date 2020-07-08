@@ -25,35 +25,18 @@ public class OrdersService {
 		ordersRepository_.setOrders(orders_);
 		return orderId;
 	}
-
-	private int calculateOrderId(){
-		int maxKey = 1;
-		//empty orders table
-		if(orders_.size() == 0)
-			return maxKey;
-		
-		//Search for the max key
-		for (Map.Entry<Integer, Order> currentEntry : orders_.entrySet()) {
-			 int tempKey  = currentEntry.getKey();
-			 if(tempKey > maxKey)
-				 maxKey = tempKey;		 
-		 }
-		 return maxKey + 1;
-	}
 	
 	public boolean cancelOrder(int orderId) throws Exception {
 		Order order = orders_.get(orderId);
 		if(!isOrderExists(orderId))
 			return false;
+		if(!order.getOrderStatus().equals("pending"))
+			throw new Exception("! Order id- " + orderId + " can not be canceled bacause it's already done.");
 		
-		//check if order status is 'pending'
-		if(!order.getOrderStatus().equals("pending")) {
-			order.setOrderStatus("canceled");
-			orders_.put(orderId, order);
-			ordersRepository_.setOrders(orders_);
-			return true;
-		}
-		return false;
+		order.setOrderStatus("canceled");
+		orders_.put(orderId, order);
+		ordersRepository_.setOrders(orders_);
+		return true;
 	}
 	
 	public boolean deleteOrder(int orderId) throws Exception{
@@ -180,5 +163,20 @@ public class OrdersService {
 	
 	public void saveToFileOrders() {
 		ordersRepository_.saveToFile();
+	}
+	
+	private int calculateOrderId(){
+		int maxKey = 1;
+		//empty orders table
+		if(orders_.size() == 0)
+			return maxKey;
+		
+		//Search for the max key
+		for (Map.Entry<Integer, Order> currentEntry : orders_.entrySet()) {
+			 int tempKey  = currentEntry.getKey();
+			 if(tempKey > maxKey)
+				 maxKey = tempKey;		 
+		 }
+		 return maxKey + 1;
 	}
 }

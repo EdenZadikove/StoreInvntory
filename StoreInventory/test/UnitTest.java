@@ -39,7 +39,7 @@ class UnitTest {
 	public static void createsDemoDB(){
 		StoreRepository.setPath_(storePath_);
 		OrdersRepository.setPath_(ordersPath_);
-		UsersRepository.setPath_(usersPath_);		
+		UsersRepository.setPath_(usersPath_);	
 	}
 	
 	@BeforeEach
@@ -51,6 +51,14 @@ class UnitTest {
 		storeService_ = new StoreService();
 		ordersService_ = new OrdersService();
 		usersService_ = new UsersService();
+		
+		//create 2 users for test and save to file.
+		usersService_.createNewUser("Danny_Bernshtein", "456", "danny@gmail.com", 2);
+		usersService_.createNewUser("Sharon_Mauda", "789", "sharon@gmail.com", 3);
+		usersService_.saveToFileUsers();
+		
+		//connect to the system as an admin
+		userSessionServiceController_.login("eden@gmail.com", "123");
 	}
 	
 	@AfterAll
@@ -64,18 +72,20 @@ class UnitTest {
 	@Test
 	void loginSuccess() {
 		try{
-			int userType = userSessionServiceController_.login("eden", "123");
-			assertEquals(userType, 1);
-		} catch(IllegalArgumentException e) {}
+			int userType = userSessionServiceController_.login("eden@gmail.com", "123");
+			assertEquals(1, userType);
+		} catch(IllegalArgumentException e) {
+			fail("failed when should success");
+		}
 	}
-
+	
 	@Test
 	void failLoginEmptyEmailTest() {
 		try{
 			userSessionServiceController_.login("", "123");
 			fail("Login success when should failed.");
 		} catch(IllegalArgumentException e) {
-			assertEquals("! Order Id must be more then 0. Please try again.", e.getMessage());
+			assertEquals("\n! Email must not be null. Please try again.", e.getMessage());
 		}
 	}
 
@@ -99,6 +109,47 @@ class UnitTest {
 	}
 	
 	@Test
+	void cancelOrdeWithStatusCanceled() {
+		ordersService_ = new OrdersService();
+		
+		/*1. create order
+		  2. cancel order
+		  3. cancel again*/
+		
+		int orderId = ordersService_.createOrder("Gloves", 10);
+		try{
+			ordersService_.cancelOrder(orderId);
+		}catch(Exception e){
+			fail("failed when should be successed");
+		}
+		
+		try {
+			ordersController_.cancelOrder(orderId);
+			fail("success when should be failed");
+		} catch(Exception e) {
+			assertEquals("! Order id- " + orderId + " can not be canceled bacause it's already done.", e.getMessage());
+		}	
+	}
+	
+	@Test
+	void deleteOrdeWithStatusPending() {
+		ordersService_ = new OrdersService();
+		
+		/*1. create order
+		  2. delete order*/
+		
+		int orderId = ordersService_.createOrder("Gloves", 10);
+		try{
+			ordersService_.deleteOrder(orderId);
+			fail("success when should be failed.");
+		}catch(Exception e){
+			assertEquals("! Order id- " + orderId + " can not be deleted because its waiting for supplier's response.\nIf"
+										+ " you want to delete this order - 1. Cancel this order\n" 
+										+ "                                   2. Delete this order.", e.getMessage());
+		}
+	}
+	
+	@Test
 	void editOrderQuantityOrderNotExists() {
 		int quantity = 100;
 		int orderId = 1;
@@ -114,10 +165,10 @@ class UnitTest {
 		int quantity = 100;
 		int orderId = -10; //orderId must be more then 0
 		try {
-			boolean res = ordersService_.editOrder(orderId, quantity);
+			ordersController_.editOrder(orderId, quantity);
 			fail("success when should be failed.");
 		} catch(Exception e) {
-			
+			assertEquals("! Order Id must be more then 0. Please try again.", e.getMessage());
 		}
 		
 	}
@@ -152,8 +203,6 @@ class UnitTest {
 			assertEquals("java.lang.IllegalArgumentException", e.getClass().getName());
 		}
 	}
-	
-	
 	
 	@Test
 	void removeProductNotExistsItem() {
@@ -215,6 +264,18 @@ class UnitTest {
 			assertEquals("! One or more of the inputs is empty. Please try again.", e.getMessage());
 		}
 	}
+	
+	@Test
+	void deleteUserSuccess() {
+		String email = "sharon@gmail.com";
+		try {
+			boolean res = usersController_.deleteUser(email);
+			assertTrue(res);
+		}catch(Exception e) {
+			fail("failed when should be success.");
+		}
+	}
+	
 	@Test
 	void deleteUserNotValidEmail() {
 		String email = "eden@";
@@ -226,6 +287,7 @@ class UnitTest {
 		}
 	}
 	
+	
 	@Test
 	void deleteUserNotExists() {
 		String email = "blabla@gmail.com";
@@ -233,5 +295,19 @@ class UnitTest {
 			boolean res = usersController_.deleteUser(email);
 			assertFalse(res);
 		}catch(Exception e) {}
+	}
+	
+	
+	@Test
+	void deleteUserActiveUser() {
+		String email = "eden@gmail.com";
+		userSessionServiceController_.login(email, "123");
+		
+		try {
+			usersController_.deleteUser("eden@gmail.com");
+			fail("success when should be failed.");
+		}catch(Exception e) {
+			assertEquals("! You can not delete your own user.", e.getMessage());
+		}
 	}
 }

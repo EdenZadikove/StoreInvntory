@@ -75,7 +75,9 @@ public abstract class Orders{
 		int orderId = 0; //if orderId == 0----> go back to Orders main menu
 		int timesToLoop = 1; // if timesToLoop == -1 then show again
 		int itemsCounter = 0;
-		
+		boolean printSeperator = true;
+		String msg = "";
+				
 		if(action.equals("delete"))
 			itemsCounter = (ordersController_.itemsCounterByFilter("approved")) + (ordersController_.itemsCounterByFilter("denied")) + (ordersController_.itemsCounterByFilter("canceled"));
 		else{
@@ -95,7 +97,7 @@ public abstract class Orders{
 			//If itemsCounter == 1, then no need to ask how many times I want to do the action
 			timesToLoop = -1;
 			while (timesToLoop == -1) {
-				System.out.println("\nHow many items would you like to " + action + "?");
+				System.out.println("How many items would you like to " + action + "?");
 				timesToLoop = viewFunctions_.validateIntInput("Number of items: ");
 				timesToLoop = viewFunctions_.validateInsertedData(1, itemsCounter, timesToLoop, "Number of items: ", "! Items range must be between 1 to " + itemsCounter);
 				commandIsZeroOrNegetiveOne(timesToLoop, userType);
@@ -103,9 +105,11 @@ public abstract class Orders{
 		} 
 		
 		int counter = 1;
-		System.out.println(viewFunctions_.getSeperator() +"\n");
+		if(timesToLoop == 1)
+			printSeperator = false;
 		while(timesToLoop > 0 ) {
-			
+			if(!msg.isEmpty() || printSeperator)
+					System.out.println(viewFunctions_.getSeperator() +"\n");
 			String title = "Which order would you like to " + action + "?";
 			System.out.println(calcCounterStr(title, counter));
 			
@@ -137,7 +141,7 @@ public abstract class Orders{
 				}
 			}
 			
-			String msg = "";
+			
 			switch(action) {
 			case "delete":
 				try {
@@ -180,7 +184,6 @@ public abstract class Orders{
 			if(msg.contains("approved") && !msg.contains("!") )
 				msg +=" \nStore inventory updated.";
 			System.out.println(viewFunctions_.getSeperator() + "\n\n" + msg + "\n");
-			System.out.println(viewFunctions_.getSeperator() +"\n");
 			
 			if(msg.contains("successfully")) {
 				timesToLoop--;
@@ -193,25 +196,31 @@ public abstract class Orders{
 
 	
 	protected boolean isEmptyMap(String filter) {
+		String msg = "No " + filter + " orders in the table.";
 		if(filter.equals("all")) {
-			if((ordersController_.itemsCounterByFilter("approved") == 0 && 
-					ordersController_.itemsCounterByFilter("denied") == 0 &&
-					ordersController_.itemsCounterByFilter("canceled") == 0)) {
-				return true;
+			if((ordersController_.itemsCounterByFilter("approved") != 0 || 
+					ordersController_.itemsCounterByFilter("denied") != 0 ||
+					ordersController_.itemsCounterByFilter("canceled") != 0)) {
+				return false;
 			}
+			if(ordersController_.itemsCounterByFilter("pending") != 0)
+				msg = "You only have orders with status 'pending'.";
+			else
+				msg = "Orders table is empty.";
+			
 		}
 		
-		if(ordersController_.itemsCounterByFilter(filter) == 0) { //empty orders map
-			System.out.println("! Action can not be taken. No " + filter + " orders in the table. \n");
-			System.out.println(viewFunctions_.getSeperator());
-			return true;
+		else if(ordersController_.itemsCounterByFilter(filter) != 0) {
+			return false; //not empty orders map
 		}
-		return false;
+		System.out.println("! Action can not be taken. " + msg + "\n");
+		System.out.println(viewFunctions_.getSeperator());
+		return true;
 	}
 	
 	private String calcCounterStr(String title, int counter) {
 		String loopCounterStr = "Item number: " + counter;
-		int rowLength = 115 - loopCounterStr.length() - title.length();
+		int rowLength = 114 - loopCounterStr.length() - title.length();
 		for(int i = 0; i< rowLength; i++) {
 			title += " ";
 		}

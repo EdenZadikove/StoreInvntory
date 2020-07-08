@@ -13,14 +13,15 @@ import com.store.model.repository.UsersRepository;
 
 public class UsersService {
 	private UsersRepository usersRepository_;
+	private UserSessionService userSessionService_;
 	private Map<String, User> users_;
 	private UsersFactory usersFactory_;
 
 	public UsersService(){
 		usersRepository_ = UsersRepository.getInstance();
+		userSessionService_ = new UserSessionService();
 		users_ = usersRepository_.getUsers();
 		usersFactory_ = new UsersFactory();
-		initUsers();
 	}
 	
 	public ArrayList<String> getAllUsers(){
@@ -59,9 +60,15 @@ public class UsersService {
 		return true;
 	}
 	
-	public boolean deleteUser(String email) {
+	public boolean deleteUser(String email) throws Exception {
+		//user can not delete his own user!
+		String activeUserEmail = userSessionService_.getUserEmail();
+		
 		if(!isExistsUser(email))
 			return false;
+		
+		if(activeUserEmail.equals(email.toLowerCase()))
+				throw new Exception("! You can not delete your own user.");
 		users_.remove(email);
 		usersRepository_.setUsers_(users_);
 		return true;
@@ -110,13 +117,5 @@ public class UsersService {
 				 maxKey = tempKey;		 
 		 }
 		 return maxKey + 1;
-	}
-	
-	private void initUsers(){
-		if(users_.size() == 0) {		
-			User users = new Admin("Eden_Zadikove", "123", "eden", 1, "Best-Store-Ever");
-			users_.put(users.getEmail(), users);
-			saveToFileUsers();
-		}
 	}
 }

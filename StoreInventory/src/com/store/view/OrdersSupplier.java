@@ -26,9 +26,9 @@ public class OrdersSupplier extends Orders {
 			
 			if(!showOrdersManagerMenu_again) {  //showOrdersManagerMenu_again == false
 				if(command == -1) {
+					System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 					System.out.println("Going back to Main Menu...");
-				}
-				else {
+				} else {
 					command = 0; //for logout
 					actionNavigate(0); //Logout
 				}
@@ -80,7 +80,7 @@ public class OrdersSupplier extends Orders {
 			}	
 			break;
 		case 3: //Denied order 
-			System.out.println(viewFunctions_.getSeperator());
+			System.out.println(viewFunctions_.getSeperator() + "\n");
 			System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "Denied order"));
 			isEmptyOrders = isEmptyMap("pending");
 			if(!isEmptyOrders) {

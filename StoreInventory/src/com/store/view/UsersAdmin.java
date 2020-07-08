@@ -7,14 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.store.controller.UsersController;
 
-public class Users{
+public class UsersAdmin{
 	
 	private UsersController usersController_;
 	private ViewFunctions viewFunctions_;
 	private String prevScreens_;
 	private Scanner scanner_;
 	
-	public Users() {
+	public UsersAdmin() {
 		usersController_ = new UsersController();
 		viewFunctions_ = new ViewFunctions();
 		prevScreens_ = viewFunctions_.getPrevScreens() + " -----> " + "Users Manager Menu";
@@ -39,9 +39,10 @@ public class Users{
 			showStoreManagerMenu_again = actionNavigate(command); //command choice from Store Manager Menu
 			
 			if(!showStoreManagerMenu_again) {  //showStoreManagerMenu_again == false
-				if(command == -1)
+				if(command == -1) {
+					System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 					System.out.println("Going back to Main Menu...");
-				else { 
+				} else { 
 					command = 0; //for logout
 					actionNavigate(0); //exit the program
 				}
@@ -68,7 +69,7 @@ public class Users{
 			createNewUser();
 			result = viewFunctions_.anotherActions();
 			break;
-		case 3: //Create a new user 
+		case 3: //Delete existing user
 			System.out.println(viewFunctions_.getSeperator());
 			System.out.println("\n" + viewFunctions_.showProgressBar(prevScreens_, "Delete existing user"));
 			deleteUser();

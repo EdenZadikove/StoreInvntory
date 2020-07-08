@@ -39,7 +39,7 @@ public class UsersController {
 		return usersService_.createNewUser(firstName + "_" + lastName, password, email, userTypeNumber);
 	}
 	
-	public boolean deleteUser(String email) {
+	public boolean deleteUser(String email) throws Exception{
 		if(isEmpty(email))
 			throw new IllegalArgumentException("! Email must not be empty. Please try again.");
 		if(!isValidEmail(email))

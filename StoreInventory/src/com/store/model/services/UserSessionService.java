@@ -34,6 +34,10 @@ public class UserSessionService {
 		return activeUser_.getUserName();
 	}
 	
+	public String getUserEmail() {
+		return activeUser_.getEmail();
+	}
+	
 	private void validateUser(String email, String password) {
 		activeUser_ = usersRepository_.getUsers().get(email); 
 		if(activeUser_ != null && !activeUser_.getPassword().equals(password))

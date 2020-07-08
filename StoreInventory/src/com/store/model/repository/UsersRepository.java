@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
 
+import com.store.model.entities.Admin;
 import com.store.model.entities.User;
 
 public class UsersRepository{
@@ -16,6 +17,7 @@ public class UsersRepository{
 	private UsersRepository() throws IOException {
 		this.fileManager = new FileManager<>(path_);
 		users_ = fileManager.readFromFile(users_);
+		initUsers();
 	}
 	
 	//Singleton
@@ -50,5 +52,13 @@ public class UsersRepository{
 
 	public void saveToFile() {
 		this.fileManager.writeToFile(users_);
+	}
+	
+	private void initUsers(){
+		if(users_.size() == 0) {		
+			User users = new Admin("Eden_Zadikove", "123", "eden@gmail.com", 1, "Best-Store-Ever");
+			users_.put(users.getEmail(), users);
+			saveToFile();
+		}
 	}
 }

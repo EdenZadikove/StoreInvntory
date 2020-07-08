@@ -2,15 +2,14 @@ package com.store.view;
 
 import com.store.controller.UserSessionServiceController;
 
-public class SellerMenu implements Menu {
+public class SellerMenu extends Menu {
 	private UserSessionServiceController userSessionService_ ;
 	private StoreSeller storeSeller_;
-	private ViewFunctions viewFunctions_;
 	
 	public SellerMenu() {
+		super();
 		userSessionService_ = new UserSessionServiceController();
 		storeSeller_ = new StoreSeller();
-		viewFunctions_ = new ViewFunctions();
 	}
 	
 	@Override
@@ -25,7 +24,8 @@ public class SellerMenu implements Menu {
 			showMainMenuAgain = showSelectedScreen(0);
 	}
 	
-	private int mainMenu() {
+	@Override
+	protected int mainMenu() {
 		int command = -1;
 
 		System.out.println("\n" + viewFunctions_.getMainMenuHeader() + "\n");
@@ -37,14 +37,16 @@ public class SellerMenu implements Menu {
 		System.out.println();
 		
 		command = viewFunctions_.validateIntInput("I want to view: ");
-		command = validateInsertedData(0, 1, command, "I want to view: " ,"! Invalid choice. Please try again. ");
+		command = viewFunctions_.validateInsertedData_noZeroOne(0, 1, command, "I want to view: " ,"! Invalid choice. Please try again. ");
 		return command;
 	}
 	
-	private int showSelectedScreen(int command){
+	@Override
+	protected int showSelectedScreen(int command){
 		int showMainMenuAgain = 0; //0- don't show again, -1- show again
 		switch(command) {
 		case 0:
+			System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 			System.out.println("Logout...");
 			userSessionService_.logout();
 			break;
@@ -53,15 +55,5 @@ public class SellerMenu implements Menu {
 			break;
 		}
 		return showMainMenuAgain;
-	}
-	
-	private int validateInsertedData(int start, int end, int command, String text, String errorMsg) {
-		while (!(command <= end && command >= start)) {
-			System.out.println(); // print enter
-			System.out.println(errorMsg);
-			command = viewFunctions_.validateIntInput(text);
-		}
-		System.out.println(); // print enter
-		return command;
 	}
 }

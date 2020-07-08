@@ -2,34 +2,22 @@ package com.store.view;
 
 import com.store.controller.UserSessionServiceController;
 
-public class AdminMenu implements Menu{
-	private ViewFunctions viewFunctions_; 
+public class AdminMenu extends Menu{
 	private StoreAdmin storeAdmin_;
 	private OrdersAdmin ordersAdmin_;
-	private Users users_;
+	private UsersAdmin users_;
 	private UserSessionServiceController userSessionServiceController_;
 	
 	public AdminMenu(){
-		viewFunctions_ = new ViewFunctions();
+		super();
 		storeAdmin_ = new StoreAdmin();
 		ordersAdmin_ = new OrdersAdmin();
-		users_ = new Users();
+		users_ = new UsersAdmin();
 		userSessionServiceController_ = new UserSessionServiceController();
 	}
 	
 	@Override
-	public void menuManager(){
-		int command = 0; //initialize variable
-		int showMainMenuAgain = -1; //-1 - show main menu, 0 - Logout
-		while(showMainMenuAgain == -1) { // while user want to show menu again
-			command =  mainMenu();
-			showMainMenuAgain = showSelectedScreen(command);	
-		} 
-		if(showMainMenuAgain == 0 && command != 0) //command arrived from other screen
-			showMainMenuAgain = showSelectedScreen(0);
-	}
-
-	private int mainMenu(){
+	protected int mainMenu(){
 		int command = -1;
 
 		System.out.println("\n" + viewFunctions_.getMainMenuHeader() +"\n");
@@ -46,10 +34,12 @@ public class AdminMenu implements Menu{
 		return command;
 	}
 	
-	private int showSelectedScreen(int command){
+	@Override
+	public int showSelectedScreen(int command){
 		int showMainMenuAgain = 0;  //0- logout, -1 - show menu again
 		switch(command) {
 		case 0:
+			System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 			System.out.println("Logout...");
 			userSessionServiceController_.logout();
 			break;

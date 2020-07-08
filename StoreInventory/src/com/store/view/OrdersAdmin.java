@@ -29,6 +29,7 @@ public class OrdersAdmin extends Orders {
 			
 			if(!showOrdersManagerMenu_again) {  //showOrdersManagerMenu_again == false
 				if(command == -1) {
+					System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 					System.out.println("Going back to Main Menu...");
 				}
 				else { 
@@ -63,10 +64,9 @@ public class OrdersAdmin extends Orders {
 		int res = -1;
 		switch(command) {
 		case 1: //View orders table
-			System.out.println(viewFunctions_.getSeperator());
-			System.out.println();
+			System.out.println(viewFunctions_.getSeperator() + "\n");
 			System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "View orders table"));
-			showOrdersTable("all", "Orders Table:\n", "No orders. Create a new order and come back to see it here :)\n");
+			showOrdersTable("all", "Orders Table:\n", "No orders. Create a new order and come back to see it here :)");
 			result = true;
 			break;
 		case 2: //Create a new order
@@ -83,11 +83,13 @@ public class OrdersAdmin extends Orders {
 			if(!isEmptyOrders) {
 				res = cancelOrder(); 
 				if(res == 0) result = true; //show menu again
-				else result = viewFunctions_.anotherActions();
+				else {
+					System.out.println(viewFunctions_.getSeperator() + "\n");
+					result = viewFunctions_.anotherActions();
+				}
 			} else {
-				System.out.println();
 				result = viewFunctions_.anotherActions();
-			}		
+			}
 			break;
 		case 4: //Delete existing order
 			System.out.println(viewFunctions_.getSeperator() + "\n");
@@ -96,15 +98,17 @@ public class OrdersAdmin extends Orders {
 			if(!isEmptyOrders) {
 				res = deleteOrder();
 				if(res == 0) result = true;
-				else result = viewFunctions_.anotherActions();
+				else {
+					System.out.println(viewFunctions_.getSeperator() + "\n");
+					result = viewFunctions_.anotherActions();
+				}
 			} else {
 				System.out.println();
 				result = viewFunctions_.anotherActions();
 			}
 			break;
 		case 5: //Edit pending order
-			System.out.println(viewFunctions_.getSeperator());
-			System.out.println();
+			System.out.println(viewFunctions_.getSeperator() + "\n");
 			System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "Edit pending order"));
 			isEmptyOrders = isEmptyMap("pending");
 			if(!isEmptyOrders) {
@@ -157,11 +161,11 @@ public class OrdersAdmin extends Orders {
 		//Print order summary 
 		System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 		System.out.println("Order successfully created!\n");
-		System.out.println("Order Summery:");
-		System.out.println("Order ID:     " + orderId);
-		System.out.println("Item Name:    " + ProductsEnum.values()[item-1]);
-		System.out.println("Quantity:     " + quantity);
-		System.out.println("Order Status: pending");
+		System.out.println("Order Summery: ");
+		System.out.println("Order ID:      " + orderId);
+		System.out.println("Item Name:     " + ProductsEnum.values()[item-1]);
+		System.out.println("Quantity:      " + quantity);
+		System.out.println("Order Status:  pending");
 		System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 	}
 	

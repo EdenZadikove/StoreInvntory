@@ -1,25 +1,15 @@
 package com.store.view;
 
-import java.util.ArrayList;
-
 public class Welcome {
 	
 	private Login login_;
 	private ViewFunctions viewFunctions_;
-	private ArrayList<Menu> menuInterface = new ArrayList<Menu>();
-	
+	private MenuFactory menuFactory_;
 	public Welcome() {
 		viewFunctions_ = new ViewFunctions();
-		initMenuInterface();
+		menuFactory_ = new MenuFactory();
 	}
-	
-	//initMenuInterface only one time per program
-	private void initMenuInterface() {
-		menuInterface.add(new AdminMenu());
-		menuInterface.add(new SellerMenu());
-		menuInterface.add(new SupplierMenu());
-	}
-	
+
 	public void welcomeMenu(){		
 		int command = -1; //initialize variable
 		int userType = 0;
@@ -48,11 +38,12 @@ public class Welcome {
 	
 	private void nevigateMenu(int userType){
 		if(userType == 0)
-			exit(0);
-		menuInterface.get(userType-1).menuManager();
+			exit(1);
+		menuFactory_.createMenu(userType).menuManager();
 	}
 	
 	private void exit(int status){
+		System.out.println(viewFunctions_.getSeperator() + "\n");
 		System.out.println("Exit the program...\nBye Bye");
 		System.exit(status); 
 	}
