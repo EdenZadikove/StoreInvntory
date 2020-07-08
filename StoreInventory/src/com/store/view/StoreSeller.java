@@ -28,7 +28,7 @@ public class StoreSeller extends Store {
 			
 			if(!showStoreManagerMenu_again) {  //showStoreManagerMenu_again == false
 				if(command == -1) {
-					System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
+					System.out.println(viewFunctions_.getSeperator() + "\n");
 					System.out.println("Going back to Main Menu...");
 				} else { 
 					command = 0; //for logout
@@ -57,7 +57,7 @@ public class StoreSeller extends Store {
 	//	boolean isEmptyStore = false; //not empty
 		switch(command) {
 		case 1: //View store inventory
-			System.out.println(viewFunctions_.getSeperator());
+			System.out.println(viewFunctions_.getSeperator() + "\n");
 			System.out.println(viewFunctions_.showProgressBar(prevScreens_, "View store inventory"));
 			showProductsTable("Store Inventory:", "! Empty Store. Create new orders to fill the store :)"); 
 			result = true;

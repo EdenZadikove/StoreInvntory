@@ -21,16 +21,16 @@ public class UsersController {
 		if(!isValidEmail(email))
 			throw new IllegalArgumentException("! Email is not valid. Please try again.");
 		
-		//add validation
 		int userTypeNumber;
+		userType = userType.toLowerCase();
 		switch(userType) {
-		case "Admin":
+		case "admin":
 			userTypeNumber = 1;
 			break;
-		case "Seller":
+		case "seller":
 			userTypeNumber = 2;
 			break;
-		case "Supplier":
+		case "supplier":
 			userTypeNumber = 3;
 			break;
 		default:

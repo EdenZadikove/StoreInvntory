@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 
 public class StoreAdmin extends Store {
@@ -140,7 +142,9 @@ public class StoreAdmin extends Store {
 		
 		while(timesToLoop > 0){	
 			System.out.println(calcCounterStr("Which item would you like to " + action + "?", itemsCounter));
+			productsMap_ = getProducts();
 			showProducts(productsMap_);
+			resetProductsArray(productsMap_);
 			System.out.println();
 			itemNumber = viewFunctions_.validateIntInput("Item number: ");
 			itemNumber = validateInsertedData(1, productsMap_.size(), itemNumber, "Item number: ", "! Invalid item number. Please try again." );
@@ -184,14 +188,16 @@ public class StoreAdmin extends Store {
 				itemNumber = viewFunctions_.validateInsertedData_noZeroOne(0,1, choice, "My choice: ", "! Invalid choice. Please try again.");
 				if(itemNumber == 1) { //user want to delete item
 					actionResault = storeController_.removeProduct(itemName);
-					if(actionResault)
+					if(actionResault) {
 						msg = itemName +" succesffully removed from the store";
+						timesToLoop--;
+						itemsCounter++;
+					}
 					else msg = "! Something went wrong. Please contact your system administrator.";
-				}
-				else {//user don't want to delete item
-					System.out.println();
+				} else { //user want to stop
 					timesToLoop--;
 					itemsCounter++;
+					System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 				}
 				break; //end while
 			}
@@ -208,12 +214,21 @@ public class StoreAdmin extends Store {
 		return itemNumber;
 	}
 	
+	private void resetProductsArray(Map<String, String> productsMap_) {
+		productsArray_.clear();
+		for (Entry<String, String> entry : productsMap_.entrySet()) {
+			String itemName = StringUtils.substringBetween(entry.getValue(), "ItemName:", ";");
+			productsArray_.add(itemName);
+		}
+	}
+	
 	private void showProducts(Map<String, String> productsMap_){
 		int i = 1;
 		for (Entry<String, String> entry : productsMap_.entrySet()) {
 			String itemName = StringUtils.substringBetween(entry.getValue(), "ItemName:", ";");
 			productsArray_.add(itemName);
 			System.out.println(calcStr(itemName, i++));
+			
 		}
 	}
 

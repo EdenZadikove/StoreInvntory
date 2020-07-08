@@ -163,6 +163,7 @@ public class OrdersService {
 	
 	public void saveToFileOrders() {
 		ordersRepository_.saveToFile();
+		storeService_.saveToFileStore();
 	}
 	
 	private int calculateOrderId(){

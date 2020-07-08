@@ -110,7 +110,7 @@ public class UsersService {
 		for (Map.Entry<String, User> currentEntry : users_.entrySet()) {
 			if( currentEntry.getValue().getUserType() == 1)
 				tempKey  = ((Admin)currentEntry.getValue()).getEmployeeNumber();
-			else
+			else if( currentEntry.getValue().getUserType() == 2)
 				tempKey  = ((Seller)currentEntry.getValue()).getEmployeeNumber();
 			
 			if(tempKey > maxKey)

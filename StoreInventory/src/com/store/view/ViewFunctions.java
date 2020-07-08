@@ -91,7 +91,8 @@ public class ViewFunctions {
 	
 	public int validateInsertedData(int start, int end, int command, String text, String errorMsg) {
 		/* If 0 --->  don't do anything
-		 * If -1 --->  don't do anything */		
+		 * If -1 --->  don't do anything */
+		
 		while ((command != 0 && command != -1) &&  !(command <= end && command >= start)) {
 			System.out.println("\n" + errorMsg); // user insert wring data.
 			command = validateIntInput(text);

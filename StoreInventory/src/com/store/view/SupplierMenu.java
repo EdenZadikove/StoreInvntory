@@ -36,6 +36,7 @@ public class SupplierMenu extends Menu {
 			userSessionService_.logout();
 			break;
 		case 1:
+			System.out.println();
 			showMainMenuAgain = ordersSupplier_.showMenu();
 			break;
 		}

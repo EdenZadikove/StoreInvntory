@@ -73,7 +73,10 @@ public class OrdersSupplier extends Orders {
 			if(!isEmptyOrders) {
 				res = navigateAction("approved");
 				if(res == 0) result = true; //show menu again
-				else result = viewFunctions_.anotherActions();
+				else {
+					System.out.println(viewFunctions_.getSeperator() + "\n");
+					result = viewFunctions_.anotherActions();
+				}
 			}  else {
 				System.out.println();
 				result = viewFunctions_.anotherActions();
@@ -86,7 +89,10 @@ public class OrdersSupplier extends Orders {
 			if(!isEmptyOrders) {
 				res = navigateAction("denied"); 
 				if(res == 0) result = true;
-				else result = viewFunctions_.anotherActions();
+				else {
+					System.out.println(viewFunctions_.getSeperator() + "\n");
+					result = viewFunctions_.anotherActions();
+				}
 			} else {
 				System.out.println();
 				result = viewFunctions_.anotherActions();

@@ -88,6 +88,7 @@ public class OrdersAdmin extends Orders {
 					result = viewFunctions_.anotherActions();
 				}
 			} else {
+				System.out.println();
 				result = viewFunctions_.anotherActions();
 			}
 			break;
@@ -114,7 +115,10 @@ public class OrdersAdmin extends Orders {
 			if(!isEmptyOrders) {
 				res = editOrder();
 				if(res == 0) result = true;
-				else result = viewFunctions_.anotherActions();
+				else {
+					System.out.println(viewFunctions_.getSeperator() + "\n");
+					result = viewFunctions_.anotherActions();
+				}
 			}else {
 				System.out.println();
 				result = viewFunctions_.anotherActions();

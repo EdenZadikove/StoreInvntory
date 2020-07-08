@@ -174,6 +174,16 @@ class UnitTest {
 	}
 	
 	//STORE
+
+	@Test
+	void editPriceSuccess(){	
+		boolean res;
+		store 
+		try {
+			res = storeController_.editPrice("blabla", 10.0, 5.0);
+			assertFalse(res);
+		} catch(Exception e) {	}
+	}
 	
 	@Test
 	void editPriceProductNotExists(){	

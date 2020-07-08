@@ -51,6 +51,7 @@ public class SellerMenu extends Menu {
 			userSessionService_.logout();
 			break;
 		case 1:
+			System.out.println();
 			showMainMenuAgain = storeSeller_.showMenu();
 			break;
 		}

@@ -24,14 +24,14 @@ public abstract class Orders{
 	protected void commandIsZeroOrNegetiveOne(int command, int userType){
 		String prevScreensTemp = viewFunctions_.getPrevScreens() + " -----> " + "Orders Manager Menu";
 		
-		if(command == 0) System.out.println("\nGoing back to Orders Manager Menu...\n");
+		if(command == 0) System.out.println(viewFunctions_.getSeperator() + "\n\nGoing back to Orders Manager Menu...\n");
 		else if(command == -1) {
 			switch(userType) {
 				case 1: //admin
 					System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 					System.out.println(viewFunctions_.showProgressBar(prevScreensTemp, "View pending orders table" ));
 					showOrdersTable("all", "Orders Table:\n", "No orders. Create a new order and come back to see it here :)\n");
-					System.out.println(viewFunctions_.getSeperator());
+					System.out.println(viewFunctions_.getSeperator() + "\n");
 					break;
 				case 3: //supplier
 					System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
@@ -105,11 +105,11 @@ public abstract class Orders{
 		} 
 		
 		int counter = 1;
-		if(timesToLoop == 1)
+		if(itemsCounter == 1)
 			printSeperator = false;
 		while(timesToLoop > 0 ) {
 			if(!msg.isEmpty() || printSeperator)
-					System.out.println(viewFunctions_.getSeperator() +"\n");
+					System.out.println(viewFunctions_.getSeperator() + "\n");
 			String title = "Which order would you like to " + action + "?";
 			System.out.println(calcCounterStr(title, counter));
 			
@@ -117,7 +117,7 @@ public abstract class Orders{
 			commandIsZeroOrNegetiveOne(orderId, userType);
 
 			while(orderId == -1) {
-				System.out.println("\n" + calcCounterStr(title, counter));
+				System.out.println(calcCounterStr(title, counter));
 				orderId = viewFunctions_.validateIntInput("Order Id: "); 
 				commandIsZeroOrNegetiveOne(orderId, userType);
 			}
@@ -127,7 +127,7 @@ public abstract class Orders{
 			int quantity = 1;
 			
 			if(action == "edit") {
-				System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
+				//System.out.println("\n" + viewFunctions_.getSeperator() + "\n");
 				quantity = viewFunctions_.validateIntInput("Update order quantity to: ");
 				commandIsZeroOrNegetiveOne(quantity, userType);
 				while(quantity == -1) { //if quantity == -1, then user want to view orders table
@@ -164,7 +164,7 @@ public abstract class Orders{
 			case "edit":
 				try {
 					if(ordersController_.editOrder(orderId, quantity))
-						msg = "Order id- " + orderId + " quantity successfully updated to " + quantity + "units.";
+						msg = "Order id- " + orderId + " quantity successfully updated to " + quantity + " units.";
 					else
 						msg = "! Order id- " + orderId + " does not exists. Please try again.";
 				}catch(Exception e) {
@@ -175,6 +175,8 @@ public abstract class Orders{
 				try {
 					if(ordersController_.changeOrderStatus(orderId, action))
 						msg = "Order ID - " + orderId + " is successfully updated from 'pending' to " + "'" + action + "'.";
+					else
+						msg = "! Order id- " + orderId + " does not exists. Please try again.";
 				}catch(Exception e) {
 					msg = e.getMessage();
 				}
