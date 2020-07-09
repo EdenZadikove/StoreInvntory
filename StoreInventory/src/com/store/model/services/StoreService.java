@@ -11,12 +11,10 @@ import com.store.model.repository.StoreRepository;
 
 public class StoreService {
 	private StoreRepository storeRepository_;
-	private Store store_;
 	private Map<String, Product> defaultProductDetails_;
 
 	public StoreService(){
 		storeRepository_ = StoreRepository.getInstance();
-		store_ = storeRepository_.getStore();
 		initStore();
 		initDefaultProductDetails();
 	}
@@ -24,7 +22,7 @@ public class StoreService {
 	//convert Map of objects to map of String. show store inventory in the view package
 	public Map<String, String> getProducts(){
 		Map<String, String> productsMap = new Hashtable<String, String>(); 
-		for (Entry<String, Product> entry : store_.getProductsMap().entrySet()) {
+		for (Entry<String, Product> entry : storeRepository_.getStore().getProductsMap().entrySet()) {
 			String row = "ItemName:" + entry.getValue().getItemName() + ";" +
 						 "Season:" + entry.getValue().getSeason() + ";" +
 						 "Quantity:" + entry.getValue().getQuantity() + ";" +
@@ -36,7 +34,7 @@ public class StoreService {
 	
 	public ArrayList<String> getProductDetails(String productName) {
 		ArrayList <String> details = new ArrayList<String>();
-		Product p = store_.getProductsMap().get(productName);
+		Product p = storeRepository_.getStore().getProductsMap().get(productName);
 		if(p == null) //product does not exists
 			p = defaultProductDetails_.get(productName); //initialize with default product
 		details.add(p.getItemName());
@@ -47,17 +45,15 @@ public class StoreService {
 	}
 	
 	public boolean editPrice(String itemName, double price) {
-		Product product  = store_.getProductsMap().get(itemName);
+		Product product  = storeRepository_.getStore().getProductsMap().get(itemName);
 		if(product == null)
 			return false;
-		store_.getProductsMap().get(itemName).setPrice(price);
-		storeRepository_.setStore(store_);
+		storeRepository_.getStore().getProductsMap().get(itemName).setPrice(price);
 		return true;
 	}
 	
 	public boolean removeProduct(String itemName) {
-		if(store_.getProductsMap().remove(itemName) != null) {
-			storeRepository_.setStore(store_);
+		if(storeRepository_.getStore().getProductsMap().remove(itemName) != null) {
 			return true;
 		}
 		return false; //item does not exists
@@ -66,31 +62,30 @@ public class StoreService {
 	public void addProductToStoreInventory(String itemName, int quantity) {
 		if(!isProductExists(itemName)) { 		//product does not exists in the store yet
 			Product p = defaultProductDetails_.get(itemName); //create a new object
-			store_.getProductsMap().put(itemName, p);
+			storeRepository_.getStore().getProductsMap().put(itemName, p);
 		}
-		int newQuantity = store_.getProductsMap().get(itemName).getQuantity() + quantity; //update quantity
-		store_.getProductsMap().get(itemName).setQuantity(newQuantity); //set new quantity
-		storeRepository_.setStore(store_);
+		int newQuantity = storeRepository_.getStore().getProductsMap().get(itemName).getQuantity() + quantity; //update quantity
+		storeRepository_.getStore().getProductsMap().get(itemName).setQuantity(newQuantity); //set new quantity
 	}
 	
 	public boolean isEmptyStore() {
-		return store_.getProductsMap().size() == 0;
+		return storeRepository_.getStore().getProductsMap().size() == 0;
 	}
 	
 	public boolean isProductExists(String productName) {
-		return store_.getProductsMap().get(productName) != null;
+		return storeRepository_.getStore().getProductsMap().get(productName) != null;
 	}
 	
 	public void saveToFileStore(){
 		storeRepository_.saveToFile();
 	}
 	
-	
 	private void initStore(){
-		if(store_ == null) {
+		Store store = storeRepository_.getStore();
+		if(store == null) {
 			Map<String, Product> products = new Hashtable<String, Product>();
-			store_ = new Store("Best-Store-Ever", "Holon", "Eden Zadikove", products);
-			storeRepository_.setStore(store_);
+			store = new Store("Best-Store-Ever", "Holon", "Eden Zadikove", products);
+			storeRepository_.setStore(store);
 		}
 	}
 	

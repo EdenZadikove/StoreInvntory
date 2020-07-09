@@ -99,6 +99,18 @@ class UnitTest {
 	}
 	
 	@Test
+	void cancelOrderSuccess() {
+		/*Create order
+		 * Cancel order*/
+		int orderId = ordersService_.createOrder("Gloves", 10);
+		try{
+			ordersService_.cancelOrder(orderId);
+		}catch(Exception e){
+			fail("failed when should be successed");
+		}
+	}
+	
+	@Test
 	void cancelOrderOrderNotExists() {
 		ordersController_ = new OrdersController();
 		try {
@@ -174,16 +186,6 @@ class UnitTest {
 	}
 	
 	//STORE
-
-	@Test
-	void editPriceSuccess(){	
-		boolean res;
-		store 
-		try {
-			res = storeController_.editPrice("blabla", 10.0, 5.0);
-			assertFalse(res);
-		} catch(Exception e) {	}
-	}
 	
 	@Test
 	void editPriceProductNotExists(){	

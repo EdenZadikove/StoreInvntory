@@ -14,20 +14,18 @@ import com.store.model.repository.UsersRepository;
 public class UsersService {
 	private UsersRepository usersRepository_;
 	private UserSessionService userSessionService_;
-	private Map<String, User> users_;
 	private UsersFactory usersFactory_;
 
 	public UsersService(){
 		usersRepository_ = UsersRepository.getInstance();
 		userSessionService_ = new UserSessionService();
-		users_ = usersRepository_.getUsers();
 		usersFactory_ = new UsersFactory();
 	}
 	
 	public ArrayList<String> getAllUsers(){
 		ArrayList<String> usersList = new ArrayList<String>();
-		if(users_.size() != 0) { //NOT empty map
-			for(Iterator<Map.Entry<String, User>> it = users_.entrySet().iterator(); it.hasNext(); ) {
+		if(usersRepository_.getUsers().size() != 0) { //NOT empty map
+			for(Iterator<Map.Entry<String, User>> it = usersRepository_.getUsers().entrySet().iterator(); it.hasNext(); ) {
 			    Map.Entry<String, User> entry = it.next();
 			    String row = "userName:" + entry.getValue().getUserName() + ";" +
 			    		"email:" + entry.getValue().getEmail() + ";" +
@@ -55,8 +53,7 @@ public class UsersService {
 			user = usersFactory_.createUser(userName, password, email, userType, 0, "");
 			break;
 		}
-		users_.put(user.getEmail(), user);
-		usersRepository_.setUsers_(users_);
+		usersRepository_.getUsers().put(user.getEmail(), user);
 		return true;
 	}
 	
@@ -69,13 +66,12 @@ public class UsersService {
 		
 		if(activeUserEmail.equals(email.toLowerCase()))
 				throw new Exception("! You can not delete your own user.");
-		users_.remove(email);
-		usersRepository_.setUsers_(users_);
+		usersRepository_.getUsers().remove(email);
 		return true;
 	}
 	
 	public String getUserAsString(String email) {
-		User user = users_.get(email);
+		User user = usersRepository_.getUsers().get(email);
 		if(user == null)
 			return null;
 		switch(user.getUserType()) {
@@ -96,18 +92,18 @@ public class UsersService {
 	
 	
 	private boolean isExistsUser(String email) {
-		return users_.get(email.toLowerCase()) != null;
+		return usersRepository_.getUsers().get(email.toLowerCase()) != null;
 	}
 	
 	private int availableEmployeeNumber() {
 		int maxKey = 2; //admin is 1
 		//no users except of admin user
-		if(users_.size() == 1)
+		if(usersRepository_.getUsers().size() == 1)
 			return maxKey;
 		
 		//Search for the max key
 		int tempKey = 0;
-		for (Map.Entry<String, User> currentEntry : users_.entrySet()) {
+		for (Map.Entry<String, User> currentEntry : usersRepository_.getUsers().entrySet()) {
 			if( currentEntry.getValue().getUserType() == 1)
 				tempKey  = ((Admin)currentEntry.getValue()).getEmployeeNumber();
 			else if( currentEntry.getValue().getUserType() == 2)
