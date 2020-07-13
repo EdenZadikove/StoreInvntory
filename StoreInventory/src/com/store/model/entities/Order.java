@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Order implements Serializable {
+
+	private static final long serialVersionUID = 2574036011995021944L;
 	private int orderId;
 	private String itemName;
 	private int quantity;

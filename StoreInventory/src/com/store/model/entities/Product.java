@@ -3,6 +3,11 @@ package com.store.model.entities;
 import java.io.Serializable;
 
 public class Product implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2502493345926536930L;
 	private String itemName;
 	private String season;
 	private int quantity;

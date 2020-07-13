@@ -3,6 +3,10 @@ import java.io.Serializable;
 
 public abstract class User implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -537162871407847977L;
 	protected String userName;
 	protected String password;
 	protected String email;

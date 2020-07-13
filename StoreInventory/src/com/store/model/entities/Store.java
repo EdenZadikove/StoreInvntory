@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class Store implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6731452110436423748L;
 	private String storeName;
 	private String address;
 	private String managerName;

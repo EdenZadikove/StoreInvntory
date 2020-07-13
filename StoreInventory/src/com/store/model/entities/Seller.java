@@ -1,6 +1,11 @@
 package com.store.model.entities;
 
 public class Seller extends User {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8968345856982890890L;
 	private int employeeNumber;
 	private String storeName;
 	
